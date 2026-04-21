@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@layer base {
+  body {
+    background-color: #FAFAFA; /* Static fallback */
+    @apply bg-background text-foreground font-body antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 bg-primary text-white rounded-lg transition-all duration-200 cursor-pointer;
+  }
+  
+  .glass-card {
+    background-color: rgba(255, 255, 255, 0.7); /* Static fallback */
+    @apply backdrop-blur-md border border-white/20 rounded-2xl shadow-sm transition-all duration-300;
+  }
+  
+  .project-card {
+    @apply relative overflow-hidden rounded-2xl aspect-[4/3] cursor-pointer;
+  }
+  
+  .project-overlay {
+    @apply absolute inset-0 bg-primary/80 opacity-0 transition-opacity duration-300 flex flex-col justify-end p-6;
+  }
+  
+  /* Use standard CSS for group hover if defined in CSS */
+  .group:hover .project-overlay {
+    @apply opacity-100;
+  }
+}
+
+/* Custom Micro-interactions */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.stagger-item {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.stagger-item.active {
+  animation: slideIn 0.5s var(--ease-out) forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stagger delays */
+.stagger-item:nth-child(1) { animation-delay: 0.1s; }
+.stagger-item:nth-child(2) { animation-delay: 0.2s; }
+.stagger-item:nth-child(3) { animation-delay: 0.3s; }
+.stagger-item:nth-child(4) { animation-delay: 0.4s; }
+.stagger-item:nth-child(5) { animation-delay: 0.5s; }
+.stagger-item:nth-child(6) { animation-delay: 0.6s; }
