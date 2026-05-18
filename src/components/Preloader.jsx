@@ -671,7 +671,7 @@ export default function Preloader({ onComplete }) {
         }}
       >
         <span style={{ fontSize: 9, fontFamily: 'var(--font-mono)', opacity: 0.5, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-          Interactivity Design lab ©2026
+          Assiste with Luffy
         </span>
         <span style={{ fontSize: 9, fontFamily: 'var(--font-mono)', opacity: 0.5, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
           Simplicity is the sophistication
