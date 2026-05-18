@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react'
 /* ── Interactive State Dimension Specs ── */
 const DIMS = {
   compact: { width: 340, height: 46, radius: 23 },
-  expanded: { width: 500, height: 195, radius: 24 }, // Can dynamically expand height if Quick Nav is open!
+  expanded: { width: 500, height: 185, radius: 24 }, // Elegant vertical breathing room for grid + nav
   chat: { width: 450, height: 490, radius: 25 },
   voice: { width: 350, height: 270, radius: 25 }
 }
@@ -457,11 +457,10 @@ const playSound = (type) => {
 }
 
 /* ── High-Fidelity Vector Icons ── */
-const MapIcon = () => (
+const DocIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/>
-    <line x1="9" y1="3" x2="9" y2="18"/>
-    <line x1="15" y1="6" x2="15" y2="21"/>
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+    <polyline points="14 2 14 8 20 8"/>
   </svg>
 )
 
@@ -597,7 +596,6 @@ export default function DynamicNotch({ activeProject }) {
   const [inactivityState, setInactivityState] = useState(false)
   const [readingTime, setReadingTime] = useState(0)
   const [translateY, setTranslateY] = useState(0)
-  const [showQuickNav, setShowQuickNav] = useState(false)
   
   // Dynamic Global Theme Tracker (Modularity preserved!)
   const [theme, setTheme] = useState(() => {
@@ -825,14 +823,12 @@ export default function DynamicNotch({ activeProject }) {
     }
   }
 
-  // Dynamic Dims calculation with Liquid Quick Nav reveal
+  // Dynamic Dims calculation
   const getDims = () => {
     if (notchState === 'compact') return DIMS.compact
     if (notchState === 'chat') return DIMS.chat
     if (notchState === 'voice') return DIMS.voice
-    return showQuickNav 
-      ? { width: 500, height: 235, radius: 24 } 
-      : { width: 500, height: 180, radius: 24 }
+    return DIMS.expanded
   }
 
   const currentDim = getDims()
@@ -893,7 +889,6 @@ export default function DynamicNotch({ activeProject }) {
         onMouseLeave={() => {
           if (notchState === 'expanded') {
             setNotchState('compact')
-            setShowQuickNav(false)
           }
         }}
       >
@@ -1006,20 +1001,20 @@ export default function DynamicNotch({ activeProject }) {
               </span>
             </div>
 
-            {/* Quick Actions Grid */}
+            {/* Quick Actions Grid (Quick Nav removed, Resume Download added) */}
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(4, 1fr)',
               gap: 8,
-              marginBottom: showQuickNav ? 14 : 0,
+              marginBottom: 10,
               transition: 'all 0.3s ease'
             }}>
               {[
-                { label: 'Ask Anything', desc: 'Chat co-pilot', icon: <ChatIcon />, action: () => setNotchState('chat') },
+                { label: 'Ask Anything', icon: <ChatIcon />, type: 'button', action: () => setNotchState('chat') },
                 { 
                   label: 'Summarize', 
-                  desc: 'Explain section', 
                   icon: <SummaryIcon />, 
+                  type: 'button',
                   action: () => {
                     setNotchState('chat')
                     handleSendChat(`Summarize the ${activeSection} section`)
@@ -1027,21 +1022,12 @@ export default function DynamicNotch({ activeProject }) {
                 },
                 { 
                   label: 'Voice Mode', 
-                  desc: 'Hold to speak', 
                   icon: <MicIcon />, 
+                  type: 'button',
                   action: () => {
                     playSound('bell')
                     setNotchState('voice')
                     setTimeout(() => startVoiceRecognition(), 200)
-                  } 
-                },
-                { 
-                  label: 'Quick Nav', 
-                  desc: 'Jump sections', 
-                  icon: <MapIcon />, 
-                  action: () => {
-                    playSound('pop')
-                    setShowQuickNav(!showQuickNav)
                   } 
                 }
               ].map(btn => (
@@ -1050,7 +1036,7 @@ export default function DynamicNotch({ activeProject }) {
                   onClick={btn.action}
                   style={{
                     background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
-                    border: showQuickNav && btn.label === 'Quick Nav' ? `1px solid ${accentColor}` : `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)'}`,
+                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)'}`,
                     borderRadius: 12,
                     padding: '8px 6px',
                     cursor: 'pointer',
@@ -1059,7 +1045,7 @@ export default function DynamicNotch({ activeProject }) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: 4,
-                    color: showQuickNav && btn.label === 'Quick Nav' ? accentColor : textColor,
+                    color: textColor,
                     transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
                   }}
                   onMouseEnter={e => {
@@ -1070,67 +1056,104 @@ export default function DynamicNotch({ activeProject }) {
                   }}
                   onMouseLeave={e => {
                     e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)';
-                    e.currentTarget.style.borderColor = showQuickNav && btn.label === 'Quick Nav' ? accentColor : (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)');
+                    e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)';
                     e.currentTarget.style.transform = 'none';
                     e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
-                  <div style={{ color: showQuickNav && btn.label === 'Quick Nav' ? accentColor : 'inherit' }}>
+                  <div style={{ color: 'inherit' }}>
                     {btn.icon}
                   </div>
                   <span style={{ fontSize: 10, fontWeight: 700, whiteSpace: 'nowrap' }}>{btn.label}</span>
                 </button>
               ))}
+
+              {/* Direct Resume Download Button Link */}
+              <a
+                href="/Soupriti_Das_Resume.pdf"
+                download="Soupriti_Das_Resume.pdf"
+                onClick={() => playSound('pop')}
+                style={{
+                  textDecoration: 'none',
+                  background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                  border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)'}`,
+                  borderRadius: 12,
+                  padding: '8px 6px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 4,
+                  color: textColor,
+                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = isDark ? 'rgba(255, 77, 166, 0.08)' : 'rgba(255, 77, 166, 0.05)';
+                  e.currentTarget.style.borderColor = accentColor;
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 77, 166, 0.12)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)';
+                  e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)';
+                  e.currentTarget.style.transform = 'none';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                <div style={{ color: 'inherit' }}>
+                  <DocIcon />
+                </div>
+                <span style={{ fontSize: 10, fontWeight: 700, whiteSpace: 'nowrap' }}>Resume ↗</span>
+              </a>
             </div>
 
-            {/* Quick Navigation Links Overlay Panel */}
-            {showQuickNav && (
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '10px 12px',
-                background: isDark ? 'rgba(255, 77, 166, 0.05)' : 'rgba(255, 77, 166, 0.03)',
-                borderRadius: 12,
-                border: `1px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`,
-                animation: 'fadeIn 0.2s ease-out'
-              }}>
-                {['Expertise', 'Projects', 'About', 'Journey', 'Contact'].map(label => {
-                  const target = label.toLowerCase();
-                  const isActive = activeSection === target;
-                  return (
-                    <button
-                      key={label}
-                      onClick={() => scrollTo(target)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: isActive ? accentColor : subtextColor,
-                        fontSize: 11,
-                        fontWeight: isActive ? 800 : 600,
-                        fontFamily: 'var(--font-mono)',
-                        letterSpacing: '0.02em',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                        textTransform: 'uppercase',
-                        padding: '4px 6px',
-                        borderRadius: 6
-                      }}
-                      onMouseEnter={e => {
-                        e.currentTarget.style.color = accentColor;
-                        e.currentTarget.style.transform = 'translateY(-1px) scale(1.05)';
-                      }}
-                      onMouseLeave={e => {
-                        e.currentTarget.style.color = isActive ? accentColor : subtextColor;
-                        e.currentTarget.style.transform = 'none';
-                      }}
-                    >
-                      {label}
-                    </button>
-                  )
-                })}
-              </div>
-            )}
+            {/* Quick Navigation Links Row (Directly visible on hover expanded!) */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '10px 12px',
+              background: isDark ? 'rgba(255, 77, 166, 0.05)' : 'rgba(255, 77, 166, 0.03)',
+              borderRadius: 12,
+              border: `1px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`,
+              animation: 'fadeIn 0.2s ease-out'
+            }}>
+              {['Expertise', 'Projects', 'About', 'Journey', 'Contact'].map(label => {
+                const target = label.toLowerCase();
+                const isActive = activeSection === target;
+                return (
+                  <button
+                    key={label}
+                    onClick={() => scrollTo(target)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: isActive ? accentColor : subtextColor,
+                      fontSize: 11,
+                      fontWeight: isActive ? 800 : 600,
+                      fontFamily: 'var(--font-mono)',
+                      letterSpacing: '0.02em',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      textTransform: 'uppercase',
+                      padding: '4px 6px',
+                      borderRadius: 6
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.color = accentColor;
+                      e.currentTarget.style.transform = 'translateY(-1px) scale(1.05)';
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.color = isActive ? accentColor : subtextColor;
+                      e.currentTarget.style.transform = 'none';
+                    }}
+                  >
+                    {label}
+                  </button>
+                )
+              })}
+            </div>
           </div>
         )}
 
