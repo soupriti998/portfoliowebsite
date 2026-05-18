@@ -810,48 +810,30 @@ export default function DynamicNotch({ activeProject }) {
               height: '100%',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between',
+              justifyContent: 'center',
+              gap: 14,
               padding: '0 18px',
               animation: 'fadeIn 0.25s ease-out'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                {/* Animated Futuristic Icon (Replaces cat/photo avatar) */}
-                <StatusHUDIcon state={hud.icon} />
-                
-                {/* Contextual thoughts (Strictly updated to var(--font-body) style guide, modest weight 600, guaranteed single-line) */}
-                <span style={{
-                  fontSize: 12.5,
-                  fontFamily: 'var(--font-body)',
-                  fontWeight: 600,
-                  color: '#ffffff',
-                  letterSpacing: '-0.015em',
-                  textTransform: 'none',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  maxWidth: '215px',
-                  display: 'block',
-                  transition: 'all 0.3s ease-out'
-                }}>
-                  <TypingText text={hud.text} />
-                </span>
-              </div>
+              {/* Animated Futuristic Icon (Replaces cat/photo avatar) */}
+              <StatusHUDIcon state={hud.icon} />
 
-              {/* Dynamic Contextual Action / Shortcut Pill Badge */}
+              {/* Dynamic Contextual Action / Shortcut Pill Badge (Highly readable and premium high-contrast design) */}
               <div style={{
-                background: 'rgba(0, 82, 255, 0.1)',
-                border: '1px solid rgba(0, 82, 255, 0.2)',
+                background: 'rgba(0, 82, 255, 0.22)', // Richer, high-contrast translucent blue background
+                border: '1.2px solid rgba(0, 82, 255, 0.45)', // Luminous border tint
                 borderRadius: 20,
-                padding: '3px 10px',
-                fontSize: 9,
+                padding: '4px 12px',
+                fontSize: 10,
                 fontFamily: 'var(--font-mono)',
                 fontWeight: 700,
-                color: 'var(--accent)',
+                color: '#ffffff', // High readability pure white text
+                textShadow: '0 0 6px rgba(0, 82, 255, 0.5)', // Neon glow outline for superb contrast on any background
                 letterSpacing: '0.04em',
                 whiteSpace: 'nowrap',
                 display: 'flex',
                 alignItems: 'center',
-                boxShadow: '0 0 8px rgba(0, 82, 255, 0.08)',
+                boxShadow: '0 0 12px rgba(0, 82, 255, 0.15)',
                 userSelect: 'none',
                 transition: 'all 0.3s ease-out'
               }}>
