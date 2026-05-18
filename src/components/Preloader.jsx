@@ -153,64 +153,133 @@ class CalmSoundscape {
   }
 }
 
+/* ── Emil Kowalski Style Vertical Rolling Digit Component ── */
+function DigitColumn({ digit }) {
+  return (
+    <div style={{
+      height: 24,
+      overflow: 'hidden',
+      position: 'relative',
+      width: 10,
+      display: 'inline-flex',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }}>
+      <div style={{
+        transform: `translateY(-${digit * 10}%)`,
+        transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        position: 'absolute',
+        top: 0
+      }}>
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => (
+          <span key={n} style={{ height: 24, display: 'flex', alignItems: 'center', fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
+            {n}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function RollingNumber({ value }) {
+  const hundreds = Math.floor(value / 100)
+  const tens = Math.floor((value % 100) / 10)
+  const ones = value % 10
+
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', height: 24 }}>
+      {hundreds > 0 && <DigitColumn digit={hundreds} />}
+      {(value >= 10 || hundreds > 0) && <DigitColumn digit={tens} />}
+      <DigitColumn digit={ones} />
+      <span style={{ fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-mono)', marginLeft: 1 }}>%</span>
+    </span>
+  )
+}
+
 export default function Preloader({ onComplete }) {
   const [wordIndex, setWordIndex] = useState(0)
   const [progress, setProgress] = useState(0)
   const [fadeState, setFadeState] = useState('in') // in, out
-  const [theme, setTheme] = useState('light')
   const [audioEnabled, setAudioEnabled] = useState(false)
   const [preloaderActive, setPreloaderActive] = useState(true)
 
   const soundscapeRef = useRef(null)
 
-  // 1. Sync theme local storage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem('theme') || 'light'
-    setTheme(saved)
-  }, [])
-
-  // 2. Sequential Word Animator
+  // 1. Smooth, Consecutive progress loader count (0 to 100)
   useEffect(() => {
     if (!preloaderActive) return
 
-    // Play transition chime when index changes
-    if (audioEnabled && soundscapeRef.current) {
-      soundscapeRef.current.playChime(WORDS[wordIndex].chime)
+    const interval = setInterval(() => {
+      setProgress(prev => {
+        if (prev < 100) {
+          return prev + 1
+        } else {
+          clearInterval(interval)
+          handleSkip()
+          return 100
+        }
+      })
+    }, 72) // 7.2 seconds total, consecutive increments
+
+    return () => clearInterval(interval)
+  }, [preloaderActive])
+
+  // 2. Dynamic Word Resolver based on progress
+  useEffect(() => {
+    let targetWordIdx = 0
+    if (progress <= 20) targetWordIdx = 0
+    else if (progress <= 40) targetWordIdx = 1
+    else if (progress <= 60) targetWordIdx = 2
+    else if (progress <= 80) targetWordIdx = 3
+    else targetWordIdx = 4
+
+    if (targetWordIdx !== wordIndex) {
+      setWordIndex(targetWordIdx)
+      setFadeState('in')
+      
+      // Play transition chime
+      if (soundscapeRef.current) {
+        soundscapeRef.current.playChime(WORDS[targetWordIdx].chime)
+      }
+    }
+  }, [progress, wordIndex])
+
+  // 3. Ambient Audio Auto-activation on First User Gesture
+  useEffect(() => {
+    const startAudio = () => {
+      if (!soundscapeRef.current) {
+        const sound = new CalmSoundscape()
+        sound.init()
+        soundscapeRef.current = sound
+        setAudioEnabled(true)
+        sound.playChime(WORDS[wordIndex].chime)
+      }
     }
 
-    // Phase 1: Keep in state, and animate progress node smoothly
-    setProgress(WORDS[wordIndex].progress)
-
-    // Phase 2: Fade word out at the end of word interval
-    const fadeOutTimer = setTimeout(() => {
-      setFadeState('out')
-    }, 1300) // 1.3 seconds of stillness/breathing
-
-    // Phase 3: Move to next word (seamless transition)
-    const nextWordTimer = setTimeout(() => {
-      if (wordIndex < WORDS.length - 1) {
-        setWordIndex(prev => prev + 1)
-        setFadeState('in')
-      } else {
-        // Safe wrap up
-        handleSkip()
-      }
-    }, 1650) // 1.65 seconds per word cycle
+    // Auto-start on any initial interaction to keep music always playing
+    window.addEventListener('click', startAudio, { once: true })
+    window.addEventListener('touchstart', startAudio, { once: true })
+    window.addEventListener('keydown', startAudio, { once: true })
+    window.addEventListener('mousemove', startAudio, { once: true })
 
     return () => {
-      clearTimeout(fadeOutTimer)
-      clearTimeout(nextWordTimer)
+      window.removeEventListener('click', startAudio)
+      window.removeEventListener('touchstart', startAudio)
+      window.removeEventListener('keydown', startAudio)
+      window.removeEventListener('mousemove', startAudio)
     }
-  }, [wordIndex, audioEnabled, preloaderActive])
+  }, [wordIndex])
 
-  // 3. Ambient audio toggler
+  // 4. Ambient audio manual toggler
   const toggleAudio = () => {
     if (!audioEnabled) {
       const sound = new CalmSoundscape()
       sound.init()
       soundscapeRef.current = sound
       setAudioEnabled(true)
-      // Play initial chord chimes
       sound.playChime(WORDS[wordIndex].chime)
     } else {
       soundscapeRef.current?.stop()
@@ -219,14 +288,14 @@ export default function Preloader({ onComplete }) {
     }
   }
 
-  // 4. Cleanup soundscapes on unmount
+  // 5. Cleanup soundscapes on unmount
   useEffect(() => {
     return () => {
       soundscapeRef.current?.stop()
     }
   }, [])
 
-  // 5. Complete Loader Animation
+  // 6. Complete Loader Animation
   const handleSkip = () => {
     setFadeState('out')
     setProgress(100)
@@ -255,7 +324,7 @@ export default function Preloader({ onComplete }) {
         style={{
           position: 'fixed',
           inset: 0,
-          background: theme === 'dark' ? '#0a0b0d' : '#f4f4f5',
+          background: '#0052ff', // Whole page electric blue
           zIndex: 99999999,
           animation: 'slideUpOut 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         }}
@@ -270,13 +339,11 @@ export default function Preloader({ onComplete }) {
     )
   }
 
-  // Dark/Light dynamic tokens
-  const bgColor = theme === 'dark' ? '#0a0b0d' : '#f4f4f5'
-  const textColor = theme === 'dark' ? '#ffffff' : '#0a0b0d'
-  const railColor = theme === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'
-  const overlayGlow = theme === 'dark' 
-    ? 'radial-gradient(circle at 10% 20%, rgba(0, 82, 255, 0.08) 0%, transparent 60%)' 
-    : 'radial-gradient(circle at 10% 20%, rgba(0, 82, 255, 0.04) 0%, transparent 60%)'
+  // Signature styling tokens: Blue backdrop, pure crisp white components
+  const bgColor = '#0052ff'
+  const textColor = '#ffffff'
+  const railColor = 'rgba(255, 255, 255, 0.15)'
+  const overlayGlow = 'radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 60%)'
 
   return (
     <div
@@ -320,15 +387,15 @@ export default function Preloader({ onComplete }) {
           100% { transform: translateY(0) translateX(0); opacity: 0.12; }
         }
         @keyframes pulseGlow {
-          0% { box-shadow: 0 0 8px rgba(0, 82, 255, 0.4); transform: scale(0.92); }
-          100% { box-shadow: 0 0 20px rgba(0, 82, 255, 0.8); transform: scale(1.08); }
+          0% { box-shadow: 0 0 8px rgba(255, 255, 255, 0.4); transform: scale(0.92); }
+          100% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.8); transform: scale(1.08); }
         }
       `}</style>
 
       {/* Futuristic grain overlay & background ambient glow */}
       <div style={{
         position: 'absolute', inset: 0,
-        background: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.85\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\' opacity=\'0.038\'/%3E%3C/svg%3E")',
+        background: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.85\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\' opacity=\'0.02\'/%3E%3C/svg%3E")',
         pointerEvents: 'none', zIndex: 1
       }} />
       <div style={{
@@ -337,7 +404,7 @@ export default function Preloader({ onComplete }) {
         pointerEvents: 'none', zIndex: 2
       }} />
 
-      {/* Floating Micro-particles */}
+      {/* Floating Micro-particles in crisp white */}
       {floatingParticles.map((pt, idx) => (
         <div
           key={idx}
@@ -348,8 +415,8 @@ export default function Preloader({ onComplete }) {
             width: pt.size,
             height: pt.size,
             borderRadius: '50%',
-            background: 'var(--accent)',
-            opacity: 0.15,
+            background: '#ffffff',
+            opacity: 0.18,
             zIndex: 3,
             animation: `particleMove ${pt.duration} ease-in-out infinite`,
             animationDelay: pt.delay
@@ -366,17 +433,17 @@ export default function Preloader({ onComplete }) {
             fontWeight: 600,
             letterSpacing: '0.15em',
             textTransform: 'uppercase',
-            opacity: 0.6
+            opacity: 0.8
           }}>
             Soupriti Das
           </span>
-          <div style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--accent)' }} />
+          <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#ffffff' }} />
           <span style={{
             fontSize: 9,
             fontFamily: 'var(--font-mono)',
             fontWeight: 500,
             letterSpacing: '0.08em',
-            opacity: 0.4,
+            opacity: 0.5,
             textTransform: 'uppercase'
           }}>
             HMI OS v1.0.8
@@ -384,7 +451,7 @@ export default function Preloader({ onComplete }) {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-          {/* Calm Soundscape Toggle Button (Compliance safe Web Audio trigger) */}
+          {/* Calm Soundscape Toggle Button */}
           <button
             onClick={toggleAudio}
             style={{
@@ -399,7 +466,7 @@ export default function Preloader({ onComplete }) {
               fontFamily: 'var(--font-mono)',
               fontWeight: 600,
               letterSpacing: '0.06em',
-              opacity: audioEnabled ? 0.95 : 0.45,
+              opacity: audioEnabled ? 0.95 : 0.6,
               transition: 'opacity 0.2s',
               outline: 'none',
               padding: 0
@@ -438,13 +505,13 @@ export default function Preloader({ onComplete }) {
               fontWeight: 600,
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
-              opacity: 0.4,
+              opacity: 0.6,
               transition: 'opacity 0.2s',
               padding: 0,
               outline: 'none'
             }}
-            onMouseEnter={e => e.currentTarget.style.opacity = '0.95'}
-            onMouseLeave={e => e.currentTarget.style.opacity = '0.4'}
+            onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+            onMouseLeave={e => e.currentTarget.style.opacity = '0.6'}
           >
             Skip Intro
           </button>
@@ -480,16 +547,16 @@ export default function Preloader({ onComplete }) {
           </h1>
         </div>
         
-        {/* Subtle breathing subtext layer */}
+        {/* Subtle breathing subtext layer with rolling progress number */}
         <p
           style={{
             fontSize: 12,
             fontFamily: 'var(--font-mono)',
-            color: 'var(--accent)',
+            color: '#ffffff',
             marginTop: 18,
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
-            opacity: 0.55,
+            opacity: 0.8,
             animation: 'breathingText 2.5s ease-in-out infinite alternate',
             display: 'flex',
             alignItems: 'center',
@@ -497,8 +564,8 @@ export default function Preloader({ onComplete }) {
           }}
         >
           <span>Mindful boot process</span>
-          <span style={{ display: 'inline-block', width: 20, height: 1, background: 'var(--accent)', opacity: 0.4 }} />
-          <span>{WORDS[wordIndex].progress}% ready</span>
+          <span style={{ display: 'inline-block', width: 20, height: 1, background: '#ffffff', opacity: 0.4 }} />
+          <RollingNumber value={progress} />
         </p>
       </main>
 
@@ -527,7 +594,7 @@ export default function Preloader({ onComplete }) {
           }}
         >
           {/* Tick Indicator Dots */}
-          {WORDS.map((itm, i) => {
+          {WORDS.map((itm) => {
             const isActive = progress >= itm.progress
             return (
               <div
@@ -547,20 +614,20 @@ export default function Preloader({ onComplete }) {
                     width: isActive ? 6 : 4,
                     height: isActive ? 6 : 4,
                     borderRadius: '50%',
-                    background: isActive ? 'var(--accent)' : textColor,
-                    opacity: isActive ? 0.95 : 0.15,
+                    background: '#ffffff',
+                    opacity: isActive ? 0.95 : 0.25,
                     transition: 'all 0.4s ease',
-                    boxShadow: isActive ? '0 0 6px var(--accent)' : 'none'
+                    boxShadow: isActive ? '0 0 8px #ffffff' : 'none'
                   }}
                 />
                 
-                {/* Micro percentage monospace labels visible only on larger viewports */}
+                {/* Micro percentage monospace labels */}
                 <span
                   style={{
                     fontSize: 8,
                     fontFamily: 'var(--font-mono)',
-                    color: isActive ? 'var(--accent)' : textColor,
-                    opacity: isActive ? 0.75 : 0.1,
+                    color: '#ffffff',
+                    opacity: isActive ? 0.95 : 0.25,
                     fontWeight: 700,
                     transition: 'all 0.4s ease',
                     position: 'absolute',
@@ -584,9 +651,9 @@ export default function Preloader({ onComplete }) {
               width: 10,
               height: 10,
               borderRadius: '50%',
-              background: 'var(--accent)',
-              boxShadow: '0 0 14px var(--accent)',
-              transition: 'top 1.2s cubic-bezier(0.16, 1, 0.3, 1)', // Calm friction-free float
+              background: '#ffffff',
+              boxShadow: '0 0 16px #ffffff',
+              transition: 'top 0.15s linear', // Perfectly consecutive fluid alignment
               animation: 'pulseGlow 1.5s ease-in-out infinite alternate',
               zIndex: 5
             }}
@@ -603,10 +670,10 @@ export default function Preloader({ onComplete }) {
           zIndex: 10
         }}
       >
-        <span style={{ fontSize: 9, fontFamily: 'var(--font-mono)', opacity: 0.35, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+        <span style={{ fontSize: 9, fontFamily: 'var(--font-mono)', opacity: 0.5, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
           Interactivity Design lab ©2026
         </span>
-        <span style={{ fontSize: 9, fontFamily: 'var(--font-mono)', opacity: 0.35, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+        <span style={{ fontSize: 9, fontFamily: 'var(--font-mono)', opacity: 0.5, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
           Simplicity is the sophistication
         </span>
       </footer>
