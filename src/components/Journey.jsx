@@ -275,38 +275,50 @@ export default function Journey() {
                 }} />
 
                 {/* Card Header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-                      {role.logo ? (
-                        <div className="role-logo-container">
-                          <img 
-                            src={role.logo} 
-                            alt={`${role.company} logo`} 
-                            className="role-logo-img"
-                          />
-                        </div>
-                      ) : (
-                        <span className="role-icon-box">{role.icon}</span>
-                      )}
-                      <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 500, color: 'var(--text-primary)', letterSpacing: '-0.015em', margin: 0, textAlign: 'left' }}>{role.company}</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', width: '100%' }}>
+                  {/* Left Side: Logo and Company Info */}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-3)', minWidth: 0, flex: 1 }}>
+                    {role.logo ? (
+                      <div className="role-logo-container" style={{ marginTop: '2px' }}>
+                        <img 
+                          src={role.logo} 
+                          alt={`${role.company} logo`} 
+                          className="role-logo-img"
+                        />
+                      </div>
+                    ) : (
+                      <span className="role-icon-box">{role.icon}</span>
+                    )}
+                    <div style={{ minWidth: 0 }}>
+                      <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 17, fontWeight: 500, color: 'var(--text-primary)', letterSpacing: '-0.015em', margin: 0, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {role.company}
+                      </h3>
+                      <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', marginTop: '4px', margin: '4px 0 0 0', textAlign: 'left', lineHeight: 1.3 }}>
+                        {role.role}
+                      </p>
+                      <p style={{ fontSize: 11.5, color: 'var(--text-muted)', margin: '2px 0 0 0', textAlign: 'left' }}>
+                        {role.location}
+                      </p>
                     </div>
-                    <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: '6px', margin: '6px 0 0 0', textAlign: 'left' }}>{role.role} · <span style={{ color: 'var(--text-muted)' }}>{role.location}</span></p>
                   </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+                  {/* Right Side: Tag and Period (Locked in Top Right, never pushed down!) */}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px', flexShrink: 0 }}>
                     <span className="role-card-tag" style={{
-                      fontSize: 10,
+                      fontSize: 9.5,
                       fontWeight: 600,
-                      letterSpacing: '0.05em',
+                      letterSpacing: '0.04em',
                       textTransform: 'uppercase',
                       padding: '2px 8px',
                       borderRadius: 'var(--radius-pill)',
                       background: 'rgba(0, 82, 255, 0.06)',
                       color: 'var(--accent)',
                       border: '1px solid rgba(0, 82, 255, 0.15)',
+                      whiteSpace: 'nowrap'
                     }}>{role.tag}</span>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)', marginTop: '2px' }}>{role.period}</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                      {role.period}
+                    </span>
                   </div>
                 </div>
 
