@@ -643,6 +643,18 @@ export default function DynamicNotch({ activeProject }) {
   const [isScanning, setIsScanning] = useState(false)
   const [matchResult, setMatchResult] = useState(null)
 
+  // Debounced auto-analyzer for pasted/typed JDs
+  useEffect(() => {
+    if (!jdText.trim() || matchResult || isScanning || jdFileName) return
+    if (jdText.trim().length < 15) return // wait for sufficient length
+
+    const timer = setTimeout(() => {
+      handleAnalyzeJD(jdText)
+    }, 1200)
+
+    return () => clearTimeout(timer)
+  }, [jdText, matchResult, isScanning, jdFileName])
+
   // Dynamic Height Hugging States
   const contentRef = useRef(null)
   const [dynamicHeight, setDynamicHeight] = useState(null)
@@ -1475,7 +1487,6 @@ export default function DynamicNotch({ activeProject }) {
                     borderColor: `${accentColor} ${accentColor} transparent ${accentColor}`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     boxShadow: `0 0 20px rgba(255, 77, 166, 0.15)`,
-                    animation: 'pulseCore 2s ease-in-out infinite alternate',
                     position: 'relative'
                   }}>
                     <span style={{ fontSize: 24, fontWeight: 800, color: textColor, fontFamily: 'var(--font-mono)' }}>
@@ -1534,16 +1545,24 @@ export default function DynamicNotch({ activeProject }) {
               </div>
             ) : (
               <div style={{
-                flex: 1, display: 'flex', flexDirection: 'column', padding: '16px 20px', gap: 12
+                flex: 1, display: 'flex', flexDirection: 'column', padding: '16px 20px 20px 20px', gap: 12
               }}>
                 {/* Inputs Wrapper */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <textarea
                     value={jdText}
                     onChange={e => setJdText(e.target.value)}
+                    onPaste={e => {
+                      const pastedText = e.clipboardData.getData('text')
+                      if (pastedText.trim()) {
+                        playSound('pop')
+                        setJdText(pastedText)
+                        handleAnalyzeJD(pastedText)
+                      }
+                    }}
                     placeholder="Paste the Job Description (JD) text here to analyze alignment..."
                     style={{
-                      width: '100%', height: 90, borderRadius: 12,
+                      width: '100%', height: 110, borderRadius: 12,
                       background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
                       border: `1.2px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'}`,
                       color: textColor, padding: '10px 14px', fontSize: 11.5,
@@ -1556,7 +1575,7 @@ export default function DynamicNotch({ activeProject }) {
                   />
 
                   {/* PDF Upload trigger row */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
                     <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
                       <input
                         type="file"
@@ -1603,33 +1622,6 @@ export default function DynamicNotch({ activeProject }) {
                     )}
                   </div>
                 </div>
-
-                {/* Scan Action Trigger */}
-                <button
-                  onClick={() => handleAnalyzeJD()}
-                  disabled={!jdText.trim() && !jdFileName}
-                  style={{
-                    width: '100%', padding: '10px 16px', borderRadius: 28,
-                    background: (jdText.trim() || jdFileName) ? accentColor : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'),
-                    color: (jdText.trim() || jdFileName) ? '#ffffff' : subtextColor,
-                    border: 'none', fontWeight: 800, fontSize: 11, cursor: (jdText.trim() || jdFileName) ? 'pointer' : 'default',
-                    transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-                    boxShadow: (jdText.trim() || jdFileName) ? `0 6px 16px rgba(255, 77, 166, 0.3)` : 'none',
-                    textTransform: 'uppercase', letterSpacing: '0.06em'
-                  }}
-                  onMouseEnter={e => {
-                    if (jdText.trim() || jdFileName) {
-                      e.currentTarget.style.transform = 'translateY(-2px)'
-                      e.currentTarget.style.boxShadow = `0 8px 20px rgba(255, 77, 166, 0.45)`
-                    }
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.transform = 'none'
-                    e.currentTarget.style.boxShadow = (jdText.trim() || jdFileName) ? `0 6px 16px rgba(255, 77, 166, 0.3)` : 'none'
-                  }}
-                >
-                  Analyze Alignment Profile
-                </button>
               </div>
             )}
           </div>
