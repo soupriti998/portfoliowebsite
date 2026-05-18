@@ -502,6 +502,15 @@ const ChatIcon = () => (
   </svg>
 )
 
+const LogIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+    <line x1="9" y1="9" x2="15" y2="9" />
+    <line x1="9" y1="13" x2="15" y2="13" />
+    <line x1="9" y1="17" x2="13" y2="17" />
+  </svg>
+)
+
 const CloseIcon = () => (
   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -1118,7 +1127,7 @@ export default function DynamicNotch({ activeProject }) {
             {/* Quick Actions Grid (Quick Nav removed, Resume Download added) */}
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
+              gridTemplateColumns: 'repeat(5, 1fr)',
               gap: 8,
               marginBottom: 10,
               transition: 'all 0.3s ease'
@@ -1143,6 +1152,16 @@ export default function DynamicNotch({ activeProject }) {
                     setNotchState('voice')
                     setTimeout(() => startVoiceRecognition(), 200)
                   } 
+                },
+                {
+                  label: 'Activity Log',
+                  icon: <LogIcon />,
+                  type: 'button',
+                  action: () => {
+                    playSound('pop')
+                    setNotchState('compact')
+                    if (window.openActivityLog) window.openActivityLog()
+                  }
                 }
               ].map(btn => (
                 <button

@@ -12,17 +12,21 @@ import Contact from './components/Contact'
 import Footer from './components/Footer'
 import Preloader from './components/Preloader'
 import SpecSheet from './components/SpecSheet'
+import ActivityLog from './components/ActivityLog'
 
 export default function App() {
   const [activeProject, setActiveProject] = useState(null)
   const [loading, setLoading] = useState(true)
   const [specOpen, setSpecOpen] = useState(false)
+  const [activityLogOpen, setActivityLogOpen] = useState(false)
 
   useEffect(() => {
-    // Expose toggle globally so it can be triggered from anywhere
+    // Expose toggles globally so they can be triggered from anywhere
     window.openSpecSheet = () => setSpecOpen(true)
+    window.openActivityLog = () => setActivityLogOpen(true)
     return () => {
       delete window.openSpecSheet
+      delete window.openActivityLog
     }
   }, [])
 
@@ -63,6 +67,10 @@ export default function App() {
           
           {specOpen && (
             <SpecSheet onClose={() => setSpecOpen(false)} />
+          )}
+
+          {activityLogOpen && (
+            <ActivityLog onClose={() => setActivityLogOpen(false)} />
           )}
         </>
       )}
