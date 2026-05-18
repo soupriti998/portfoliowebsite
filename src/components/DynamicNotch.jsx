@@ -904,6 +904,7 @@ export default function DynamicNotch({ activeProject }) {
     if (notchState === 'compact') return DIMS.compact
     if (notchState === 'chat') return DIMS.chat
     if (notchState === 'voice') return DIMS.voice
+    if (notchState === 'jdMatch') return DIMS.jdMatch
     return DIMS.expanded
   }
 
