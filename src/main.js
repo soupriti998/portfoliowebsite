@@ -1,100 +1,99 @@
-import './style.css'
+document.addEventListener('DOMContentLoaded', () => {
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const root = document.documentElement;
 
-// Scroll Reveal Observer
-const revealCallback = (entries, observer) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('active');
-      
-      // If it's a grid, trigger children stagger
-      const children = entry.target.querySelectorAll('.stagger-item');
-      if (children.length > 0) {
-        children.forEach(child => child.classList.add('active'));
-      }
-      
-      observer.unobserve(entry.target);
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = root.getAttribute('data-theme');
+        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        setTheme(nextTheme);
+    });
+
+    function setTheme(theme) {
+        root.classList.add('theme-transitioning');
+        root.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        if (themeIcon) themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        
+        // Remove class after transition duration
+        setTimeout(() => {
+            root.classList.remove('theme-transitioning');
+        }, 400);
     }
-  });
-};
 
-const revealOptions = {
-  threshold: 0.1,
-  rootMargin: '0px 0px -50px 0px'
-};
+    // Scroll Reveal Interaction
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
 
-const observer = new IntersectionObserver(revealCallback, revealOptions);
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                revealObserver.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
 
-// Initialize observers
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-document.querySelectorAll('#project-grid').forEach(el => observer.observe(el));
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-
-// Smooth Scroll
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
+    // Smooth Scroll for Navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
     });
-});
 
-// Toast Implementation (Sonner-inspired)
-export const toast = (message) => {
-    const toaster = document.getElementById('toaster') || createToaster();
-    const toastEl = document.createElement('div');
-    toastEl.className = 'glass-card px-4 py-3 text-sm font-medium flex items-center gap-3 animate-in slide-in-from-bottom-full duration-300 pointer-events-auto mb-2';
-    toastEl.innerHTML = `
-        <div class="w-2 h-2 rounded-full bg-cta"></div>
-        <span>${message}</span>
-    `;
-    
-    toaster.appendChild(toastEl);
-    
-    // Remove after 3s
-    setTimeout(() => {
-        toastEl.classList.add('opacity-0', 'scale-95', 'transition-all', 'duration-300');
-        setTimeout(() => toastEl.remove(), 300);
-    }, 3000);
-};
+    // Magnetic Button Effect for Primary CTAs
+    const magneticButtons = document.querySelectorAll('.btn-primary');
+    magneticButtons.forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+            const rect = btn.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            
+            btn.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+        });
 
-function createToaster() {
-    const toaster = document.createElement('div');
-    toaster.id = 'toaster';
-    toaster.className = 'fixed bottom-6 right-6 z-[100] flex flex-col items-end pointer-events-none';
-    document.body.appendChild(toaster);
-    return toaster;
-}
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = '';
+        });
+    });
 
-// Intercept CV download as a demo for toast
-document.querySelector('a[href="#"]').addEventListener('click', (e) => {
-    if (e.target.innerText === 'Download CV') {
-        e.preventDefault();
-        toast('Starting resume download...');
+    // Form Submission Feedback
+    const contactForm = document.querySelector('form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = contactForm.querySelector('button');
+            const originalText = btn.textContent;
+            
+            btn.textContent = 'Sending...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = 'Message Sent!';
+                btn.style.backgroundColor = 'oklch(65% 0.2 150)'; // Green success state
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.backgroundColor = '';
+                    btn.disabled = false;
+                    contactForm.reset();
+                }, 3000);
+            }, 1500);
+        });
     }
-});
-
-// Cursor awareness for project cards (Emil's tip: make things feel alive)
-document.querySelectorAll('.project-card').forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        const rotateX = (y - centerY) / 20;
-        const rotateY = (centerX - x) / 20;
-        
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
-    });
-    
-    card.addEventListener('mouseleave', () => {
-        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
-    });
 });

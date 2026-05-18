@@ -1,86 +1,194 @@
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+/* =====================================================
+   SOUPRITI DAS — PORTFOLIO DESIGN SYSTEM
+   Palette: Coinbase-inspired (Coinbase Blue accent + White floor + Ink + Muted grays)
+   Typography: Inter (display & body) + Geist Mono (numerical fields)
+   ===================================================== */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Geist+Mono:wght@300;400;500;600&display=swap');
 
+/* ── Coinbase-Inspired Design Tokens ── */
 :root {
-  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  /* Brand: Coinbase Blue primary + Gold secondary accent */
+  --accent:        #0052ff;
+  --accent-rgb:    0, 82, 255;
+  --accent-light:  #3375ff;
+  --accent-muted:  #a8c5ff;
+  --gold:          #f4b000;
+  --gold-muted:    #fdf0cd;
+
+  /* Surfaces — Clean Coinbase white & gray floors */
+  --bg:            #ffffff;
+  --bg-warm:       #f7f7f7;
+  --bg-card:       #ffffff;
+  --bg-overlay:    #ffffff;
+  --bg-dark:       #0a0b0d;
+
+  /* Text */
+  --text-primary:  #0a0b0d;
+  --text-secondary:#5b616e;
+  --text-muted:    #7c828a;
+  --text-inverse:  #ffffff;
+
+  /* Borders — Fine hairlines */
+  --border:        #dee1e6;
+  --border-strong: #a8acb3;
+
+  /* Shadows — Minimal depth, card-on-card layering */
+  --shadow-sm:     0 1px 3px rgba(10, 11, 13, 0.04);
+  --shadow-md:     0 4px 12px rgba(10, 11, 13, 0.06);
+  --shadow-lg:     0 12px 32px rgba(10, 11, 13, 0.08);
+  --shadow-xl:     0 24px 64px rgba(10, 11, 13, 0.12);
+
+  /* Spacing scale (4pt base) */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+  --space-9:  96px;
+  --space-10: 128px;
+  --space-11: 160px;
+
+  /* Radii (Coinbase geometry) */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 100px;
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:   cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 200ms;
+  --duration-mid:  380ms;
+  --duration-slow: 600ms;
+
+  /* Typography */
+  --font-display: 'Inter', -apple-system, system-ui, sans-serif;
+  --font-body:    'Inter', -apple-system, sans-serif;
+  --font-mono:    'Geist Mono', monospace;
 }
 
-@layer base {
-  body {
-    background-color: #FAFAFA; /* Static fallback */
-    @apply bg-background text-foreground font-body antialiased;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-heading tracking-tight;
-  }
+
+/* ── Reset & Base ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@layer components {
-  .btn-primary {
-    @apply px-6 py-3 bg-primary text-white rounded-lg transition-all duration-200 cursor-pointer;
-  }
-  
-  .glass-card {
-    background-color: rgba(255, 255, 255, 0.7); /* Static fallback */
-    @apply backdrop-blur-md border border-white/20 rounded-2xl shadow-sm transition-all duration-300;
-  }
-  
-  .project-card {
-    @apply relative overflow-hidden rounded-2xl aspect-[4/3] cursor-pointer;
-  }
-  
-  .project-overlay {
-    @apply absolute inset-0 bg-primary/80 opacity-0 transition-opacity duration-300 flex flex-col justify-end p-6;
-  }
-  
-  /* Use standard CSS for group hover if defined in CSS */
-  .group:hover .project-overlay {
-    @apply opacity-100;
-  }
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom Micro-interactions */
-.reveal {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  overflow-x: hidden;
 }
 
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
+/* ── Lenis Smooth Scroll ── */
+html.lenis { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+
+/* ── Selection ── */
+::selection {
+  background: var(--accent-muted);
+  color: var(--text-primary);
 }
 
-.stagger-item {
-  opacity: 0;
-  transform: translateY(10px);
+/* ── Focus visible ── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
 }
 
-.stagger-item.active {
-  animation: slideIn 0.5s var(--ease-out) forwards;
+/* ── Links ── */
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--accent-muted); border-radius: var(--radius-pill); }
+
+/* ── Utility classes ── */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: var(--space-8);
+}
+
+@media (max-width: 768px) {
+  .container { padding-inline: var(--space-5); }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Coinbase Midnight Dark Mode Variables ── */
+[data-theme="dark"] {
+  --bg:            #0a0b0d; /* Midnight background */
+  --bg-warm:       #131418; /* Rich slate dark contrast */
+  --bg-card:       #181a1f; /* Card surfaces */
+  --bg-overlay:    #181a1f;
+  --bg-dark:       #ffffff;
+
+  --accent:        #0052ff; /* Coinbase Blue */
+  --accent-rgb:    0, 82, 255;
+
+  --text-primary:  #ffffff; /* Clean white */
+  --text-secondary:#a8acb3; /* Sleek silver text */
+  --text-muted:    #7c828a;  /* Slate text */
+  --text-inverse:  #0a0b0d;
+
+  --border:        #24272e; /* Slate hairlines */
+  --border-strong: #40444f;
+
+  --shadow-sm:     0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md:     0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg:     0 12px 36px rgba(0, 0, 0, 0.5);
+  --shadow-xl:     0 24px 72px rgba(0, 0, 0, 0.6);
+}
+
+/* Global transition for smooth theme switching */
+body {
+  transition: background-color 0.4s var(--ease-out-expo), color 0.4s var(--ease-out-expo);
+}
+div, section, footer, header, p, h1, h2, h3, blockquote, button, span, a, input, textarea {
+  transition: background-color 0.4s var(--ease-out-expo), color 0.4s var(--ease-out-expo), border-color 0.4s var(--ease-out-expo), box-shadow 0.4s var(--ease-out-expo);
+}
+
+/* ── Bento Grid Toolkit & Interaction Lab ── */
+@media (min-width: 1024px) {
+  .bento-toolkit-container {
+    grid-template-columns: 1.12fr 0.88fr !important;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
-
-/* Stagger delays */
-.stagger-item:nth-child(1) { animation-delay: 0.1s; }
-.stagger-item:nth-child(2) { animation-delay: 0.2s; }
-.stagger-item:nth-child(3) { animation-delay: 0.3s; }
-.stagger-item:nth-child(4) { animation-delay: 0.4s; }
-.stagger-item:nth-child(5) { animation-delay: 0.5s; }
-.stagger-item:nth-child(6) { animation-delay: 0.6s; }

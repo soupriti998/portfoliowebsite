@@ -8,3 +8,5 @@ dist
 .env
 .gemini
 package-lock.json
+
+.vercel
