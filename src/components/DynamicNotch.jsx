@@ -1540,6 +1540,8 @@ export default function DynamicNotch({ activeProject }) {
                             // Auto populate descriptive mock text based on PDF name
                             const mockText = `Role Details for PDF: ${file.name}. Looking for a Senior Product Designer with experience designing SaaS component libraries, high-fidelity React interactive web modules, and conversational AI UX layouts in Figma.`
                             setJdText(mockText)
+                            // Directly trigger analysis immediately to show loading and generate the score
+                            handleAnalyzeJD(mockText)
                           }
                         }}
                         style={{ display: 'none' }}
