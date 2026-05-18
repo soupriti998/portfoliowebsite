@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 
 /* ── Interactive State Dimension Specs ── */
 const DIMS = {
-  compact: { width: 340, height: 46, radius: 23 },
+  compact: { width: 365, height: 46, radius: 23 },
   expanded: { width: 500, height: 185, radius: 24 }, // Elegant vertical breathing room for grid + nav
   chat: { width: 450, height: 490, radius: 25 },
   voice: { width: 350, height: 270, radius: 25 }
@@ -944,14 +944,11 @@ export default function DynamicNotch({ activeProject }) {
                 fontFamily: 'var(--font-body)',
                 fontWeight: 600,
                 color: textColor,
-                letterSpacing: '-0.01em',
+                letterSpacing: '-0.015em',
                 whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                maxWidth: '220px',
                 display: 'block'
               }}>
-                <TypingText text={hud.text} />
+                Hi I am Luffy, press Ctrl + L to talk.
               </span>
             </div>
           );
