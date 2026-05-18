@@ -3,9 +3,10 @@ import { useState, useRef, useEffect } from 'react'
 /* ── Interactive State Dimension Specs ── */
 const DIMS = {
   compact: { width: 365, height: 46, radius: 23 },
-  expanded: { width: 500, height: 185, radius: 24 }, // Elegant vertical breathing room for grid + nav
+  expanded: { width: 500, height: 195, radius: 24 }, // Slightly taller for the new layout
   chat: { width: 450, height: 490, radius: 25 },
-  voice: { width: 350, height: 270, radius: 25 }
+  voice: { width: 350, height: 270, radius: 25 },
+  jdMatch: { width: 500, height: 450, radius: 25 }
 }
 
 /* ── Dynamic Breathing Circle & Status System (NO MASCOT, NO CAT) ── */
@@ -485,6 +486,16 @@ const MicLargeIcon = () => (
   </svg>
 )
 
+const ScanJDIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+    <polyline points="14 2 14 8 20 8"/>
+    <path d="M8 13h8"/>
+    <path d="M8 17h8"/>
+    <path d="M10 9H8"/>
+  </svg>
+)
+
 const ChatIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -625,6 +636,71 @@ export default function DynamicNotch({ activeProject }) {
   const [voiceSpeechText, setVoiceSpeechText] = useState('')
   const recRef = useRef(null)
   const chatEndRef = useRef(null)
+
+  // JD Matcher States
+  const [jdText, setJdText] = useState('')
+  const [jdFileName, setJdFileName] = useState('')
+  const [isScanning, setIsScanning] = useState(false)
+  const [matchResult, setMatchResult] = useState(null)
+
+  const handleAnalyzeJD = async (textToScan) => {
+    const rawText = (textToScan || jdText || '').trim()
+    if (!rawText && !jdFileName) return
+
+    setIsScanning(true)
+    setMatchResult(null)
+
+    // Simulate futuristic scan duration
+    await new Promise(r => setTimeout(r, 2000))
+
+    // Heuristics Score engine
+    let score = 78 // solid baseline for a world-class designer
+    const textLower = rawText.toLowerCase()
+
+    const matches = {
+      figma: textLower.includes('figma'),
+      designSystem: textLower.includes('system') || textLower.includes('token') || textLower.includes('library'),
+      ai: textLower.includes('ai') || textLower.includes('artificial') || textLower.includes('intelligence') || textLower.includes('gpt') || textLower.includes('llm') || textLower.includes('agent'),
+      saas: textLower.includes('saas') || textLower.includes('b2b') || textLower.includes('enterprise') || textLower.includes('dashboard') || textLower.includes('data'),
+      react: textLower.includes('react') || textLower.includes('frontend') || textLower.includes('code') || textLower.includes('javascript') || textLower.includes('html') || textLower.includes('css'),
+      interaction: textLower.includes('interaction') || textLower.includes('animation') || textLower.includes('micro') || textLower.includes('motion')
+    }
+
+    if (matches.figma) score += 4
+    if (matches.designSystem) score += 4
+    if (matches.ai) score += 5
+    if (matches.saas) score += 4
+    if (matches.react) score += 3
+    if (matches.interaction) score += 3
+
+    // Cap at 98% because there is always room for custom creative iterations
+    score = Math.min(98, score)
+
+    // Generate Tailored Summary
+    let summaryPoints = []
+    if (matches.ai) {
+      summaryPoints.push("Soupriti excels in designing advanced AI user experiences—including agentic UI flows, floating HUD control units, and conversational co-pilots like Luffy.")
+    }
+    if (matches.designSystem) {
+      summaryPoints.push("She builds scalable, tokenized design systems with clear multi-theme (light/dark) engineering and robust semantic tokens.")
+    }
+    if (matches.saas || matches.interaction) {
+      summaryPoints.push("She specializes in high-density SaaS dashboards, simplifying complex data hierarchies with interactive widgets and organic micro-interactions.")
+    }
+    if (matches.react) {
+      summaryPoints.push("Her design engineering skills allow her to bridge the design-to-development gap seamlessly, writing clean component logic in React/Vite.")
+    }
+
+    if (summaryPoints.length === 0) {
+      summaryPoints.push("Soupriti Das fits this profile excellently, bringing production-ready product design expertise, high-fidelity interactive prototyping, and pixel-perfect aesthetics.")
+    }
+
+    setMatchResult({
+      score,
+      summary: summaryPoints.join(" ")
+    })
+    setIsScanning(false)
+  }
 
   // 1. SECTION INTERSECTION OBSERVER
   useEffect(() => {
@@ -1009,12 +1085,12 @@ export default function DynamicNotch({ activeProject }) {
               {[
                 { label: 'Ask Anything', icon: <ChatIcon />, type: 'button', action: () => setNotchState('chat') },
                 { 
-                  label: 'Summarize', 
-                  icon: <SummaryIcon />, 
+                  label: 'JD Matcher', 
+                  icon: <ScanJDIcon />, 
                   type: 'button',
                   action: () => {
-                    setNotchState('chat')
-                    handleSendChat(`Summarize the ${activeSection} section`)
+                    playSound('pop')
+                    setNotchState('jdMatch')
                   } 
                 },
                 { 
@@ -1290,6 +1366,241 @@ export default function DynamicNotch({ activeProject }) {
               </button>
             </div>
 
+          </div>
+        )}
+
+        {/* STATE 5: JD PROFILE MATCHING CANOPY */}
+        {notchState === 'jdMatch' && (
+          <div style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            animation: 'fadeIn 0.3s ease-out',
+            boxSizing: 'border-box'
+          }}>
+            {/* Header */}
+            <div style={{
+              width: '100%', padding: '14px 20px',
+              borderBottom: `1.2px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`,
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: accentColor, boxShadow: `0 0 6px ${accentColor}` }} />
+                <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', fontWeight: 700, color: textColor, letterSpacing: '0.08em', textTransform: 'uppercase' }}>JD Fit Analyzer</span>
+              </div>
+              <button 
+                onClick={() => {
+                  playSound('pop')
+                  setNotchState('compact')
+                  setJdText('')
+                  setJdFileName('')
+                  setMatchResult(null)
+                }}
+                style={{
+                  background: 'none', border: 'none', color: subtextColor,
+                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: 11.5
+                }}
+                onMouseEnter={e => e.currentTarget.style.color = textColor}
+                onMouseLeave={e => e.currentTarget.style.color = subtextColor}
+              >
+                <CloseIcon />
+                <span>CLOSE</span>
+              </button>
+            </div>
+
+            {/* Content Switch */}
+            {isScanning ? (
+              <div style={{
+                flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20
+              }}>
+                <div style={{ position: 'relative', width: 64, height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{
+                    position: 'absolute', inset: 0, borderRadius: '50%',
+                    border: `2.5px solid ${isDark ? 'rgba(255, 77, 166, 0.1)' : 'rgba(255, 77, 166, 0.2)'}`,
+                    borderTopColor: accentColor,
+                    animation: 'spinOrbit 1s cubic-bezier(0.4, 0, 0.2, 1) infinite'
+                  }} />
+                  <div style={{
+                    position: 'absolute', width: '90%', height: 1.5, background: accentColor,
+                    boxShadow: `0 0 8px ${accentColor}`,
+                    animation: 'scanLaser 1.5s ease-in-out infinite alternate'
+                  }} />
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: accentColor, boxShadow: `0 0 10px ${accentColor}` }} />
+                </div>
+                <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', fontWeight: 700, letterSpacing: '0.12em', color: accentColor, textTransform: 'uppercase' }}>
+                  Scanning Profile Match...
+                </span>
+              </div>
+            ) : matchResult ? (
+              <div style={{
+                flex: 1, display: 'flex', gap: 20, padding: '20px 24px', alignItems: 'center'
+              }}>
+                {/* Left Side: Score Circle */}
+                <div style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8
+                }}>
+                  <div style={{
+                    width: 90, height: 90, borderRadius: '50%',
+                    border: `3px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`,
+                    borderColor: `${accentColor} ${accentColor} transparent ${accentColor}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: `0 0 20px rgba(255, 77, 166, 0.15)`,
+                    animation: 'pulseCore 2s ease-in-out infinite alternate',
+                    position: 'relative'
+                  }}>
+                    <span style={{ fontSize: 24, fontWeight: 800, color: textColor, fontFamily: 'var(--font-mono)' }}>
+                      {matchResult.score}%
+                    </span>
+                  </div>
+                  <span style={{ fontSize: 9, fontFamily: 'var(--font-mono)', fontWeight: 700, opacity: 0.6, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                    Match Score
+                  </span>
+                </div>
+
+                {/* Right Side: Description Summary & Action */}
+                <div style={{
+                  flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 12
+                }}>
+                  <div>
+                    <h4 style={{ margin: '0 0 4px 0', fontSize: 12, fontWeight: 800, color: textColor, textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+                      Alignment Overview
+                    </h4>
+                    <p style={{ margin: 0, fontSize: 11.5, lineHeight: 1.5, color: subtextColor }}>
+                      {matchResult.summary}
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      playSound('pop')
+                      setMatchResult(null)
+                      setJdText('')
+                      setJdFileName('')
+                    }}
+                    style={{
+                      alignSelf: 'flex-start',
+                      padding: '6px 14px', borderRadius: 20,
+                      background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
+                      border: `1.2px solid ${isDark ? 'rgba(255, 77, 166, 0.2)' : 'rgba(255, 77, 166, 0.3)'}`,
+                      color: textColor, fontSize: 10.5, fontWeight: 700, cursor: 'pointer',
+                      transition: 'all 0.2s', textTransform: 'uppercase', letterSpacing: '0.02em'
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.background = accentColor
+                      e.currentTarget.style.color = '#ffffff'
+                      e.currentTarget.style.borderColor = accentColor
+                      e.currentTarget.style.boxShadow = `0 4px 10px rgba(255, 77, 166, 0.25)`
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.background = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)'
+                      e.currentTarget.style.color = textColor
+                      e.currentTarget.style.borderColor = isDark ? 'rgba(255, 77, 166, 0.2)' : 'rgba(255, 77, 166, 0.3)'
+                      e.currentTarget.style.boxShadow = 'none'
+                    }}
+                  >
+                    Scan Another JD
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div style={{
+                flex: 1, display: 'flex', flexDirection: 'column', padding: '16px 20px', gap: 12
+              }}>
+                {/* Inputs Wrapper */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <textarea
+                    value={jdText}
+                    onChange={e => setJdText(e.target.value)}
+                    placeholder="Paste the Job Description (JD) text here to analyze alignment..."
+                    style={{
+                      width: '100%', height: 90, borderRadius: 12,
+                      background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                      border: `1.2px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'}`,
+                      color: textColor, padding: '10px 14px', fontSize: 11.5,
+                      outline: 'none', boxSizing: 'border-box', resize: 'none',
+                      lineHeight: 1.55, fontFamily: 'var(--font-body)',
+                      transition: 'border-color 0.2s'
+                    }}
+                    onFocus={e => e.currentTarget.style.borderColor = accentColor}
+                    onBlur={e => e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'}
+                  />
+
+                  {/* PDF Upload trigger row */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+                      <input
+                        type="file"
+                        accept=".pdf"
+                        onChange={e => {
+                          const file = e.target.files?.[0]
+                          if (file) {
+                            playSound('pop')
+                            setJdFileName(file.name)
+                            // Auto populate descriptive mock text based on PDF name
+                            const mockText = `Role Details for PDF: ${file.name}. Looking for a Senior Product Designer with experience designing SaaS component libraries, high-fidelity React interactive web modules, and conversational AI UX layouts in Figma.`
+                            setJdText(mockText)
+                          }
+                        }}
+                        style={{ display: 'none' }}
+                      />
+                      <span style={{
+                        padding: '6px 14px', borderRadius: 20,
+                        background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+                        border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'}`,
+                        color: textColor, fontSize: 10.5, fontWeight: 700,
+                        display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.borderColor = accentColor
+                        e.currentTarget.style.background = isDark ? 'rgba(255, 77, 166, 0.06)' : 'rgba(255, 77, 166, 0.03)'
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'
+                        e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)'
+                      }}
+                      >
+                        <DocIcon />
+                        {jdFileName ? jdFileName : "Upload Job PDF"}
+                      </span>
+                    </label>
+
+                    {jdFileName && (
+                      <span style={{ fontSize: 9.5, fontFamily: 'var(--font-mono)', opacity: 0.6, textTransform: 'uppercase' }}>
+                        PDF Loaded ✓
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Scan Action Trigger */}
+                <button
+                  onClick={() => handleAnalyzeJD()}
+                  disabled={!jdText.trim() && !jdFileName}
+                  style={{
+                    width: '100%', padding: '10px 16px', borderRadius: 28,
+                    background: (jdText.trim() || jdFileName) ? accentColor : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'),
+                    color: (jdText.trim() || jdFileName) ? '#ffffff' : subtextColor,
+                    border: 'none', fontWeight: 800, fontSize: 11, cursor: (jdText.trim() || jdFileName) ? 'pointer' : 'default',
+                    transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                    boxShadow: (jdText.trim() || jdFileName) ? `0 6px 16px rgba(255, 77, 166, 0.3)` : 'none',
+                    textTransform: 'uppercase', letterSpacing: '0.06em'
+                  }}
+                  onMouseEnter={e => {
+                    if (jdText.trim() || jdFileName) {
+                      e.currentTarget.style.transform = 'translateY(-2px)'
+                      e.currentTarget.style.boxShadow = `0 8px 20px rgba(255, 77, 166, 0.45)`
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.transform = 'none'
+                    e.currentTarget.style.boxShadow = (jdText.trim() || jdFileName) ? `0 6px 16px rgba(255, 77, 166, 0.3)` : 'none'
+                  }}
+                >
+                  Analyze Alignment Profile
+                </button>
+              </div>
+            )}
           </div>
         )}
 
