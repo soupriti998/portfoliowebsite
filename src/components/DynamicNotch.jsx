@@ -643,6 +643,31 @@ export default function DynamicNotch({ activeProject }) {
   const [isScanning, setIsScanning] = useState(false)
   const [matchResult, setMatchResult] = useState(null)
 
+  // Dynamic Height Hugging States
+  const contentRef = useRef(null)
+  const [dynamicHeight, setDynamicHeight] = useState(null)
+
+  useEffect(() => {
+    if (notchState === 'compact') {
+      setDynamicHeight(null)
+      return
+    }
+
+    const element = contentRef.current
+    if (!element) return
+
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        setDynamicHeight(entry.target.scrollHeight)
+      }
+    })
+
+    observer.observe(element)
+    setDynamicHeight(element.scrollHeight)
+
+    return () => observer.disconnect()
+  }, [notchState, matchResult, isScanning, messages, voiceStatus])
+
   const handleAnalyzeJD = async (textToScan) => {
     const rawText = (textToScan || jdText || '').trim()
     if (!rawText && !jdFileName) return
@@ -936,7 +961,7 @@ export default function DynamicNotch({ activeProject }) {
           left: '50%',
           transform: `${transformScale} translateY(${translateY}px)`,
           width: currentDim.width,
-          height: currentDim.height,
+          height: notchState === 'compact' ? DIMS.compact.height : (dynamicHeight ? dynamicHeight : currentDim.height),
           borderBottomLeftRadius: currentDim.radius,
           borderBottomRightRadius: currentDim.radius,
           borderTopLeftRadius: 0,
@@ -1031,11 +1056,14 @@ export default function DynamicNotch({ activeProject }) {
           );
         })()}
 
-        {/* STATE 2: EXPANDED HUD DOCK */}
-        {notchState === 'expanded' && (
-          <div style={{
-            width: '100%',
-            height: '100%',
+        {/* CONTENT DOCK WRAPPER FOR DYNAMIC HUGGING */}
+        {notchState !== 'compact' && (
+          <div ref={contentRef} style={{ width: '100%', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
+            {/* STATE 2: EXPANDED HUD DOCK */}
+            {notchState === 'expanded' && (
+              <div style={{
+                width: '100%',
+                height: 'auto',
             display: 'flex',
             flexDirection: 'column',
             padding: '16px 20px',
@@ -1235,7 +1263,7 @@ export default function DynamicNotch({ activeProject }) {
         {notchState === 'chat' && (
           <div style={{
             width: '100%',
-            height: '100%',
+            height: '490px',
             display: 'flex',
             flexDirection: 'column',
             animation: 'fadeIn 0.3s ease-out',
@@ -1374,7 +1402,7 @@ export default function DynamicNotch({ activeProject }) {
         {notchState === 'jdMatch' && (
           <div style={{
             width: '100%',
-            height: '100%',
+            height: 'auto',
             display: 'flex',
             flexDirection: 'column',
             animation: 'fadeIn 0.3s ease-out',
@@ -1611,7 +1639,7 @@ export default function DynamicNotch({ activeProject }) {
         {notchState === 'voice' && (
           <div style={{
             width: '100%',
-            height: '100%',
+            height: '270px',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -1702,10 +1730,10 @@ export default function DynamicNotch({ activeProject }) {
               <CloseIcon />
               <span>EXIT</span>
             </button>
-
           </div>
         )}
-
+          </div>
+        )}
       </nav>
 
       {/* Dynamic Keyframes */}
