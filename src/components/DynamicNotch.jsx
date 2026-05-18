@@ -8,62 +8,222 @@ const DIMS = {
   voice: { width: 350, height: 270, radius: 25 }
 }
 
-/* ── Deeply Contextual AI Thought Engine (Scroll vs. Resting) ── */
-const getContextualThought = (section, velocity, activeProj) => {
-  if (activeProj) {
-    if (velocity > 0.4) return `Scanning case: ${activeProj.name.slice(0, 15)}...`;
-    return `Analyzing: ${activeProj.name.slice(0, 22)}`;
-  }
-  
-  if (velocity > 0.4) {
-    const thoughts = [
-      "Tracking scroll momentum...",
-      "Indexing portfolio segments...",
-      "Caching design layout assets...",
-      "Scanning visual systems...",
-      "Analyzing page telemetry..."
-    ];
-    // Use window scroll position as a stable seed to rotate thoughts naturally without flickering
-    const idx = Math.floor((window.scrollY / 300) % thoughts.length);
-    return thoughts[idx];
+/* ── Dynamic Status HUD Animated Icon System (NO MASCOT, NO CAT) ── */
+const StatusHUDIcon = ({ state }) => {
+  if (state === 'voice') {
+    // Pulse ambient voice waves
+    return (
+      <div style={{ display: 'flex', gap: 2.2, alignItems: 'center', height: 14, width: 24, justifyContent: 'center' }}>
+        {[1, 2, 3, 4, 5].map(i => (
+          <div 
+            key={i} 
+            style={{
+              width: 2.2,
+              height: '100%',
+              background: 'var(--accent)',
+              borderRadius: 1,
+              animation: `ambientWave 0.7s ease-in-out infinite alternate`,
+              animationDelay: `${i * 0.12}s`
+            }} 
+          />
+        ))}
+      </div>
+    )
   }
 
-  const restingThoughts = {
-    hero: [
-      "Luffy: Ready to co-pilot (CTRL + L)",
-      "Exploring Soupriti's design cosmos...",
-      "Parsing index: 3+ years SaaS / HMI experience"
-    ],
-    expertise: [
-      "Reviewing superpowers: Figma & React",
-      "Tracking user research telemetry logs...",
-      "Evaluating physical-digital interface logic"
-    ],
-    projects: [
-      "Deep-diving into upliance.ai case studies...",
-      "Reviewing +24% task efficiency metrics...",
-      "Scanning Medpod & Doctorite dashboards..."
-    ],
-    about: [
-      "Caching cinematic celluloid film strips...",
-      "Parsing hobbies: coffee, sketching, layout loops...",
-      "Reading: Fashion Communication @ NIFT Chennai"
-    ],
-    journey: [
-      "Verifying career timeline: NIFT → upliance.ai",
-      "Caching Divami Labs & Incture logs...",
-      "Career velocity: Senior-ready product engineer"
-    ],
-    contact: [
-      "Opening secure communication channel...",
-      "Luffy recommends: Hire Soupriti Das!",
-      "Ready to build state-of-the-art SaaS?"
-    ]
+  if (state === 'thinking') {
+    // Rotating orbit particle core
+    return (
+      <div style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{
+          position: 'absolute',
+          width: 14, height: 14,
+          borderRadius: '50%',
+          border: '1.5px dashed var(--accent)',
+          animation: 'spinOrbit 2s linear infinite'
+        }} />
+        <div style={{
+          width: 6, height: 6,
+          borderRadius: '50%',
+          background: 'var(--accent)',
+          boxShadow: '0 0 6px var(--accent)',
+          animation: 'pulseCore 1s ease-in-out infinite alternate'
+        }} />
+      </div>
+    )
+  }
+
+  if (state === 'scrolling') {
+    // Scanning line / Rotating outer ring
+    return (
+      <div style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{
+          position: 'absolute',
+          width: 16, height: 16,
+          borderRadius: '50%',
+          border: '1.2px solid rgba(0, 82, 255, 0.4)',
+          borderTopColor: 'var(--accent)',
+          animation: 'spinOrbit 1.2s cubic-bezier(0.25, 1, 0.5, 1) infinite'
+        }} />
+        <div style={{
+          position: 'absolute',
+          width: '100%', height: 1.8,
+          background: 'linear-gradient(to right, transparent, var(--accent), transparent)',
+          boxShadow: '0 0 4px var(--accent)',
+          animation: 'scanLaser 1.8s ease-in-out infinite alternate'
+        }} />
+        <div style={{
+          width: 4, height: 4,
+          borderRadius: '50%',
+          background: '#ffffff',
+          boxShadow: '0 0 4px #ffffff'
+        }} />
+      </div>
+    )
+  }
+
+  if (state === 'inactive') {
+    // Sleeping core (deep pulsing dim blue orb)
+    return (
+      <div style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{
+          width: 8, height: 8,
+          borderRadius: '50%',
+          background: 'rgba(0, 82, 255, 0.3)',
+          border: '1px solid rgba(0, 82, 255, 0.5)',
+          boxShadow: '0 0 8px rgba(0, 82, 255, 0.15)',
+          animation: 'pulseSleep 3.5s ease-in-out infinite'
+        }} />
+      </div>
+    )
+  }
+
+  // default 'idle' - Breathing Glow / Orbit Animation
+  return (
+    <div style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{
+        position: 'absolute',
+        width: 12, height: 12,
+        borderRadius: '50%',
+        background: 'rgba(0, 82, 255, 0.15)',
+        filter: 'blur(3px)',
+        animation: 'pulseCore 2.5s ease-in-out infinite alternate'
+      }} />
+      <div style={{
+        position: 'absolute',
+        width: 16, height: 16,
+        borderRadius: '50%',
+        border: '1.2px solid rgba(0, 82, 255, 0.25)',
+        animation: 'pulseCore 2.5s ease-in-out infinite alternate'
+      }} />
+      <div style={{
+        position: 'absolute',
+        width: 3,
+        height: 3,
+        borderRadius: '50%',
+        background: 'var(--accent)',
+        boxShadow: '0 0 4px var(--accent)',
+        animation: 'orbitParticle 3s linear infinite'
+      }} />
+      <div style={{
+        width: 6,
+        height: 6,
+        borderRadius: '50%',
+        background: 'var(--accent)',
+        boxShadow: '0 0 8px var(--accent)'
+      }} />
+    </div>
+  )
+}
+
+/* ── Smart Contextual Status Resolver (Scroll, Reading Time, Inactivity, Active Project) ── */
+const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) => {
+  // 1. Thinking / Active Project state
+  if (activeProj) {
+    if (velocity > 0.4) {
+      return {
+        text: `Scanning case: ${activeProj.name.slice(0, 16)}...`,
+        shortcut: "Want the UX breakdown?",
+        icon: "scrolling"
+      };
+    }
+    return {
+      text: `Analyzing: ${activeProj.name.slice(0, 22)}`,
+      shortcut: "High-fidelity case study",
+      icon: "thinking"
+    };
+  }
+
+  // 2. Inactive / Idle state
+  if (inactive) {
+    const idlePool = [
+      { text: "Idle but attentive.", shortcut: "Ready when you are" },
+      { text: "Waiting for curiosity...", shortcut: "Monitoring interactions" },
+      { text: "Still exploring?", shortcut: "Ctrl + L to co-pilot" },
+      { text: "Need help finding something?", shortcut: "Ask Luffy" }
+    ];
+    const idx = Math.floor((window.scrollY / 250) % idlePool.length);
+    return { ...idlePool[idx], icon: "inactive" };
+  }
+
+  // 3. Active Scrolling state
+  if (velocity > 0.4) {
+    const scrollPool = [
+      { text: "You've entered deep-scroll mode.", shortcut: "Voice mode available" },
+      { text: "Summarize this section?", shortcut: "Press Ctrl + L" },
+      { text: "Need a quick overview?", shortcut: "I can guide you" },
+      { text: "Tracking scroll momentum...", shortcut: "Voice ready" }
+    ];
+    const idx = Math.floor((window.scrollY / 300) % scrollPool.length);
+    return { ...scrollPool[idx], icon: "scrolling" };
+  }
+
+  // 4. Reading deep insight state (stays in section > 15 seconds)
+  if (readingSecs > 15) {
+    const readingPool = [
+      { text: "Reading personality signals...", shortcut: "Systems thinker identified" },
+      { text: "Cross-domain design detected.", shortcut: "NIFT systems logic" },
+      { text: "Analyzing interaction pattern...", shortcut: "Intuitive HMI flow" }
+    ];
+    const idx = Math.floor((window.scrollY / 200) % readingPool.length);
+    return { ...readingPool[idx], icon: "thinking" };
+  }
+
+  // 5. Default Resting Section state
+  const restingPool = {
+    hero: {
+      text: "Luffy: Ready to co-pilot",
+      shortcut: "Ctrl + L to talk",
+      icon: "idle"
+    },
+    expertise: {
+      text: "Reviewing superpowers: Figma & React",
+      shortcut: "Figma interaction systems",
+      icon: "idle"
+    },
+    projects: {
+      text: "Deep-diving into upliance.ai designs",
+      shortcut: "Changed 3 times!",
+      icon: "idle"
+    },
+    about: {
+      text: "Caching cinematic celluloid reels",
+      shortcut: "NIFT Chennai background",
+      icon: "idle"
+    },
+    journey: {
+      text: "Verifying career timeline: NIFT → upliance",
+      shortcut: "Senior product engineer",
+      icon: "idle"
+    },
+    contact: {
+      text: "Opening secure communication channel",
+      shortcut: "Luffy recommends: HIRE!",
+      icon: "idle"
+    }
   };
 
-  const pool = restingThoughts[section] || restingThoughts.hero;
-  const idx = Math.floor((window.scrollY / 250) % pool.length);
-  return pool[idx];
+  return restingPool[section] || restingPool.hero;
 };
 
 /* ── Chat replies dictionary ── */
@@ -379,6 +539,11 @@ export default function DynamicNotch({ activeProject }) {
   const [scrollVelocity, setScrollVelocity] = useState(0)
   const lastScrollY = useRef(0)
   
+  // Custom HUD States
+  const [inactivityState, setInactivityState] = useState(false)
+  const [readingTime, setReadingTime] = useState(0)
+  const [translateY, setTranslateY] = useState(0)
+  
   // Chat States
   const [messages, setMessages] = useState([{ from: 'bot', text: "hey I am luffy, I can help you being more contextual about soupriti's portfolio." }])
   const [chatInput, setChatInput] = useState('')
@@ -410,17 +575,27 @@ export default function DynamicNotch({ activeProject }) {
     return () => observer.disconnect()
   }, [])
 
-  // 2. SCROLL VELOCITY / ACCELERATION LISTENER
+  // 2. SCROLL VELOCITY / ACCELERATION LISTENER & ANTI-GRAVITY DRIFT
   useEffect(() => {
     let timer
     const handleScroll = () => {
       const cy = window.scrollY
-      const diff = Math.abs(cy - lastScrollY.current)
-      setScrollVelocity(Math.min(2.5, diff / 10))
+      const diffY = cy - lastScrollY.current
+      const absDiff = Math.abs(diffY)
+      
+      setScrollVelocity(Math.min(2.5, absDiff / 10))
+      
+      // Calculate smooth anti-gravity lag offset (max 6px drift)
+      const drift = Math.max(-6, Math.min(6, diffY * 0.08))
+      setTranslateY(drift)
+      
       lastScrollY.current = cy
 
       clearTimeout(timer)
-      timer = setTimeout(() => setScrollVelocity(0), 120)
+      timer = setTimeout(() => {
+        setScrollVelocity(0)
+        setTranslateY(0) // Smoothly recover back to zero gravity center
+      }, 150)
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => {
@@ -428,6 +603,42 @@ export default function DynamicNotch({ activeProject }) {
       clearTimeout(timer)
     }
   }, [])
+
+  // 2.1 INACTIVITY TRACKER (8s mouse/scroll stillness triggers system idle mode)
+  useEffect(() => {
+    let activeTimer
+    const resetTimer = () => {
+      setInactivityState(false)
+      clearTimeout(activeTimer)
+      activeTimer = setTimeout(() => {
+        setInactivityState(true)
+      }, 8000)
+    }
+    
+    window.addEventListener('mousemove', resetTimer, { passive: true })
+    window.addEventListener('scroll', resetTimer, { passive: true })
+    window.addEventListener('keydown', resetTimer, { passive: true })
+    window.addEventListener('click', resetTimer, { passive: true })
+    
+    resetTimer()
+    
+    return () => {
+      window.removeEventListener('mousemove', resetTimer)
+      window.removeEventListener('scroll', resetTimer)
+      window.removeEventListener('keydown', resetTimer)
+      window.removeEventListener('click', resetTimer)
+      clearTimeout(activeTimer)
+    }
+  }, [])
+
+  // 2.2 READING TIMER (Tracks active exploration duration per section)
+  useEffect(() => {
+    setReadingTime(0)
+    const interval = setInterval(() => {
+      setReadingTime(prev => prev + 1)
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [activeSection])
 
   // 3. KEYBOARD CTRL + L DETECTOR (Voice Toggle)
   useEffect(() => {
@@ -555,7 +766,7 @@ export default function DynamicNotch({ activeProject }) {
           position: 'fixed',
           top: 0,
           left: '50%',
-          transform: transformScale,
+          transform: `${transformScale} translateY(${translateY}px)`,
           width: currentDim.width,
           height: currentDim.height,
           borderBottomLeftRadius: currentDim.radius,
@@ -564,14 +775,14 @@ export default function DynamicNotch({ activeProject }) {
           borderTopRightRadius: 0,
           background: 'rgba(10, 10, 12, 0.88)',
           borderTop: 'none',
-          borderLeft: '1.8px solid rgba(0, 82, 255, 0.25)', // Brand Electric Blue Border
-          borderRight: '1.8px solid rgba(0, 82, 255, 0.25)',
-          borderBottom: '1.8px solid rgba(0, 82, 255, 0.25)',
+          borderLeft: '1.2px solid rgba(0, 82, 255, 0.15)', // Premium Subtle Faint Tint Border
+          borderRight: '1.2px solid rgba(0, 82, 255, 0.15)',
+          borderBottom: '1.2px solid rgba(0, 82, 255, 0.15)',
           backdropFilter: 'blur(20px) saturate(180%)',
-          boxShadow: '0 8px 32px rgba(0, 82, 255, 0.12), inset 0 1px 0 rgba(255,255,255,0.05)',
+          boxShadow: '0 8px 32px rgba(0, 82, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.05)',
           zIndex: 999999,
           overflow: 'hidden',
-          transition: 'all 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.25)',
+          transition: 'all 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.25), transform 0.1s ease-out', // Spring ease and fast lag recovery
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -591,71 +802,64 @@ export default function DynamicNotch({ activeProject }) {
       >
         
         {/* STATE 1: COMPACT NOTCH */}
-        {notchState === 'compact' && (
-          <div style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '0 18px',
-            animation: 'fadeIn 0.25s ease-out'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <img 
-                src="/soupriti.jpg" 
-                alt="Soupriti" 
-                style={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                  border: '1.5px solid var(--accent)',
-                  margin: 0,
-                  boxShadow: '0 0 6px rgba(0, 82, 255, 0.3)',
-                }}
-              />
-              
-              {/* Contextual thoughts (Strictly updated to var(--font-body) style guide, modest weight 600, guaranteed single-line) */}
-              <span style={{
-                fontSize: 12.5,
-                fontFamily: 'var(--font-body)',
-                fontWeight: 600,
-                color: '#ffffff',
-                letterSpacing: '-0.015em',
-                textTransform: 'none',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                maxWidth: '215px',
-                display: 'block',
-                transition: 'all 0.3s ease-out'
-              }}>
-                <TypingText text={getContextualThought(activeSection, scrollVelocity, activeProject)} />
-              </span>
-            </div>
-
-            {/* "Hey Luffy to talk" Pill (Replaced scrolling voice animation) */}
+        {notchState === 'compact' && (() => {
+          const hud = getSmartHUDState(activeSection, scrollVelocity, activeProject, inactivityState, readingTime);
+          return (
             <div style={{
-              background: 'rgba(0, 82, 255, 0.12)',
-              border: '1.2px solid rgba(0, 82, 255, 0.25)',
-              borderRadius: 20,
-              padding: '3px 10px',
-              fontSize: 9,
-              fontFamily: 'var(--font-mono)',
-              fontWeight: 700,
-              color: 'var(--accent)',
-              letterSpacing: '0.04em',
-              whiteSpace: 'nowrap',
+              width: '100%',
+              height: '100%',
               display: 'flex',
               alignItems: 'center',
-              boxShadow: '0 0 8px rgba(0, 82, 255, 0.15)',
-              userSelect: 'none'
+              justifyContent: 'space-between',
+              padding: '0 18px',
+              animation: 'fadeIn 0.25s ease-out'
             }}>
-              Hey Luffy to talk
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                {/* Animated Futuristic Icon (Replaces cat/photo avatar) */}
+                <StatusHUDIcon state={hud.icon} />
+                
+                {/* Contextual thoughts (Strictly updated to var(--font-body) style guide, modest weight 600, guaranteed single-line) */}
+                <span style={{
+                  fontSize: 12.5,
+                  fontFamily: 'var(--font-body)',
+                  fontWeight: 600,
+                  color: '#ffffff',
+                  letterSpacing: '-0.015em',
+                  textTransform: 'none',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  maxWidth: '215px',
+                  display: 'block',
+                  transition: 'all 0.3s ease-out'
+                }}>
+                  <TypingText text={hud.text} />
+                </span>
+              </div>
+
+              {/* Dynamic Contextual Action / Shortcut Pill Badge */}
+              <div style={{
+                background: 'rgba(0, 82, 255, 0.1)',
+                border: '1px solid rgba(0, 82, 255, 0.2)',
+                borderRadius: 20,
+                padding: '3px 10px',
+                fontSize: 9,
+                fontFamily: 'var(--font-mono)',
+                fontWeight: 700,
+                color: 'var(--accent)',
+                letterSpacing: '0.04em',
+                whiteSpace: 'nowrap',
+                display: 'flex',
+                alignItems: 'center',
+                boxShadow: '0 0 8px rgba(0, 82, 255, 0.08)',
+                userSelect: 'none',
+                transition: 'all 0.3s ease-out'
+              }}>
+                {hud.shortcut}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* STATE 2: EXPANDED HOVER MENU (Fuzzy search completely removed, beautiful blue resume CTA at end) */}
         {notchState === 'expanded' && (
@@ -669,22 +873,12 @@ export default function DynamicNotch({ activeProject }) {
             position: 'relative',
             animation: 'fadeIn 0.3s ease-out'
           }}>
-            {/* Left: Avatar Brand Logo */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <img 
-                src="/soupriti.jpg" 
-                alt="Soupriti"
-                onClick={() => scrollTo('hero')} 
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                  border: '1.5px solid var(--accent)',
-                  cursor: 'pointer',
-                  boxShadow: '0 0 8px rgba(0, 82, 255, 0.4)',
-                }}
-              />
+            {/* Left: Interactive HUD Status Mark */}
+            <div 
+              onClick={() => scrollTo('hero')} 
+              style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}
+            >
+              <StatusHUDIcon state="idle" />
               <span style={{
                 fontSize: 11,
                 fontFamily: 'var(--font-mono)',
