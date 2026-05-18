@@ -11,10 +11,20 @@ import Testimonial from './components/Testimonial'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import Preloader from './components/Preloader'
+import SpecSheet from './components/SpecSheet'
 
 export default function App() {
   const [activeProject, setActiveProject] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [specOpen, setSpecOpen] = useState(false)
+
+  useEffect(() => {
+    // Expose toggle globally so it can be triggered from anywhere
+    window.openSpecSheet = () => setSpecOpen(true)
+    return () => {
+      delete window.openSpecSheet
+    }
+  }, [])
 
   useEffect(() => {
     if (loading) return
@@ -50,6 +60,10 @@ export default function App() {
             <Contact />
           </main>
           <Footer />
+          
+          {specOpen && (
+            <SpecSheet onClose={() => setSpecOpen(false)} />
+          )}
         </>
       )}
     </>

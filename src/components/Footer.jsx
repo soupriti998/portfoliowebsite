@@ -25,6 +25,37 @@ export default function Footer() {
           }}>S</div>
           <span style={{ color: '#ffffff', fontSize: 13.5, fontWeight: 600, letterSpacing: '-0.01em' }}>Soupriti Das</span>
           <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: 12 }}>· Product Designer</span>
+          <button
+            onClick={() => window.openSpecSheet && window.openSpecSheet()}
+            style={{
+              background: 'rgba(255, 77, 166, 0.25)',
+              border: '1.2px solid #FF4DA6',
+              borderRadius: 20,
+              padding: '3px 10px',
+              fontSize: 10,
+              fontWeight: 800,
+              fontFamily: 'var(--font-mono)',
+              color: '#ffffff',
+              cursor: 'pointer',
+              marginLeft: 8,
+              boxShadow: '0 0 10px rgba(255, 77, 166, 0.4)',
+              transition: 'all 0.2s',
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em'
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = '#FF4DA6'
+              e.currentTarget.style.boxShadow = '0 0 18px #FF4DA6'
+              e.currentTarget.style.transform = 'translateY(-1px)'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'rgba(255, 77, 166, 0.25)'
+              e.currentTarget.style.boxShadow = '0 0 10px rgba(255, 77, 166, 0.4)'
+              e.currentTarget.style.transform = 'none'
+            }}
+          >
+            Design Spec ✦
+          </button>
         </div>
 
         {/* Center: Single line tagline with emoji, expanding end-to-end */}
