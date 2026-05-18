@@ -2,28 +2,31 @@ import { useState, useRef, useEffect } from 'react'
 
 /* ── Interactive State Dimension Specs ── */
 const DIMS = {
-  compact: { width: 390, height: 46, radius: 23 },
-  expanded: { width: 780, height: 58, radius: 29 },
+  compact: { width: 340, height: 46, radius: 23 },
+  expanded: { width: 500, height: 195, radius: 24 }, // Can dynamically expand height if Quick Nav is open!
   chat: { width: 450, height: 490, radius: 25 },
   voice: { width: 350, height: 270, radius: 25 }
 }
 
-/* ── Dynamic Status HUD Animated Icon System (NO MASCOT, NO CAT) ── */
-const StatusHUDIcon = ({ state }) => {
-  if (state === 'voice') {
+/* ── Dynamic Breathing Circle & Status System (NO MASCOT, NO CAT) ── */
+const StatusHUDIcon = ({ state, theme }) => {
+  const pinkGlow = '#FF4DA6'
+
+  if (state === 'voice' || state === 'listening') {
     // Pulse ambient voice waves
     return (
-      <div style={{ display: 'flex', gap: 2.2, alignItems: 'center', height: 14, width: 24, justifyContent: 'center' }}>
+      <div style={{ display: 'flex', gap: 3, alignItems: 'center', height: 16, width: 26, justifyContent: 'center' }}>
         {[1, 2, 3, 4, 5].map(i => (
           <div 
             key={i} 
             style={{
               width: 2.2,
               height: '100%',
-              background: 'var(--accent)',
-              borderRadius: 1,
-              animation: `ambientWave 0.7s ease-in-out infinite alternate`,
-              animationDelay: `${i * 0.12}s`
+              background: pinkGlow,
+              borderRadius: 1.5,
+              animation: `ambientWave 0.6s ease-in-out infinite alternate`,
+              animationDelay: `${i * 0.12}s`,
+              boxShadow: `0 0 6px ${pinkGlow}`
             }} 
           />
         ))}
@@ -32,88 +35,112 @@ const StatusHUDIcon = ({ state }) => {
   }
 
   if (state === 'thinking') {
-    // Rotating orbit particle core
-    return (
-      <div style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{
-          position: 'absolute',
-          width: 14, height: 14,
-          borderRadius: '50%',
-          border: '1.5px dashed var(--accent)',
-          animation: 'spinOrbit 2s linear infinite'
-        }} />
-        <div style={{
-          width: 6, height: 6,
-          borderRadius: '50%',
-          background: 'var(--accent)',
-          boxShadow: '0 0 6px var(--accent)',
-          animation: 'pulseCore 1s ease-in-out infinite alternate'
-        }} />
-      </div>
-    )
-  }
-
-  if (state === 'scrolling') {
-    // Scanning line / Rotating outer ring
+    // Dotted orbit ring + pulsating core matching thinking state
     return (
       <div style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{
           position: 'absolute',
           width: 16, height: 16,
           borderRadius: '50%',
-          border: '1.2px solid rgba(0, 82, 255, 0.4)',
-          borderTopColor: 'var(--accent)',
-          animation: 'spinOrbit 1.2s cubic-bezier(0.25, 1, 0.5, 1) infinite'
+          border: `1.5px dashed ${pinkGlow}`,
+          animation: 'spinOrbit 2s linear infinite',
+          opacity: 0.8
         }} />
         <div style={{
+          width: 6, height: 6,
+          borderRadius: '50%',
+          background: pinkGlow,
+          boxShadow: `0 0 8px ${pinkGlow}`,
+          animation: 'pulseCore 0.8s ease-in-out infinite alternate'
+        }} />
+      </div>
+    )
+  }
+
+  if (state === 'processing') {
+    // Spinning particle ring representing active process
+    return (
+      <div style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{
           position: 'absolute',
-          width: '100%', height: 1.8,
-          background: 'linear-gradient(to right, transparent, var(--accent), transparent)',
-          boxShadow: '0 0 4px var(--accent)',
-          animation: 'scanLaser 1.8s ease-in-out infinite alternate'
+          width: 16, height: 16,
+          borderRadius: '50%',
+          border: `1.5px solid rgba(255, 77, 166, 0.2)`,
+          borderTopColor: pinkGlow,
+          borderRightColor: pinkGlow,
+          animation: 'spinOrbit 1s cubic-bezier(0.4, 0, 0.2, 1) infinite'
         }} />
         <div style={{
           width: 4, height: 4,
           borderRadius: '50%',
-          background: '#ffffff',
-          boxShadow: '0 0 4px #ffffff'
+          background: theme === 'dark' ? '#ffffff' : '#0a0b0d',
+          boxShadow: `0 0 4px ${theme === 'dark' ? '#ffffff' : 'rgba(0, 0, 0, 0.2)'}`
+        }} />
+      </div>
+    )
+  }
+
+  if (state === 'scrolling') {
+    // Scanning laser and sweep ring
+    return (
+      <div style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{
+          position: 'absolute',
+          width: 18, height: 18,
+          borderRadius: '50%',
+          border: `1.2px solid rgba(255, 77, 166, 0.35)`,
+          borderTopColor: pinkGlow,
+          animation: 'spinOrbit 1.2s cubic-bezier(0.25, 1, 0.5, 1) infinite'
+        }} />
+        <div style={{
+          position: 'absolute',
+          width: '100%', height: 1.5,
+          background: `linear-gradient(to right, transparent, ${pinkGlow}, transparent)`,
+          boxShadow: `0 0 4px ${pinkGlow}`,
+          animation: 'scanLaser 1.5s ease-in-out infinite alternate'
+        }} />
+        <div style={{
+          width: 4, height: 4,
+          borderRadius: '50%',
+          background: theme === 'dark' ? '#ffffff' : '#0a0b0d',
+          boxShadow: `0 0 4px ${theme === 'dark' ? '#ffffff' : 'rgba(0, 0, 0, 0.2)'}`
         }} />
       </div>
     )
   }
 
   if (state === 'inactive') {
-    // Sleeping core (deep pulsing dim blue orb)
+    // Sleeping core (deep pulsing dim pink orb)
     return (
       <div style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{
           width: 8, height: 8,
           borderRadius: '50%',
-          background: 'rgba(0, 82, 255, 0.3)',
-          border: '1px solid rgba(0, 82, 255, 0.5)',
-          boxShadow: '0 0 8px rgba(0, 82, 255, 0.15)',
+          background: 'rgba(255, 77, 166, 0.3)',
+          border: '1px solid rgba(255, 77, 166, 0.5)',
+          boxShadow: '0 0 6px rgba(255, 77, 166, 0.2)',
           animation: 'pulseSleep 3.5s ease-in-out infinite'
         }} />
       </div>
     )
   }
 
-  // default 'idle' - Breathing Glow / Orbit Animation
+  // Default 'idle' - Slowly breathing pink neon circle
   return (
     <div style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{
         position: 'absolute',
-        width: 12, height: 12,
+        width: 14, height: 14,
         borderRadius: '50%',
-        background: 'rgba(0, 82, 255, 0.15)',
+        background: 'rgba(255, 77, 166, 0.15)',
         filter: 'blur(3px)',
         animation: 'pulseCore 2.5s ease-in-out infinite alternate'
       }} />
       <div style={{
         position: 'absolute',
-        width: 16, height: 16,
+        width: 18, height: 18,
         borderRadius: '50%',
-        border: '1.2px solid rgba(0, 82, 255, 0.25)',
+        border: '1.2px solid rgba(255, 77, 166, 0.25)',
         animation: 'pulseCore 2.5s ease-in-out infinite alternate'
       }} />
       <div style={{
@@ -121,16 +148,16 @@ const StatusHUDIcon = ({ state }) => {
         width: 3,
         height: 3,
         borderRadius: '50%',
-        background: 'var(--accent)',
-        boxShadow: '0 0 4px var(--accent)',
+        background: pinkGlow,
+        boxShadow: `0 0 4px ${pinkGlow}`,
         animation: 'orbitParticle 3s linear infinite'
       }} />
       <div style={{
-        width: 6,
-        height: 6,
+        width: 7,
+        height: 7,
         borderRadius: '50%',
-        background: 'var(--accent)',
-        boxShadow: '0 0 8px var(--accent)'
+        background: pinkGlow,
+        boxShadow: `0 0 8px ${pinkGlow}`
       }} />
     </div>
   )
@@ -138,93 +165,113 @@ const StatusHUDIcon = ({ state }) => {
 
 /* ── Smart Contextual Status Resolver (Scroll, Reading Time, Inactivity, Active Project) ── */
 const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) => {
-  // 1. Thinking / Active Project state
+  // 1. Check if near bottom
+  const scrollHeight = document.documentElement.scrollHeight
+  const clientHeight = document.documentElement.clientHeight
+  const isNearBottom = (window.scrollY + clientHeight) >= (scrollHeight - 150)
+
+  if (isNearBottom) {
+    return {
+      text: "You've reached the end.",
+      icon: "idle"
+    }
+  }
+
+  // 2. Active Project Detail View open
   if (activeProj) {
     if (velocity > 0.4) {
       return {
-        text: `Scanning case: ${activeProj.name.slice(0, 16)}...`,
-        shortcut: "Want the UX breakdown?",
+        text: "Scanning case details...",
         icon: "scrolling"
-      };
+      }
     }
     return {
-      text: `Analyzing: ${activeProj.name.slice(0, 22)}`,
-      shortcut: "High-fidelity case study",
+      text: "Analyzing project patterns...",
       icon: "thinking"
-    };
+    }
   }
 
-  // 2. Inactive / Idle state
+  // 3. Inactive / Sleeping states
   if (inactive) {
-    const idlePool = [
-      { text: "Idle but attentive.", shortcut: "Ready when you are" },
-      { text: "Waiting for curiosity...", shortcut: "Monitoring interactions" },
-      { text: "Still exploring?", shortcut: "Ctrl + L to co-pilot" },
-      { text: "Need help finding something?", shortcut: "Ask Luffy" }
-    ];
-    const idx = Math.floor((window.scrollY / 250) % idlePool.length);
-    return { ...idlePool[idx], icon: "inactive" };
+    if (readingSecs > 45) {
+      return {
+        text: "Taking a tiny nap...",
+        icon: "inactive"
+      }
+    }
+    const inactivePool = [
+      "Still here.",
+      "Missed me?",
+      "Whenever you're ready.",
+      "Keeping an eye on things."
+    ]
+    const idx = Math.floor((window.scrollY / 250) % inactivePool.length)
+    return {
+      text: inactivePool[idx],
+      icon: "inactive"
+    }
   }
 
-  // 3. Active Scrolling state
-  if (velocity > 0.4) {
-    const scrollPool = [
-      { text: "You've entered deep-scroll mode.", shortcut: "Voice mode available" },
-      { text: "Summarize this section?", shortcut: "Press Ctrl + L" },
-      { text: "Need a quick overview?", shortcut: "I can guide you" },
-      { text: "Tracking scroll momentum...", shortcut: "Voice ready" }
-    ];
-    const idx = Math.floor((window.scrollY / 300) % scrollPool.length);
-    return { ...scrollPool[idx], icon: "scrolling" };
+  // 4. Scroll Aware states
+  if (velocity > 0.7) {
+    return {
+      text: "Deep-scroll mode on.",
+      icon: "scrolling"
+    }
   }
 
-  // 4. Reading deep insight state (stays in section > 15 seconds)
-  if (readingSecs > 15) {
+  if (velocity > 0.3) {
+    return {
+      text: "Keep going, I'm here.",
+      icon: "scrolling"
+    }
+  }
+
+  // 5. Reading deep states (time in current section)
+  if (readingSecs > 14) {
     const readingPool = [
-      { text: "Reading personality signals...", shortcut: "Systems thinker identified" },
-      { text: "Cross-domain design detected.", shortcut: "NIFT systems logic" },
-      { text: "Analyzing interaction pattern...", shortcut: "Intuitive HMI flow" }
-    ];
-    const idx = Math.floor((window.scrollY / 200) % readingPool.length);
-    return { ...readingPool[idx], icon: "thinking" };
+      "Reading this section",
+      "Analyzing patterns",
+      "Extracting key points",
+      "Gathering insights"
+    ]
+    const idx = Math.floor((window.scrollY / 200) % readingPool.length)
+    return {
+      text: readingPool[idx],
+      icon: "thinking"
+    }
   }
 
-  // 5. Default Resting Section state
-  const restingPool = {
+  // 6. Section aware defaults
+  const sectionPool = {
     hero: {
-      text: "Luffy: Ready to co-pilot",
-      shortcut: "Ctrl + L to talk",
+      text: "Exploring quietly",
       icon: "idle"
     },
     expertise: {
-      text: "Reviewing superpowers: Figma & React",
-      shortcut: "Figma interaction systems",
+      text: "Let's talk ideas",
       icon: "idle"
     },
     projects: {
-      text: "Deep-diving into upliance.ai designs",
-      shortcut: "Changed 3 times!",
+      text: "Exploring deep-scroll",
       icon: "idle"
     },
     about: {
-      text: "Caching cinematic celluloid reels",
-      shortcut: "NIFT Chennai background",
+      text: "Checking the details",
       icon: "idle"
     },
     journey: {
-      text: "Verifying career timeline: NIFT → upliance",
-      shortcut: "Senior product engineer",
+      text: "This part is important",
       icon: "idle"
     },
     contact: {
-      text: "Opening secure communication channel",
-      shortcut: "Luffy recommends: HIRE!",
+      text: "Ready when you are",
       icon: "idle"
     }
-  };
+  }
 
-  return restingPool[section] || restingPool.hero;
-};
+  return sectionPool[section] || { text: "I'm here if you need me", icon: "idle" }
+}
 
 /* ── Chat replies dictionary ── */
 const KB = {
@@ -410,9 +457,20 @@ const playSound = (type) => {
 }
 
 /* ── High-Fidelity Vector Icons ── */
-const DocIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+const MapIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/>
+    <line x1="9" y1="3" x2="9" y2="18"/>
+    <line x1="15" y1="6" x2="15" y2="21"/>
+  </svg>
+)
+
+const SummaryIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="21" y1="10" x2="3" y2="10"/>
+    <line x1="21" y1="6" x2="3" y2="6"/>
+    <line x1="21" y1="14" x2="3" y2="14"/>
+    <line x1="21" y1="18" x2="3" y2="18"/>
   </svg>
 )
 
@@ -459,26 +517,23 @@ const VolumeIcon = () => (
   </svg>
 )
 
-
 function TypingText({ text, speed = 20 }) {
   const [currentText, setCurrentText] = useState(text)
   const [displayedText, setDisplayedText] = useState(text)
   const [index, setIndex] = useState(text.length)
-  const [rollClass, setRollClass] = useState('roll-idle') // roll-idle, roll-out, roll-in
+  const [rollClass, setRollClass] = useState('roll-idle')
 
   useEffect(() => {
     if (text === currentText) return
 
-    // Trigger roll-out animation
     setRollClass('roll-out')
     
     const outTimeout = setTimeout(() => {
-      // Swapping text targets while hidden
       setCurrentText(text)
       setDisplayedText('')
       setIndex(0)
       setRollClass('roll-in')
-    }, 220) // Match rollOut animation duration
+    }, 220)
 
     return () => clearTimeout(outTimeout)
   }, [text, currentText])
@@ -499,7 +554,6 @@ function TypingText({ text, speed = 20 }) {
 
   const isComplete = index >= currentText.length
 
-  // Styles based on transition state
   let animation = 'none'
   if (rollClass === 'roll-out') {
     animation = 'rollOut 0.22s cubic-bezier(0.77, 0, 0.175, 1) forwards'
@@ -522,7 +576,7 @@ function TypingText({ text, speed = 20 }) {
         {displayedText}
         {!isComplete && rollClass !== 'roll-out' && (
           <span style={{ 
-            color: 'var(--accent)', 
+            color: '#FF4DA6', 
             marginLeft: 2, 
             animation: 'blinkCursor 0.8s step-end infinite',
             fontWeight: 800
@@ -543,9 +597,27 @@ export default function DynamicNotch({ activeProject }) {
   const [inactivityState, setInactivityState] = useState(false)
   const [readingTime, setReadingTime] = useState(0)
   const [translateY, setTranslateY] = useState(0)
+  const [showQuickNav, setShowQuickNav] = useState(false)
+  
+  // Dynamic Global Theme Tracker (Modularity preserved!)
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return document.documentElement.getAttribute('data-theme') || 'dark'
+    }
+    return 'dark'
+  })
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark'
+      setTheme(current)
+    })
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+    return () => observer.disconnect()
+  }, [])
   
   // Chat States
-  const [messages, setMessages] = useState([{ from: 'bot', text: "hey I am luffy, I can help you being more contextual about soupriti's portfolio." }])
+  const [messages, setMessages] = useState([{ from: 'bot', text: "Hmm... Hey! I'm Luffy. I can help you co-pilot and explore Soupriti's work contextually. Ask me anything!" }])
   const [chatInput, setChatInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const [jokeState, setJokeState] = useState(null)
@@ -554,7 +626,6 @@ export default function DynamicNotch({ activeProject }) {
   const [voiceStatus, setVoiceStatus] = useState('idle') // listening, thinking, replying, idle
   const [voiceSpeechText, setVoiceSpeechText] = useState('')
   const recRef = useRef(null)
-
   const chatEndRef = useRef(null)
 
   // 1. SECTION INTERSECTION OBSERVER
@@ -655,6 +726,10 @@ export default function DynamicNotch({ activeProject }) {
           return 'voice'
         })
       }
+      if (e.code === 'Escape') {
+        setNotchState('compact')
+        stopVoiceRecognition()
+      }
     }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
@@ -750,12 +825,32 @@ export default function DynamicNotch({ activeProject }) {
     }
   }
 
-  // Dimension mapping
-  const currentDim = DIMS[notchState] || DIMS.compact
-  
+  // Dynamic Dims calculation with Liquid Quick Nav reveal
+  const getDims = () => {
+    if (notchState === 'compact') return DIMS.compact
+    if (notchState === 'chat') return DIMS.chat
+    if (notchState === 'voice') return DIMS.voice
+    return showQuickNav 
+      ? { width: 500, height: 235, radius: 24 } 
+      : { width: 500, height: 180, radius: 24 }
+  }
+
+  const currentDim = getDims()
+
+  // Colors & Aesthetic Tokens
+  const isDark = theme === 'dark'
+  const bgColor = isDark ? 'rgba(10, 10, 12, 0.88)' : 'rgba(244, 244, 245, 0.88)'
+  const textColor = isDark ? '#ffffff' : '#0a0b0d'
+  const subtextColor = isDark ? '#a1a1a6' : '#515156'
+  const accentColor = '#FF4DA6' // Glowing Pink
+  const borderTint = isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.3)'
+  const glowShadow = isDark 
+    ? '0 8px 32px rgba(255, 77, 166, 0.08), inset 0 1px 0 rgba(255,255,255,0.05)'
+    : '0 8px 32px rgba(255, 77, 166, 0.06), inset 0 1px 0 rgba(255,255,255,0.2)'
+
   // Inertia squash momentum calculation
   const transformScale = notchState === 'compact' 
-    ? `translateX(-50%) scaleX(${1 + scrollVelocity * 0.05}) scaleY(${1 - scrollVelocity * 0.03})`
+    ? `translateX(-50%) scaleX(${1 + scrollVelocity * 0.04}) scaleY(${1 - scrollVelocity * 0.02})`
     : `translateX(-50%) scale(1)`
 
   return (
@@ -773,16 +868,17 @@ export default function DynamicNotch({ activeProject }) {
           borderBottomRightRadius: currentDim.radius,
           borderTopLeftRadius: 0,
           borderTopRightRadius: 0,
-          background: 'rgba(10, 10, 12, 0.88)',
+          background: bgColor,
           borderTop: 'none',
-          borderLeft: '1.2px solid rgba(0, 82, 255, 0.15)', // Premium Subtle Faint Tint Border
-          borderRight: '1.2px solid rgba(0, 82, 255, 0.15)',
-          borderBottom: '1.2px solid rgba(0, 82, 255, 0.15)',
+          borderLeft: `1.2px solid ${borderTint}`,
+          borderRight: `1.2px solid ${borderTint}`,
+          borderBottom: `1.2px solid ${borderTint}`,
           backdropFilter: 'blur(20px) saturate(180%)',
-          boxShadow: '0 8px 32px rgba(0, 82, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.05)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+          boxShadow: glowShadow,
           zIndex: 999999,
           overflow: 'hidden',
-          transition: 'all 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.25), transform 0.1s ease-out', // Spring ease and fast lag recovery
+          transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.1s ease-out', // Super smooth spring-physics easing
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -797,10 +893,39 @@ export default function DynamicNotch({ activeProject }) {
         onMouseLeave={() => {
           if (notchState === 'expanded') {
             setNotchState('compact')
+            setShowQuickNav(false)
           }
         }}
       >
         
+        {/* Absolute Left bezel Wing Flare */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: -24,
+          width: 24,
+          height: 24,
+          background: 'transparent',
+          pointerEvents: 'none',
+          borderTopRightRadius: 24,
+          boxShadow: `12px -12px 0 0 ${bgColor}`,
+          transition: 'box-shadow 0.4s ease'
+        }} />
+
+        {/* Absolute Right bezel Wing Flare */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          right: -24,
+          width: 24,
+          height: 24,
+          background: 'transparent',
+          pointerEvents: 'none',
+          borderTopLeftRadius: 24,
+          boxShadow: `-12px -12px 0 0 ${bgColor}`,
+          transition: 'box-shadow 0.4s ease'
+        }} />
+
         {/* STATE 1: COMPACT NOTCH */}
         {notchState === 'compact' && (() => {
           const hud = getSmartHUDState(activeSection, scrollVelocity, activeProject, inactivityState, readingTime);
@@ -811,204 +936,201 @@ export default function DynamicNotch({ activeProject }) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 14,
-              padding: '0 18px',
+              gap: 12,
+              padding: '0 20px',
               animation: 'fadeIn 0.25s ease-out'
             }}>
-              {/* Animated Futuristic Icon (Replaces cat/photo avatar) */}
-              <StatusHUDIcon state={hud.icon} />
-
-              {/* Dynamic Contextual Action / Shortcut Pill Badge (Highly readable and premium high-contrast design) */}
-              <div style={{
-                background: 'rgba(0, 82, 255, 0.22)', // Richer, high-contrast translucent blue background
-                border: '1.2px solid rgba(0, 82, 255, 0.45)', // Luminous border tint
-                borderRadius: 20,
-                padding: '4px 12px',
-                fontSize: 10,
-                fontFamily: 'var(--font-mono)',
-                fontWeight: 700,
-                color: '#ffffff', // High readability pure white text
-                textShadow: '0 0 6px rgba(0, 82, 255, 0.5)', // Neon glow outline for superb contrast on any background
-                letterSpacing: '0.04em',
+              {/* Glowing Breathing Circle */}
+              <StatusHUDIcon state={hud.icon} theme={theme} />
+              
+              {/* Dynamic Contextual Text */}
+              <span style={{
+                fontSize: 12,
+                fontFamily: 'var(--font-body)',
+                fontWeight: 600,
+                color: textColor,
+                letterSpacing: '-0.01em',
                 whiteSpace: 'nowrap',
-                display: 'flex',
-                alignItems: 'center',
-                boxShadow: '0 0 12px rgba(0, 82, 255, 0.15)',
-                userSelect: 'none',
-                transition: 'all 0.3s ease-out'
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                maxWidth: '220px',
+                display: 'block'
               }}>
-                {hud.shortcut}
-              </div>
+                <TypingText text={hud.text} />
+              </span>
             </div>
           );
         })()}
 
-        {/* STATE 2: EXPANDED HOVER MENU (Fuzzy search completely removed, beautiful blue resume CTA at end) */}
+        {/* STATE 2: EXPANDED HUD DOCK */}
         {notchState === 'expanded' && (
           <div style={{
             width: '100%',
             height: '100%',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '0 24px',
-            position: 'relative',
-            animation: 'fadeIn 0.3s ease-out'
+            flexDirection: 'column',
+            padding: '16px 20px',
+            animation: 'fadeIn 0.3s ease-out',
+            boxSizing: 'border-box'
           }}>
-            {/* Left: Interactive HUD Status Mark */}
-            <div 
-              onClick={() => scrollTo('hero')} 
-              style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}
-            >
-              <StatusHUDIcon state="idle" />
+            {/* Header: Ask Anything prompt & Breathing Circle */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: 14
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <StatusHUDIcon state="idle" theme={theme} />
+                <span style={{
+                  fontSize: 13,
+                  fontFamily: 'var(--font-body)',
+                  fontWeight: 700,
+                  color: textColor,
+                  letterSpacing: '-0.01em'
+                }}>
+                  How can I assist you today?
+                </span>
+              </div>
               <span style={{
-                fontSize: 11,
+                fontSize: 10,
                 fontFamily: 'var(--font-mono)',
-                fontWeight: 800,
-                color: '#ffffff',
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase'
+                fontWeight: 700,
+                color: 'rgba(255, 77, 166, 0.7)',
+                letterSpacing: '0.04em',
+                background: isDark ? 'rgba(255, 77, 166, 0.1)' : 'rgba(255, 77, 166, 0.15)',
+                padding: '2px 8px',
+                borderRadius: 10
               }}>
-                Soupriti.
+                CTRL + L
               </span>
             </div>
 
-            {/* Middle: Identical links to previous top nav */}
-            <div style={{ display: 'flex', gap: 22 }}>
-              {['Expertise', 'Projects', 'About', 'Journey', 'Contact'].map(label => {
-                const target = label === 'Expertise' ? 'expertise' : (label === 'Projects' ? 'projects' : (label === 'About' ? 'about' : (label === 'Journey' ? 'journey' : 'contact')))
-                return (
-                  <button 
-                    key={label}
-                    onClick={() => scrollTo(target)}
-                    style={{
-                      background: 'none', border: 'none', color: '#a1a1a6',
-                      fontSize: 12, fontWeight: 700, fontFamily: 'var(--font-body)',
-                      cursor: 'pointer', transition: 'color 0.2s', textTransform: 'uppercase',
-                      letterSpacing: '0.02em'
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.color = 'var(--accent)'}
-                    onMouseLeave={e => e.currentTarget.style.color = '#a1a1a6'}
-                  >
-                    {label}
-                  </button>
-                )
-              })}
+            {/* Quick Actions Grid */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4, 1fr)',
+              gap: 8,
+              marginBottom: showQuickNav ? 14 : 0,
+              transition: 'all 0.3s ease'
+            }}>
+              {[
+                { label: 'Ask Anything', desc: 'Chat co-pilot', icon: <ChatIcon />, action: () => setNotchState('chat') },
+                { 
+                  label: 'Summarize', 
+                  desc: 'Explain section', 
+                  icon: <SummaryIcon />, 
+                  action: () => {
+                    setNotchState('chat')
+                    handleSendChat(`Summarize the ${activeSection} section`)
+                  } 
+                },
+                { 
+                  label: 'Voice Mode', 
+                  desc: 'Hold to speak', 
+                  icon: <MicIcon />, 
+                  action: () => {
+                    playSound('bell')
+                    setNotchState('voice')
+                    setTimeout(() => startVoiceRecognition(), 200)
+                  } 
+                },
+                { 
+                  label: 'Quick Nav', 
+                  desc: 'Jump sections', 
+                  icon: <MapIcon />, 
+                  action: () => {
+                    playSound('pop')
+                    setShowQuickNav(!showQuickNav)
+                  } 
+                }
+              ].map(btn => (
+                <button
+                  key={btn.label}
+                  onClick={btn.action}
+                  style={{
+                    background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                    border: showQuickNav && btn.label === 'Quick Nav' ? `1px solid ${accentColor}` : `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)'}`,
+                    borderRadius: 12,
+                    padding: '8px 6px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 4,
+                    color: showQuickNav && btn.label === 'Quick Nav' ? accentColor : textColor,
+                    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = isDark ? 'rgba(255, 77, 166, 0.08)' : 'rgba(255, 77, 166, 0.05)';
+                    e.currentTarget.style.borderColor = accentColor;
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 77, 166, 0.12)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)';
+                    e.currentTarget.style.borderColor = showQuickNav && btn.label === 'Quick Nav' ? accentColor : (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)');
+                    e.currentTarget.style.transform = 'none';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <div style={{ color: showQuickNav && btn.label === 'Quick Nav' ? accentColor : 'inherit' }}>
+                    {btn.icon}
+                  </div>
+                  <span style={{ fontSize: 10, fontWeight: 700, whiteSpace: 'nowrap' }}>{btn.label}</span>
+                </button>
+              ))}
             </div>
 
-            {/* Right: Tools + Solid Blue Resume CTA Button at the end */}
-            <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-              
-              {/* Voice mode trigger (Now rendered as premium circular button icon) */}
-              <button 
-                onClick={() => {
-                  playSound('bell')
-                  setNotchState('voice')
-                  setTimeout(() => startVoiceRecognition(), 200)
-                }}
-                title="Voice Mode (CTRL+L)"
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: '50%',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1.2px solid rgba(255,255,255,0.1)',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'rgba(255,255,255,0.7)',
-                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = 'rgba(0, 82, 255, 0.15)';
-                  e.currentTarget.style.color = '#ffffff';
-                  e.currentTarget.style.borderColor = 'var(--accent)';
-                  e.currentTarget.style.transform = 'scale(1.05)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
-                  e.currentTarget.style.color = 'rgba(255,255,255,0.7)';
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
-                  e.currentTarget.style.transform = 'none';
-                }}
-              >
-                <MicIcon />
-              </button>
-
-              {/* Embedded Chat mode trigger (Now rendered as premium circular button icon) */}
-              <button 
-                onClick={() => {
-                  playSound('bell')
-                  setNotchState('chat')
-                }}
-                title="Ask Luffy AI"
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: '50%',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1.2px solid rgba(255,255,255,0.1)',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'rgba(255,255,255,0.7)',
-                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = 'rgba(0, 82, 255, 0.15)';
-                  e.currentTarget.style.color = '#ffffff';
-                  e.currentTarget.style.borderColor = 'var(--accent)';
-                  e.currentTarget.style.transform = 'scale(1.05)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
-                  e.currentTarget.style.color = 'rgba(255,255,255,0.7)';
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
-                  e.currentTarget.style.transform = 'none';
-                }}
-              >
-                <ChatIcon />
-              </button>
-
-              {/* Solid Electric Blue Resume download CTA Button at the very end */}
-              <a 
-                href="/resume.pdf" 
-                download
-                title="Download Resume"
-                style={{
-                  background: 'var(--accent)',
-                  color: '#ffffff',
-                  fontSize: 11,
-                  fontWeight: 700,
-                  fontFamily: 'var(--font-mono)',
-                  padding: '6px 14px',
-                  borderRadius: 20,
-                  textDecoration: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  boxShadow: '0 4px 12px rgba(0, 82, 255, 0.3)',
-                  transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                  border: '1.2px solid rgba(255,255,255,0.1)',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.transform = 'scale(1.05)';
-                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 82, 255, 0.5)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 82, 255, 0.3)';
-                }}
-              >
-                <DocIcon />
-                <span>RESUME</span>
-              </a>
-
-            </div>
-
+            {/* Quick Navigation Links Overlay Panel */}
+            {showQuickNav && (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '10px 12px',
+                background: isDark ? 'rgba(255, 77, 166, 0.05)' : 'rgba(255, 77, 166, 0.03)',
+                borderRadius: 12,
+                border: `1px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`,
+                animation: 'fadeIn 0.2s ease-out'
+              }}>
+                {['Expertise', 'Projects', 'About', 'Journey', 'Contact'].map(label => {
+                  const target = label.toLowerCase();
+                  const isActive = activeSection === target;
+                  return (
+                    <button
+                      key={label}
+                      onClick={() => scrollTo(target)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: isActive ? accentColor : subtextColor,
+                        fontSize: 11,
+                        fontWeight: isActive ? 800 : 600,
+                        fontFamily: 'var(--font-mono)',
+                        letterSpacing: '0.02em',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        textTransform: 'uppercase',
+                        padding: '4px 6px',
+                        borderRadius: 6
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.color = accentColor;
+                        e.currentTarget.style.transform = 'translateY(-1px) scale(1.05)';
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.color = isActive ? accentColor : subtextColor;
+                        e.currentTarget.style.transform = 'none';
+                      }}
+                    >
+                      {label}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
           </div>
         )}
 
@@ -1019,17 +1141,18 @@ export default function DynamicNotch({ activeProject }) {
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            animation: 'fadeIn 0.3s ease-out'
+            animation: 'fadeIn 0.3s ease-out',
+            boxSizing: 'border-box'
           }}>
             {/* Header */}
             <div style={{
               width: '100%', padding: '14px 20px',
-              borderBottom: '1.2px solid rgba(0, 82, 255, 0.15)',
+              borderBottom: `1.2px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`,
               display: 'flex', justifyContent: 'space-between', alignItems: 'center'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)', boxShadow: '0 0 6px var(--accent)' }} />
-                <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'white', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Luffy Assistant</span>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: accentColor, boxShadow: `0 0 6px ${accentColor}` }} />
+                <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', fontWeight: 700, color: textColor, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Luffy Assistant</span>
               </div>
               <button 
                 onClick={() => {
@@ -1037,11 +1160,11 @@ export default function DynamicNotch({ activeProject }) {
                   setNotchState('compact')
                 }}
                 style={{
-                  background: 'none', border: 'none', color: '#8e8e93',
+                  background: 'none', border: 'none', color: subtextColor,
                   cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: 11.5
                 }}
-                onMouseEnter={e => e.currentTarget.style.color = 'white'}
-                onMouseLeave={e => e.currentTarget.style.color = '#8e8e93'}
+                onMouseEnter={e => e.currentTarget.style.color = textColor}
+                onMouseLeave={e => e.currentTarget.style.color = subtextColor}
               >
                 <CloseIcon />
                 <span>CLOSE</span>
@@ -1059,10 +1182,10 @@ export default function DynamicNotch({ activeProject }) {
                   style={{
                     alignSelf: m.from === 'user' ? 'flex-end' : 'flex-start',
                     maxWidth: '82%', padding: '10px 14px',
-                    background: m.from === 'user' ? 'var(--accent)' : 'rgba(255,255,255,0.04)',
-                    color: 'white', fontSize: 12, lineHeight: 1.5,
-                    borderRadius: 12, border: m.from === 'bot' ? '1.2px solid rgba(0, 82, 255, 0.15)' : 'none',
-                    boxShadow: m.from === 'user' ? '0 4px 12px rgba(0, 82, 255, 0.2)' : 'none'
+                    background: m.from === 'user' ? accentColor : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'),
+                    color: m.from === 'user' ? '#ffffff' : textColor, fontSize: 12, lineHeight: 1.5,
+                    borderRadius: 12, border: m.from === 'bot' ? `1.2px solid ${isDark ? 'rgba(255, 77, 166, 0.12)' : 'rgba(255, 77, 166, 0.22)'}` : 'none',
+                    boxShadow: m.from === 'user' ? `0 4px 12px rgba(255, 77, 166, 0.25)` : 'none'
                   }}
                 >
                   {m.text}
@@ -1072,10 +1195,10 @@ export default function DynamicNotch({ activeProject }) {
               {isTyping && (
                 <div style={{
                   alignSelf: 'flex-start', display: 'flex', gap: 4,
-                  padding: '10px 14px', background: 'rgba(255,255,255,0.04)',
+                  padding: '10px 14px', background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
                   borderRadius: 12, width: 'fit-content'
                 }}>
-                  {[0,1,2].map(i => <span key={i} style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--accent)', animation: `bounce 1.2s infinite ${i * 0.2}s` }} />)}
+                  {[0,1,2].map(i => <span key={i} style={{ width: 5, height: 5, borderRadius: '50%', background: accentColor, animation: `bounce 1.2s infinite ${i * 0.2}s` }} />)}
                 </div>
               )}
               <div ref={chatEndRef} />
@@ -1092,17 +1215,19 @@ export default function DynamicNotch({ activeProject }) {
                       handleSendChat(q)
                     }}
                     style={{
-                      padding: '5px 12px', borderRadius: 20, background: 'rgba(255,255,255,0.03)',
-                      border: '1.2px solid rgba(0, 82, 255, 0.15)', color: '#d1d1d6',
+                      padding: '5px 12px', borderRadius: 20, background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.01)',
+                      border: `1.2px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`, color: subtextColor,
                       fontSize: 10.5, cursor: 'pointer', transition: 'all 0.2s', fontWeight: 600
                     }}
                     onMouseEnter={e => {
-                      e.currentTarget.style.background = 'rgba(0, 82, 255, 0.1)';
-                      e.currentTarget.style.borderColor = 'var(--accent)';
+                      e.currentTarget.style.background = isDark ? 'rgba(255, 77, 166, 0.1)' : 'rgba(255, 77, 166, 0.05)';
+                      e.currentTarget.style.borderColor = accentColor;
+                      e.currentTarget.style.color = textColor;
                     }}
                     onMouseLeave={e => {
-                      e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
-                      e.currentTarget.style.borderColor = 'rgba(0, 82, 255, 0.15)';
+                      e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.01)';
+                      e.currentTarget.style.borderColor = isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)';
+                      e.currentTarget.style.color = subtextColor;
                     }}
                   >
                     {chip}
@@ -1113,7 +1238,7 @@ export default function DynamicNotch({ activeProject }) {
 
             {/* Input Form Box */}
             <div style={{
-              padding: '10px 16px', borderTop: '1px solid rgba(0, 82, 255, 0.15)',
+              padding: '10px 16px', borderTop: `1px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`,
               display: 'flex', gap: 8, alignItems: 'center'
             }}>
               <input
@@ -1124,8 +1249,9 @@ export default function DynamicNotch({ activeProject }) {
                 placeholder="Ask Luffy AI anything..."
                 style={{
                   flex: 1, padding: '8px 14px', borderRadius: 20,
-                  background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
-                  color: 'white', fontSize: 12, outline: 'none'
+                  background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)', 
+                  border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'}`,
+                  color: textColor, fontSize: 12, outline: 'none'
                 }}
               />
               <button
@@ -1133,10 +1259,11 @@ export default function DynamicNotch({ activeProject }) {
                 disabled={!chatInput.trim()}
                 style={{
                   width: 32, height: 32, borderRadius: '50%',
-                  background: chatInput.trim() ? 'var(--accent)' : 'rgba(255,255,255,0.04)',
+                  background: chatInput.trim() ? accentColor : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'),
                   color: 'white', border: 'none', cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: chatInput.trim() ? '0 4px 10px rgba(0, 82, 255, 0.3)' : 'none'
+                  boxShadow: chatInput.trim() ? `0 4px 10px rgba(255, 77, 166, 0.3)` : 'none',
+                  transition: 'all 0.2s'
                 }}
               >
                 <SendIcon />
@@ -1157,15 +1284,16 @@ export default function DynamicNotch({ activeProject }) {
             justifyContent: 'center',
             padding: 24,
             position: 'relative',
-            animation: 'fadeIn 0.3s ease-out'
+            animation: 'fadeIn 0.3s ease-out',
+            boxSizing: 'border-box'
           }}>
             
             <div style={{
               fontSize: 10, fontFamily: 'var(--font-mono)', fontWeight: 700,
-              color: 'rgba(0, 82, 255, 0.6)', textTransform: 'uppercase',
-              letterSpacing: '0.1em', marginBottom: 12
+              color: 'rgba(255, 77, 166, 0.8)', textTransform: 'uppercase',
+              letterSpacing: '0.15em', marginBottom: 12
             }}>
-              Local AI Engine
+              Voice co-pilot active
             </div>
 
             <div 
@@ -1178,13 +1306,13 @@ export default function DynamicNotch({ activeProject }) {
               }}
               style={{
                 width: 72, height: 72, borderRadius: '50%',
-                background: voiceStatus === 'listening' ? 'rgba(0, 82, 255, 0.15)' : 'rgba(255,255,255,0.02)',
-                border: '2.5px solid var(--accent)',
+                background: voiceStatus === 'listening' ? 'rgba(255, 77, 166, 0.15)' : (isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)'),
+                border: `2.5px solid ${accentColor}`,
                 display: 'flex', alignItems: 'center',
                 justifyContent: 'center', cursor: 'pointer', position: 'relative',
-                boxShadow: '0 0 24px rgba(0, 82, 255, 0.3)',
+                boxShadow: `0 0 24px rgba(255, 77, 166, 0.25)`,
                 transition: 'all 0.3s ease',
-                color: 'white'
+                color: textColor
               }}
             >
               <span style={{ display: 'flex', alignItems: 'center', justify: 'center' }}>
@@ -1204,11 +1332,11 @@ export default function DynamicNotch({ activeProject }) {
                     style={{
                       width: 3,
                       height: voiceStatus === 'listening' ? 14 : (voiceStatus === 'replying' ? 24 : 6),
-                      background: 'var(--accent)',
+                      background: accentColor,
                       borderRadius: 1.5,
                       animation: voiceStatus !== 'thinking' ? `voiceWave 0.5s ease-in-out infinite alternate` : 'none',
                       animationDelay: `${i * 0.08}s`,
-                      boxShadow: '0 0 4px var(--accent)'
+                      boxShadow: `0 0 4px ${accentColor}`
                     }}
                   />
                 ))}
@@ -1216,7 +1344,7 @@ export default function DynamicNotch({ activeProject }) {
             )}
 
             <div style={{
-              fontSize: 12, color: '#ffffff', fontWeight: 700,
+              fontSize: 12, color: textColor, fontWeight: 700,
               fontFamily: 'var(--font-mono)', marginTop: 14, textAlign: 'center',
               textTransform: 'uppercase', letterSpacing: '0.02em'
             }}>
@@ -1230,12 +1358,12 @@ export default function DynamicNotch({ activeProject }) {
               }}
               style={{
                 position: 'absolute', bottom: 16, right: 18,
-                background: 'none', border: 'none', color: '#8e8e93',
+                background: 'none', border: 'none', color: subtextColor,
                 cursor: 'pointer', fontSize: 10, fontFamily: 'var(--font-mono)',
                 display: 'flex', alignItems: 'center', gap: 4
               }}
-              onMouseEnter={e => e.currentTarget.style.color = 'white'}
-              onMouseLeave={e => e.currentTarget.style.color = '#8e8e93'}
+              onMouseEnter={e => e.currentTarget.style.color = textColor}
+              onMouseLeave={e => e.currentTarget.style.color = subtextColor}
             >
               <CloseIcon />
               <span>EXIT</span>
@@ -1253,8 +1381,8 @@ export default function DynamicNotch({ activeProject }) {
           to { opacity: 1; transform: scale(1); }
         }
         @keyframes ambientWave {
-          from { height: 3px; }
-          to { height: 12px; }
+          from { height: 4px; }
+          to { height: 14px; }
         }
         @keyframes voiceWave {
           0% { transform: scaleY(0.3); }
@@ -1269,7 +1397,7 @@ export default function DynamicNotch({ activeProject }) {
           position: absolute;
           inset: -4px;
           border-radius: 50%;
-          border: 1.5px solid var(--accent);
+          border: 1.5px solid #FF4DA6;
           animation: radarWave 1.4s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
         }
         @keyframes radarWave {
@@ -1287,6 +1415,28 @@ export default function DynamicNotch({ activeProject }) {
         @keyframes rollIn {
           0% { transform: translateY(100%); opacity: 0; filter: blur(1.5px); }
           100% { transform: translateY(0); opacity: 1; filter: blur(0px); }
+        }
+        @keyframes spinOrbit {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes pulseCore {
+          0% { transform: scale(0.85); opacity: 0.7; }
+          100% { transform: scale(1.15); opacity: 1; }
+        }
+        @keyframes pulseSleep {
+          0% { transform: scale(0.9); opacity: 0.4; }
+          50% { transform: scale(1.1); opacity: 0.7; }
+          100% { transform: scale(0.9); opacity: 0.4; }
+        }
+        @keyframes scanLaser {
+          0% { transform: translateY(-8px); opacity: 0.2; }
+          50% { opacity: 0.9; }
+          100% { transform: translateY(8px); opacity: 0.2; }
+        }
+        @keyframes orbitParticle {
+          0% { transform: rotate(0deg) translateX(8px) rotate(0deg); }
+          100% { transform: rotate(360deg) translateX(8px) rotate(-360deg); }
         }
       `}</style>
     </>
