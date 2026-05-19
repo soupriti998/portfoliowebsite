@@ -313,10 +313,10 @@ function ThinkingCircle({ isPanelOpen, isHovered, onClick, onMouseEnter, onMouse
       onMouseLeave={onMouseLeave}
       aria-label="Chat with Soup"
       style={{
-        width: 64,
-        height: 64,
-        background: 'var(--bg-card)',
-        border: '2.5px solid #000000',
+        width: 56,
+        height: 56,
+        background: 'rgba(14, 14, 17, 0.95)',
+        border: '1px solid rgba(255, 42, 133, 0.25)',
         borderRadius: '50%',
         cursor: 'pointer',
         display: 'flex',
@@ -328,8 +328,8 @@ function ThinkingCircle({ isPanelOpen, isHovered, onClick, onMouseEnter, onMouse
         zIndex: 201,
         pointerEvents: 'auto',
         boxShadow: isHovered 
-          ? '0 0 24px rgba(0, 82, 255, 0.2), 0 8px 16px rgba(0, 0, 0, 0.08)' 
-          : '0 4px 12px rgba(0, 0, 0, 0.06)',
+          ? '0 0 24px rgba(255, 42, 133, 0.25), 0 8px 16px rgba(0, 0, 0, 0.3)' 
+          : '0 4px 16px rgba(0, 0, 0, 0.2)',
         transform: isHovered ? 'scale(1.08)' : 'scale(1)',
         transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
@@ -339,33 +339,33 @@ function ThinkingCircle({ isPanelOpen, isHovered, onClick, onMouseEnter, onMouse
         position: 'absolute',
         inset: 4,
         borderRadius: '50%',
-        border: '1.8px dashed var(--accent)',
-        animation: `spinRing ${isHovered ? '4s' : '16s'} linear infinite`,
+        border: '1.5px dashed #ff2a85',
+        animation: `spinRing ${isHovered ? '4s' : '12s'} linear infinite`,
       }} />
 
       {/* Inner Solid Rotating Ring */}
       <div style={{
         position: 'absolute',
-        inset: 10,
+        inset: 9,
         borderRadius: '50%',
-        border: '1.2px solid var(--text-primary)',
-        animation: `spinRingInverse ${isHovered ? '3s' : '10s'} linear infinite`,
+        border: '1px solid rgba(255, 255, 255, 0.12)',
+        animation: `spinRingInverse ${isHovered ? '3s' : '8s'} linear infinite`,
         opacity: 0.7,
       }} />
 
-      {/* Center Pulsating Core Core */}
+      {/* Center Pulsating Core */}
       <div style={{
-        width: 14,
-        height: 14,
+        width: 10,
+        height: 10,
         borderRadius: '50%',
-        background: 'var(--accent)',
+        background: '#ff2a85',
         animation: 'pulseCore 2.2s ease-in-out infinite',
       }} />
     </button>
   )
 }
 
-/* ── Modern Sharp Pill Thought Bubble ── */
+/* ── Modern Glass Pill Thought Bubble ── */
 function SharpPillThoughtBubble({ text, onClick, onMouseEnter, onMouseLeave, isHovered }) {
   return (
     <div
@@ -374,41 +374,40 @@ function SharpPillThoughtBubble({ text, onClick, onMouseEnter, onMouseLeave, isH
       onMouseLeave={onMouseLeave}
       style={{
         position: 'absolute',
-        bottom: 84, // Sit beautifully above the grounded cat
+        bottom: 76,
         right: 0,
-        background: 'var(--bg-card)',
-        color: 'var(--text-primary)',
-        border: '2.5px solid #000000', // Premium sharp Swiss/comic border
-        borderRadius: 'var(--radius-pill)', // Pill shape
-        padding: '10px 20px',
-        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.08)',
+        background: 'rgba(14, 14, 17, 0.95)',
+        color: '#ffffff',
+        border: '1px solid rgba(255, 42, 133, 0.25)',
+        borderRadius: '20px',
+        padding: '8px 16px',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.25), 0 0 16px rgba(255, 42, 133, 0.05)',
         cursor: 'pointer',
         zIndex: 205,
-        fontFamily: 'var(--font-mono)', // Sharp mono typography
-        fontSize: '12px',
-        fontWeight: 700,
+        fontFamily: 'var(--font-body)',
+        fontSize: '12.5px',
+        fontWeight: 500,
         letterSpacing: '-0.01em',
         whiteSpace: 'nowrap',
         display: 'flex',
         alignItems: 'center',
         gap: 8,
-        transform: `scale(${isHovered ? 1.05 : 1}) translateY(${isHovered ? -3 : 0}px)`,
-        transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1.25)',
+        transform: `scale(${isHovered ? 1.04 : 1}) translateY(${isHovered ? -2 : 0}px)`,
+        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
         pointerEvents: 'auto',
       }}
     >
-      <span style={{ color: 'var(--accent)', animation: 'pulseDot 1.2s infinite' }}>●</span>
+      <span style={{ color: '#ff2a85', animation: 'pulseDot 1.2s infinite' }}>●</span>
       <span>{text}</span>
-      {/* Crisp little sharp arrow pointing down to cat */}
       <div style={{
         position: 'absolute',
-        bottom: -8,
-        right: 36,
-        width: 12,
-        height: 12,
-        background: 'var(--bg-card)',
-        borderBottom: '2.5px solid #000000',
-        borderRight: '2.5px solid #000000',
+        bottom: -6,
+        right: 24,
+        width: 10,
+        height: 10,
+        background: 'rgba(14, 14, 17, 0.95)',
+        borderBottom: '1px solid rgba(255, 42, 133, 0.25)',
+        borderRight: '1px solid rgba(255, 42, 133, 0.25)',
         transform: 'rotate(45deg)',
       }} />
     </div>
@@ -416,7 +415,7 @@ function SharpPillThoughtBubble({ text, onClick, onMouseEnter, onMouseLeave, isH
 }
 
 /* ── Main Chatbot Drawer & Gravity Companion Component ── */
-const OPENING = "hey I am Soup, I can help you being more contextual about soupriti's portfolio."
+const OPENING = "hello! i'm soup, your companion here. ask me anything about soupriti's design work."
 
 export default function Chatbot({ activeProject }) {
   const [open, setOpen] = useState(false)
@@ -633,6 +632,17 @@ export default function Chatbot({ activeProject }) {
 
   const chips = ['Her work', 'Skills', 'Tell a joke', 'Contact']
   const chipQ = ["What projects has she done?", "What are her skills?", "Tell me a joke", "How can I contact her?"]
+  
+  const chipIcons = [
+    // Briefcase (Projects)
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>,
+    // Sparkles (Skills)
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707-.707M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"></path></svg>,
+    // Smile (Joke)
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>,
+    // Mail (Contact)
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+  ]
 
   return (
     <>
@@ -648,7 +658,7 @@ export default function Chatbot({ activeProject }) {
           pointerEvents: 'none',
         }}
       >
-        {/* ── Sharp Pill Thought Bubble ── */}
+        {/* ── Glass Pill Thought Bubble ── */}
         {currentThought && !open && (
           <SharpPillThoughtBubble
             text={currentThought.text}
@@ -678,15 +688,25 @@ export default function Chatbot({ activeProject }) {
           <div ref={panelRef} id="chatbot-panel"
             style={{
               position: 'absolute', bottom: 0, right: 0,
-              width: 360, height: 490,
-              background: 'var(--bg-card)', borderRadius: 'var(--radius-xl)',
-              border: '1px solid var(--border)', boxShadow: 'var(--shadow-xl)',
+              width: 360, height: 520,
+              background: '#0e0e11', borderRadius: '20px',
+              border: '1px solid rgba(255, 42, 133, 0.2)', 
+              boxShadow: '0 24px 64px rgba(0, 0, 0, 0.7), 0 0 40px rgba(255, 42, 133, 0.05)',
               display: 'flex', flexDirection: 'column', overflow: 'visible',
               zIndex: 200, animation: 'panelIn 0.35s var(--ease-out-expo)',
             }}
           >
             {/* Header */}
-            <div style={{ padding: 'var(--space-4) var(--space-5)', background: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 'var(--space-3)', borderTopLeftRadius: 'var(--radius-xl)', borderTopRightRadius: 'var(--radius-xl)' }}>
+            <div style={{ 
+              padding: '16px 20px', 
+              background: '#16161a', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 12, 
+              borderTopLeftRadius: '20px', 
+              borderTopRightRadius: '20px',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.05)'
+            }}>
               
               {/* Smaller Rotating Circle Emblem in Header */}
               <div style={{ width: 32, height: 32, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -694,28 +714,30 @@ export default function Chatbot({ activeProject }) {
                   position: 'absolute',
                   inset: 2,
                   borderRadius: '50%',
-                  border: '1.2px dashed #ffffff',
+                  border: '1.2px dashed rgba(255, 42, 133, 0.5)',
                   animation: 'spinRing 12s linear infinite',
                 }} />
                 <div style={{
                   width: 8,
                   height: 8,
                   borderRadius: '50%',
-                  background: 'var(--accent)',
+                  background: '#ff2a85',
                   animation: 'pulseCore 2.2s ease-in-out infinite',
                 }} />
               </div>
               
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: 'white', letterSpacing: '-0.01em' }}>Soup</div>
-                <div style={{ fontSize: 11, color: '#a8acb3', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: speaking ? '#ff3b30' : '#34c759', display: 'inline-block', animation: speaking ? 'speakPulse 0.8s ease-in-out infinite' : 'none' }} />
-                  {speaking ? 'Speaking...' : jokeState ? '🎭 Joke mode...' : "Soupriti's AI Companion"}
+                <div style={{ fontSize: 14, fontWeight: 600, color: 'white', letterSpacing: '-0.01em', fontFamily: 'var(--font-display)' }}>Soup</div>
+                <div style={{ fontSize: 11, color: '#8a8a93', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-body)' }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: speaking ? '#ff2a85' : '#ff2a85', display: 'inline-block', animation: 'speakPulse 0.8s ease-in-out infinite' }} />
+                  {speaking ? 'Speaking...' : jokeState ? 'Joke mode...' : "Soupriti's AI Companion"}
                 </div>
               </div>
               {speaking && (
                 <button onClick={stopSpeaking} title="Stop speaking"
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'white', fontSize: 18, marginRight: 8 }}>⏹</button>
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff2a85', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 4 }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="4" y="4" width="16" height="16" rx="2" /></svg>
+                </button>
               )}
               {/* Sleek close cross in header */}
               <button 
@@ -725,87 +747,168 @@ export default function Chatbot({ activeProject }) {
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  color: '#a8acb3',
-                  fontSize: 16,
+                  color: '#8a8a93',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   transition: 'color 0.2s',
                   padding: 4,
                 }}
-                onMouseEnter={e => e.currentTarget.style.color = 'white'}
-                onMouseLeave={e => e.currentTarget.style.color = '#a8acb3'}
+                onMouseEnter={e => e.currentTarget.style.color = '#ff2a85'}
+                onMouseLeave={e => e.currentTarget.style.color = '#8a8a93'}
               >
-                ✕
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
               </button>
             </div>
 
             {/* Messages */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: 'var(--space-5)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {messages.map((msg, i) => (
                 <div key={i} style={{ display: 'flex', justifyContent: msg.from === 'user' ? 'flex-end' : 'flex-start', animation: 'msgIn 0.3s var(--ease-out-expo)' }}>
                   <div style={{
-                    maxWidth: '82%', padding: 'var(--space-4) var(--space-5)',
+                    maxWidth: '82%', padding: '10px 14px',
                     borderRadius: msg.from === 'user'
-                      ? 'var(--radius-lg) var(--radius-sm) var(--radius-lg) var(--radius-lg)'
-                      : 'var(--radius-sm) var(--radius-lg) var(--radius-lg) var(--radius-lg)',
-                    background: msg.from === 'user' ? 'var(--accent)' : 'var(--bg-warm)',
-                    color: msg.from === 'user' ? 'white' : 'var(--text-primary)',
-                    fontSize: 13, lineHeight: 1.65, whiteSpace: 'pre-line',
-                    border: msg.from === 'bot' ? '1px solid var(--border)' : 'none',
+                      ? '16px 16px 4px 16px'
+                      : '16px 16px 16px 4px',
+                    background: msg.from === 'user' ? '#ff2a85' : '#16161a',
+                    color: msg.from === 'user' ? 'white' : '#f3f3f5',
+                    fontSize: 13, lineHeight: 1.6, whiteSpace: 'pre-line',
+                    border: msg.from === 'bot' ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                    fontFamily: 'var(--font-body)',
                   }}>{msg.text}</div>
                 </div>
               ))}
 
-              {/* Quick chips — shown only at start */}
+              {/* Quick icon chips — shown only at start */}
               {messages.length === 1 && !jokeState && (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center', margin: '8px 0' }}>
                   {chips.map((chip, i) => (
-                    <button key={chip} onClick={() => sendMessage(chipQ[i])}
-                      style={{ padding: '5px 12px', borderRadius: 'var(--radius-pill)', border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text-secondary)', fontSize: 12, cursor: 'pointer', transition: 'all 0.2s', fontFamily: 'var(--font-body)' }}
-                      onMouseEnter={e => { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.color = 'white'; e.currentTarget.style.borderColor = 'var(--accent)'; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg-card)'; e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
-                    >{chip}</button>
+                    <button 
+                      key={chip} 
+                      onClick={() => sendMessage(chipQ[i])}
+                      title={chip}
+                      className="chatbot-chip-btn"
+                      style={{ 
+                        padding: '6px 12px', 
+                        borderRadius: '20px', 
+                        border: '1px solid rgba(255, 255, 255, 0.08)', 
+                        background: 'rgba(255, 255, 255, 0.03)', 
+                        color: '#a8acb3', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: 6,
+                        justifyContent: 'center', 
+                        cursor: 'pointer', 
+                        transition: 'all 0.25s var(--ease-out-expo)',
+                        fontSize: 11,
+                        fontWeight: 500,
+                        fontFamily: 'var(--font-body)',
+                      }}
+                      onMouseEnter={e => { 
+                        e.currentTarget.style.background = 'rgba(255, 42, 133, 0.1)'; 
+                        e.currentTarget.style.color = '#ff2a85'; 
+                        e.currentTarget.style.borderColor = 'rgba(255, 42, 133, 0.3)'; 
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                      }}
+                      onMouseLeave={e => { 
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)'; 
+                        e.currentTarget.style.color = '#a8acb3'; 
+                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)'; 
+                        e.currentTarget.style.transform = 'none';
+                      }}
+                    >
+                      {chipIcons[i]}
+                      <span className="chatbot-chip-label">{chip}</span>
+                    </button>
                   ))}
                 </div>
               )}
 
               {typing && (
-                <div style={{ display: 'flex', gap: 4, padding: 'var(--space-3) var(--space-5)', background: 'var(--bg-warm)', borderRadius: 'var(--radius-lg)', width: 'fit-content', border: '1px solid var(--border)' }}>
-                  {[0, 1, 2].map(i => <span key={i} style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--text-muted)', animation: `bounce 1.2s ease-in-out ${i * 0.2}s infinite`, display: 'inline-block' }} />)}
+                <div style={{ display: 'flex', gap: 4, padding: '10px 14px', background: '#16161a', borderRadius: '16px', width: 'fit-content', border: '1px solid rgba(255,255,255,0.05)' }}>
+                  {[0, 1, 2].map(i => <span key={i} style={{ width: 6, height: 6, borderRadius: '50%', background: '#ff2a85', animation: `bounce 1.2s ease-in-out ${i * 0.2}s infinite`, display: 'inline-block' }} />)}
                 </div>
               )}
               <div ref={endRef} />
             </div>
 
             {/* Input row */}
-            <div style={{ padding: 'var(--space-3) var(--space-4)', borderTop: '1px solid var(--border)', display: 'flex', gap: 8, background: 'var(--bg-card)', alignItems: 'center', borderBottomLeftRadius: 'var(--radius-xl)', borderBottomRightRadius: 'var(--radius-xl)' }}>
+            <div style={{ 
+              padding: '12px 16px', 
+              borderTop: '1px solid rgba(255, 255, 255, 0.05)', 
+              display: 'flex', 
+              gap: 8, 
+              background: '#16161a', 
+              alignItems: 'center', 
+              borderBottomLeftRadius: '20px', 
+              borderBottomRightRadius: '20px' 
+            }}>
               <button id="chatbot-voice" onClick={toggleVoice} title={listening ? 'Stop recording' : 'Click to speak'}
-                style={{ width: 38, height: 38, borderRadius: '50%', background: listening ? 'var(--accent)' : 'var(--bg-warm)', border: '1px solid var(--border)', cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all 0.2s', animation: listening ? 'micPulse 1s ease-in-out infinite' : 'none', color: listening ? 'white' : 'var(--text-primary)' }}
-              >🎤</button>
+                style={{ 
+                  width: 38, height: 38, borderRadius: '50%', 
+                  background: listening ? '#ff2a85' : 'rgba(255, 255, 255, 0.03)', 
+                  border: '1px solid rgba(255, 255, 255, 0.08)', 
+                  cursor: 'pointer', display: 'flex', alignItems: 'center', 
+                  justifyContent: 'center', flexShrink: 0, transition: 'all 0.2s', 
+                  animation: listening ? 'micPulse 1s ease-in-out infinite' : 'none', 
+                  color: '#ffffff' 
+                }}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+              </button>
               <input ref={inputRef} id="chatbot-input" type="text"
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && send()}
-                placeholder={listening ? '🎤 Listening...' : jokeState ? 'Type your answer...' : 'Ask Soup anything...'}
-                style={{ flex: 1, padding: 'var(--space-3) var(--space-4)', borderRadius: 'var(--radius-pill)', border: '1px solid var(--border)', background: 'var(--bg)', fontSize: 13, fontFamily: 'var(--font-body)', color: 'var(--text-primary)', outline: 'none', transition: 'border-color 0.2s' }}
-                onFocus={e => e.target.style.borderColor = 'var(--accent)'}
-                onBlur={e => e.target.style.borderColor = 'var(--border)'}
+                placeholder={listening ? 'Listening...' : jokeState ? 'Type your answer...' : 'Ask Soup anything...'}
+                style={{ 
+                  flex: 1, padding: '10px 16px', borderRadius: '20px', 
+                  border: '1px solid rgba(255, 255, 255, 0.1)', 
+                  background: '#0e0e11', fontSize: 13, fontFamily: 'var(--font-body)', 
+                  color: '#ffffff', outline: 'none', transition: 'border-color 0.2s' 
+                }}
+                onFocus={e => e.target.style.borderColor = '#ff2a85'}
+                onBlur={e => e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
               />
               <button id="chatbot-send" onClick={send} disabled={!input.trim()}
-                style={{ width: 38, height: 38, borderRadius: '50%', background: input.trim() ? 'var(--accent)' : 'var(--border)', border: 'none', cursor: input.trim() ? 'pointer' : 'default', color: 'white', fontSize: 16, transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
-              >→</button>
+                style={{ 
+                  width: 38, height: 38, borderRadius: '50%', 
+                  background: input.trim() ? '#ff2a85' : 'rgba(255, 255, 255, 0.05)', 
+                  border: 'none', cursor: input.trim() ? 'pointer' : 'default', 
+                  color: 'white', transition: 'all 0.2s', display: 'flex', 
+                  alignItems: 'center', justifyContent: 'center', flexShrink: 0 
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              </button>
             </div>
             {listening && (
-              <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--accent)', padding: '4px 0 8px', fontWeight: 600, letterSpacing: '0.05em' }}>● Listening — speak now</div>
+              <div style={{ textAlign: 'center', fontSize: 11, color: '#ff2a85', padding: '4px 0 8px', fontWeight: 600, letterSpacing: '0.05em', fontFamily: 'var(--font-body)' }}>● Listening — speak now</div>
             )}
           </div>
         )}
       </div>
 
       <style>{`
+        .chatbot-chip-label {
+          display: inline-block;
+        }
+        @media (max-width: 480px) {
+          .chatbot-chip-label {
+            display: none;
+          }
+          .chatbot-chip-btn {
+            border-radius: 50% !important;
+            padding: 0 !important;
+            width: 36px !important;
+            height: 36px !important;
+          }
+        }
         @keyframes bubbleIn { from { opacity: 0; transform: translateY(12px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
         @keyframes panelIn { from { opacity: 0; transform: translateY(20px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
         @keyframes msgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
-        @keyframes micPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(0, 82, 255, 0.4); } 50% { box-shadow: 0 0 0 10px rgba(0, 82, 255, 0); } }
+        @keyframes micPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 42, 133, 0.4); } 50% { box-shadow: 0 0 0 10px rgba(255, 42, 133, 0); } }
         @keyframes speakPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         @keyframes pulseDot { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
         
@@ -819,8 +922,8 @@ export default function Chatbot({ activeProject }) {
           to { transform: rotate(-360deg); }
         }
         @keyframes pulseCore {
-          0%, 100% { transform: scale(0.85); opacity: 0.85; filter: drop-shadow(0 0 2px var(--accent)); }
-          50% { transform: scale(1.2); opacity: 1; filter: drop-shadow(0 0 8px var(--accent)); }
+          0%, 100% { transform: scale(0.85); opacity: 0.85; filter: drop-shadow(0 0 2px #ff2a85); }
+          50% { transform: scale(1.2); opacity: 1; filter: drop-shadow(0 0 8px #ff2a85); }
         }
 
         @media (max-width: 480px) { 
@@ -830,3 +933,4 @@ export default function Chatbot({ activeProject }) {
     </>
   )
 }
+

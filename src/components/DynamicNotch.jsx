@@ -1059,16 +1059,14 @@ export default function DynamicNotch({ activeProject }) {
 
   const currentDim = getDims()
 
-  // Colors & Aesthetic Tokens
-  const isDark = theme === 'dark'
-  const bgColor = isDark ? 'rgba(10, 10, 12, 0.88)' : 'rgba(244, 244, 245, 0.88)'
-  const textColor = isDark ? '#ffffff' : '#0a0b0d'
-  const subtextColor = isDark ? '#a1a1a6' : '#515156'
+  // Colors & Aesthetic Tokens (Forced dark & pink aesthetic for chatbot notch companion)
+  const isDark = true
+  const bgColor = 'rgba(10, 10, 12, 0.95)'
+  const textColor = '#ffffff'
+  const subtextColor = '#a8acb3'
   const accentColor = '#FF4DA6' // Glowing Pink
-  const borderTint = isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.3)'
-  const glowShadow = isDark 
-    ? '0 8px 32px rgba(255, 77, 166, 0.08), inset 0 1px 0 rgba(255,255,255,0.05)'
-    : '0 8px 32px rgba(255, 77, 166, 0.06), inset 0 1px 0 rgba(255,255,255,0.2)'
+  const borderTint = 'rgba(255, 77, 166, 0.2)'
+  const glowShadow = '0 12px 40px rgba(255, 77, 166, 0.15), 0 0 12px rgba(255, 77, 166, 0.12), inset 0 1px 0 rgba(255,255,255,0.05)'
 
   // -- INTERPOLATION LOGIC --
   const isDocked = dockRect && scrollProgress < 1
@@ -1118,9 +1116,7 @@ export default function DynamicNotch({ activeProject }) {
   // Add floating animation if fully docked
   const isFullyDocked = p === 0
 
-  const hoverShadow = isDark
-    ? '0 12px 40px rgba(255, 77, 166, 0.16), 0 0 12px rgba(255, 77, 166, 0.15), inset 0 1px 0 rgba(255,255,255,0.05)'
-    : '0 12px 40px rgba(255, 77, 166, 0.12), 0 0 8px rgba(255, 77, 166, 0.2), inset 0 1px 0 rgba(255,255,255,0.2)'
+  const hoverShadow = '0 12px 40px rgba(255, 77, 166, 0.25), 0 0 16px rgba(255, 77, 166, 0.2), inset 0 1px 0 rgba(255,255,255,0.05)'
 
   const finalTransformScale = notchState === 'compact' && p === 1
     ? `translateX(-50%) scaleX(${(1 + scrollVelocity * 0.04) * (hovered ? 1.03 : 1)}) scaleY(${(1 - scrollVelocity * 0.02) * (hovered ? 1.03 : 1)})`
@@ -1244,14 +1240,14 @@ export default function DynamicNotch({ activeProject }) {
                 {/* Dynamic Contextual Text */}
                 <span style={{
                   fontSize: isFullyDocked ? 15 : 12,
-                  fontFamily: isFullyDocked ? 'var(--font-display)' : 'var(--font-mono)',
-                  fontWeight: isFullyDocked ? 800 : 700,
+                  fontFamily: isFullyDocked ? 'var(--font-display)' : 'var(--font-body)',
+                  fontWeight: isFullyDocked ? 700 : 600,
                   color: textColor,
-                  letterSpacing: isFullyDocked ? '-0.02em' : '0.04em',
-                  textTransform: isFullyDocked ? 'none' : 'uppercase',
+                  letterSpacing: isFullyDocked ? '-0.02em' : '-0.01em',
+                  textTransform: 'none',
                   whiteSpace: isFullyDocked ? 'normal' : 'nowrap',
                 }}>
-                  {isFullyDocked ? "Hi, I'm Soup — Soupriti's digital pet." : "Soup — Press Ctrl + L to talk"}
+                  {isFullyDocked ? "hi, i'm soup — soupriti's digital companion." : "soup — press ctrl+l to talk"}
                 </span>
 
                 {isFullyDocked && (
@@ -1278,14 +1274,14 @@ export default function DynamicNotch({ activeProject }) {
             {/* 1. UNIFIED WORKSPACE HEADER */}
             <div style={{
               width: '100%', padding: '14px 20px',
-              borderBottom: `1.2px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`,
+              borderBottom: `1.2px solid rgba(255, 77, 166, 0.15)`,
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               boxSizing: 'border-box'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: accentColor, boxShadow: `0 0 6px ${accentColor}` }} />
-                <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', fontWeight: 700, color: textColor, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                  {notchState === 'chat' ? "Soup Chat" : (notchState === 'jdMatch' ? "Match Scanner" : "Voice Mode")}
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: accentColor, boxShadow: `0 0 6px ${accentColor}`, animation: 'speakPulse 1.2s infinite' }} />
+                <span style={{ fontSize: 12, fontFamily: 'var(--font-body)', fontWeight: 600, color: textColor }}>
+                  {notchState === 'chat' ? "soup chat" : (notchState === 'jdMatch' ? "match scanner" : "voice companion")}
                 </span>
               </div>
               
@@ -1295,26 +1291,32 @@ export default function DynamicNotch({ activeProject }) {
                   if (notchState === 'voice') stopVoiceRecognition()
                   setNotchState('compact')
                 }}
+                title="Minimize"
                 style={{
                   background: 'none', border: 'none', color: subtextColor,
-                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: 11.5,
-                  fontFamily: 'var(--font-mono)'
+                  cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  padding: 6, borderRadius: '50%', transition: 'all 0.2s'
                 }}
-                onMouseEnter={e => e.currentTarget.style.color = textColor}
-                onMouseLeave={e => e.currentTarget.style.color = subtextColor}
+                onMouseEnter={e => {
+                  e.currentTarget.style.color = '#ff2a85'
+                  e.currentTarget.style.background = 'rgba(255, 77, 166, 0.1)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.color = subtextColor
+                  e.currentTarget.style.background = 'none'
+                }}
               >
                 <CloseIcon />
-                <span>MINIMIZE</span>
               </button>
             </div>
 
             {/* 2. UNIFIED WORKSPACE SEGMENTED TABS */}
             <div style={{
               display: 'flex',
-              gap: 4,
-              padding: '8px 12px',
-              borderBottom: `1px dashed ${isDark ? 'rgba(255, 77, 166, 0.12)' : 'rgba(255, 77, 166, 0.2)'}`,
-              background: isDark ? 'rgba(255, 255, 255, 0.01)' : 'rgba(0, 0, 0, 0.01)',
+              gap: 8,
+              padding: '8px 16px',
+              borderBottom: `1px dashed rgba(255, 77, 166, 0.15)`,
+              background: 'rgba(255, 255, 255, 0.01)',
               boxSizing: 'border-box'
             }}>
               {[
@@ -1338,29 +1340,27 @@ export default function DynamicNotch({ activeProject }) {
                   <button
                     key={tab.id}
                     onClick={handleClick}
+                    title={tab.label}
+                    className="chatbot-tab-btn"
                     style={{
                       flex: 1,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: 6,
-                      padding: '8px 4px',
-                      background: isActive ? (isDark ? 'rgba(255, 77, 166, 0.12)' : 'rgba(255, 77, 166, 0.08)') : 'transparent',
+                      height: 36,
+                      background: isActive ? 'rgba(255, 77, 166, 0.15)' : 'transparent',
                       border: `1px solid ${isActive ? accentColor : 'transparent'}`,
-                      borderRadius: 10,
+                      borderRadius: '20px',
                       color: isActive ? accentColor : subtextColor,
-                      fontSize: 10.5,
-                      fontWeight: isActive ? 800 : 600,
-                      fontFamily: 'var(--font-mono)',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.02em'
+                      padding: '0 12px',
                     }}
                     onMouseEnter={e => {
                       if (!isActive) {
                         e.currentTarget.style.color = textColor
-                        e.currentTarget.style.background = isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)'
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
                       }
                     }}
                     onMouseLeave={e => {
@@ -1371,7 +1371,7 @@ export default function DynamicNotch({ activeProject }) {
                     }}
                   >
                     {tab.icon}
-                    <span style={{ fontSize: 10.5, fontWeight: 700, fontFamily: 'var(--font-mono)' }}>{tab.label}</span>
+                    <span className="chatbot-tab-label">{tab.label}</span>
                   </button>
                 )
               })}
@@ -1397,13 +1397,13 @@ export default function DynamicNotch({ activeProject }) {
                       <h3 style={{
                         margin: '0 0 6px 0',
                         fontSize: 15,
-                        fontWeight: 800,
+                        fontWeight: 700,
                         color: textColor,
                         fontFamily: 'var(--font-display)',
-                        letterSpacing: '-0.02em',
+                        letterSpacing: '-0.01em',
                         lineHeight: 1.2
                       }}>
-                        Hi, I'm Soup — Soupriti's digital pet.
+                        hi, i'm soup — soupriti's companion.
                       </h3>
                       <p style={{
                         margin: 0,
@@ -1412,7 +1412,7 @@ export default function DynamicNotch({ activeProject }) {
                         color: subtextColor,
                         fontFamily: 'var(--font-body)'
                       }}>
-                        I can help you sniff around and see if Soupriti is a strong fit for your team, product, or role.
+                        i can help you sniff around and see if soupriti is a strong fit for your team, product, or role.
                       </p>
                     </div>
 
@@ -1440,9 +1440,7 @@ export default function DynamicNotch({ activeProject }) {
                           borderRadius: 12,
                           fontSize: 12,
                           fontWeight: 700,
-                          fontFamily: 'var(--font-mono)',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.04em',
+                          fontFamily: 'var(--font-body)',
                           cursor: 'pointer',
                           boxShadow: '0 4px 12px rgba(255, 77, 166, 0.25)',
                           transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
@@ -1457,7 +1455,7 @@ export default function DynamicNotch({ activeProject }) {
                         }}
                       >
                         <ScanJDIcon />
-                        <span>Upload a Job Description</span>
+                        <span>Upload a job description</span>
                       </button>
 
                       {/* Prompt Cards Grid */}
@@ -1484,8 +1482,8 @@ export default function DynamicNotch({ activeProject }) {
                               justifyContent: 'flex-start',
                               textAlign: 'left',
                               padding: '10px 12px',
-                              background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
-                              border: `1.2px solid ${isDark ? 'rgba(255, 77, 166, 0.12)' : 'rgba(255, 77, 166, 0.22)'}`,
+                              background: 'rgba(255,255,255,0.03)',
+                              border: '1.2px solid rgba(255, 77, 166, 0.12)',
                               borderRadius: 12,
                               fontSize: 11.5,
                               fontWeight: 600,
@@ -1496,12 +1494,12 @@ export default function DynamicNotch({ activeProject }) {
                             }}
                             onMouseEnter={e => {
                               e.currentTarget.style.borderColor = accentColor
-                              e.currentTarget.style.background = isDark ? 'rgba(255, 77, 166, 0.08)' : 'rgba(255, 77, 166, 0.04)'
+                              e.currentTarget.style.background = 'rgba(255, 77, 166, 0.08)'
                               e.currentTarget.style.transform = 'translateY(-1px)'
                             }}
                             onMouseLeave={e => {
-                              e.currentTarget.style.borderColor = isDark ? 'rgba(255, 77, 166, 0.12)' : 'rgba(255, 77, 166, 0.22)'
-                              e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'
+                              e.currentTarget.style.borderColor = 'rgba(255, 77, 166, 0.12)'
+                              e.currentTarget.style.background = 'rgba(255,255,255,0.03)'
                               e.currentTarget.style.transform = 'none'
                             }}
                           >
@@ -1515,8 +1513,8 @@ export default function DynamicNotch({ activeProject }) {
                     <div style={{
                       marginTop: 4,
                       padding: '10px 14px',
-                      background: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)',
-                      border: `1px dashed ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)'}`,
+                      background: 'rgba(255,255,255,0.02)',
+                      border: '1px dashed rgba(255,255,255,0.06)',
                       borderRadius: 12,
                       display: 'flex',
                       flexDirection: 'column',
@@ -1524,8 +1522,8 @@ export default function DynamicNotch({ activeProject }) {
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <div style={{ color: accentColor }}><MicIcon /></div>
-                        <span style={{ fontSize: 10.5, fontWeight: 700, color: textColor, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
-                          Voice Mode: Press Ctrl + L to talk
+                        <span style={{ fontSize: 11, fontWeight: 600, color: textColor, fontFamily: 'var(--font-body)' }}>
+                          Voice mode: press Ctrl + L to talk
                         </span>
                       </div>
                       <span style={{ fontSize: 11, color: subtextColor, fontFamily: 'var(--font-body)', lineHeight: 1.4 }}>
@@ -1619,7 +1617,7 @@ export default function DynamicNotch({ activeProject }) {
                     <div style={{ position: 'relative', width: 64, height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <div style={{
                         position: 'absolute', inset: 0, borderRadius: '50%',
-                        border: `2.5px solid ${isDark ? 'rgba(255, 77, 166, 0.1)' : 'rgba(255, 77, 166, 0.2)'}`,
+                        border: '2.5px solid rgba(255, 77, 166, 0.2)',
                         borderTopColor: accentColor,
                         animation: 'spinOrbit 1s cubic-bezier(0.4, 0, 0.2, 1) infinite'
                       }} />
@@ -1630,8 +1628,8 @@ export default function DynamicNotch({ activeProject }) {
                       }} />
                       <div style={{ width: 8, height: 8, borderRadius: '50%', background: accentColor, boxShadow: `0 0 10px ${accentColor}` }} />
                     </div>
-                    <span style={{ fontSize: 10.5, fontFamily: 'var(--font-mono)', fontWeight: 700, letterSpacing: '0.12em', color: accentColor, textTransform: 'uppercase' }}>
-                      Scanning Profile Match...
+                    <span style={{ fontSize: 11, fontFamily: 'var(--font-body)', fontWeight: 600, color: accentColor }}>
+                      scanning profile match...
                     </span>
                   </div>
                 ) : matchResult ? (
@@ -1645,18 +1643,18 @@ export default function DynamicNotch({ activeProject }) {
                     }}>
                       <div style={{
                         width: 90, height: 90, borderRadius: '50%',
-                        border: `3px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`,
+                        border: '3px solid rgba(255, 77, 166, 0.25)',
                         borderColor: `${accentColor} ${accentColor} transparent ${accentColor}`,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         boxShadow: `0 0 20px rgba(255, 77, 166, 0.15)`,
                         position: 'relative'
                       }}>
-                        <span style={{ fontSize: 24, fontWeight: 800, color: textColor, fontFamily: 'var(--font-mono)' }}>
+                        <span style={{ fontSize: 24, fontWeight: 700, color: textColor, fontFamily: 'var(--font-body)' }}>
                           {matchResult.score}%
                         </span>
                       </div>
-                      <span style={{ fontSize: 9, fontFamily: 'var(--font-mono)', fontWeight: 700, opacity: 0.6, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-                        Match Score
+                      <span style={{ fontSize: 10, fontFamily: 'var(--font-body)', fontWeight: 500, opacity: 0.6 }}>
+                        match score
                       </span>
                     </div>
 
@@ -1665,8 +1663,8 @@ export default function DynamicNotch({ activeProject }) {
                       flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 12
                     }}>
                       <div>
-                        <h4 style={{ margin: '0 0 4px 0', fontSize: 12, fontWeight: 800, color: textColor, textTransform: 'uppercase', letterSpacing: '0.02em', fontFamily: 'var(--font-mono)' }}>
-                          Alignment Overview
+                        <h4 style={{ margin: '0 0 4px 0', fontSize: 12, fontWeight: 700, color: textColor, fontFamily: 'var(--font-body)' }}>
+                          alignment overview
                         </h4>
                         <p style={{ margin: 0, fontSize: 11.5, lineHeight: 1.5, color: subtextColor, fontFamily: 'var(--font-body)' }}>
                           {matchResult.summary}
@@ -1683,11 +1681,10 @@ export default function DynamicNotch({ activeProject }) {
                         style={{
                           alignSelf: 'flex-start',
                           padding: '6px 14px', borderRadius: 20,
-                          background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
-                          border: `1.2px solid ${isDark ? 'rgba(255, 77, 166, 0.2)' : 'rgba(255, 77, 166, 0.3)'}`,
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          border: '1.2px solid rgba(255, 77, 166, 0.2)',
                           color: textColor, fontSize: 10.5, fontWeight: 700, cursor: 'pointer',
-                          transition: 'all 0.2s', textTransform: 'uppercase', letterSpacing: '0.02em',
-                          fontFamily: 'var(--font-mono)'
+                          transition: 'all 0.2s', fontFamily: 'var(--font-body)'
                         }}
                         onMouseEnter={e => {
                           e.currentTarget.style.background = accentColor
@@ -1696,13 +1693,13 @@ export default function DynamicNotch({ activeProject }) {
                           e.currentTarget.style.boxShadow = `0 4px 10px rgba(255, 77, 166, 0.25)`
                         }}
                         onMouseLeave={e => {
-                          e.currentTarget.style.background = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)'
+                          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
                           e.currentTarget.style.color = textColor
-                          e.currentTarget.style.borderColor = isDark ? 'rgba(255, 77, 166, 0.2)' : 'rgba(255, 77, 166, 0.3)'
+                          e.currentTarget.style.borderColor = 'rgba(255, 77, 166, 0.2)'
                           e.currentTarget.style.boxShadow = 'none'
                         }}
                       >
-                        Analyze New Role
+                        analyze new role
                       </button>
                     </div>
                   </div>
@@ -1814,14 +1811,14 @@ export default function DynamicNotch({ activeProject }) {
                             }}
                             >
                               <ImageIcon />
-                              {jdFileName && !jdFileName.endsWith('.pdf') ? jdFileName : "Upload JD Image"}
+                              {jdFileName && !jdFileName.endsWith('.pdf') ? jdFileName : "upload JD image"}
                             </span>
                           </label>
                         </div>
 
                         {jdFileName && (
-                          <span style={{ fontSize: 9.5, fontFamily: 'var(--font-mono)', opacity: 0.6, textTransform: 'uppercase' }}>
-                            {jdFileName.endsWith('.pdf') ? "PDF" : "Image"} Loaded ✓
+                          <span style={{ fontSize: 10, fontFamily: 'var(--font-body)', opacity: 0.6 }}>
+                            {jdFileName.endsWith('.pdf') ? "pdf" : "image"} loaded ✓
                           </span>
                         )}
                       </div>
@@ -1844,11 +1841,10 @@ export default function DynamicNotch({ activeProject }) {
                 boxSizing: 'border-box'
               }}>
                 <div style={{
-                  fontSize: 10.5, fontFamily: 'var(--font-mono)', fontWeight: 700,
-                  color: 'rgba(255, 77, 166, 0.8)', textTransform: 'uppercase',
-                  letterSpacing: '0.15em', marginBottom: 16
+                  fontSize: 11, fontFamily: 'var(--font-body)', fontWeight: 600,
+                  color: 'rgba(255, 77, 166, 0.9)', marginBottom: 16
                 }}>
-                  Voice co-pilot active
+                  voice companion active
                 </div>
 
                 <div 
@@ -1899,11 +1895,11 @@ export default function DynamicNotch({ activeProject }) {
                 )}
 
                 <div style={{
-                  fontSize: 12, color: textColor, fontWeight: 700,
-                  fontFamily: 'var(--font-mono)', marginTop: 16, textAlign: 'center',
-                  textTransform: 'uppercase', letterSpacing: '0.02em', maxWidth: '280px'
+                  fontSize: 12, color: textColor, fontWeight: 600,
+                  fontFamily: 'var(--font-body)', marginTop: 16, textAlign: 'center',
+                  maxWidth: '280px'
                 }}>
-                  {voiceSpeechText || "Listening..."}
+                  {voiceSpeechText ? voiceSpeechText.toLowerCase() : "listening..."}
                 </div>
               </div>
             )}
@@ -1914,6 +1910,21 @@ export default function DynamicNotch({ activeProject }) {
 
       {/* Dynamic Keyframes */}
       <style>{`
+        .chatbot-tab-label {
+          display: inline-block;
+          font-size: 11px;
+          font-weight: 600;
+          font-family: var(--font-body);
+        }
+        @media (max-width: 480px) {
+          .chatbot-tab-label {
+            display: none;
+          }
+          .chatbot-tab-btn {
+            border-radius: 50% !important;
+            padding: 0 !important;
+          }
+        }
         @keyframes fadeIn {
           from { opacity: 0; transform: scale(0.96); }
           to { opacity: 1; transform: scale(1); }

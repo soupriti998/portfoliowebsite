@@ -134,17 +134,20 @@ export default function Expertise() {
         /* ── SPLIT LAYOUT ── */
         .expertise-split-layout {
           display: grid;
-          grid-template-columns: 1.2fr 1fr;
+          grid-template-columns: 1fr 1.2fr;
+          grid-template-areas: "folder details";
           gap: var(--space-8);
           align-items: center;
         }
 
         .expertise-left-panel {
+          grid-area: details;
           display: flex;
           flex-direction: column;
           gap: var(--space-3);
           min-height: 280px;
           justify-content: center;
+          padding-left: var(--space-6);
         }
 
         .active-details-wrapper {
@@ -159,7 +162,7 @@ export default function Expertise() {
         .expertise-active-title {
           font-family: var(--font-display);
           font-size: clamp(28px, 3.2vw, 42px);
-          fontWeight: 400;
+          font-weight: 400;
           letter-spacing: -0.025em;
           line-height: 1.15;
           color: var(--text-primary);
@@ -175,8 +178,9 @@ export default function Expertise() {
         }
 
         .expertise-right-panel {
+          grid-area: folder;
           display: flex;
-          justify-content: flex-end;
+          justify-content: flex-start;
           align-items: center;
         }
 
@@ -187,10 +191,10 @@ export default function Expertise() {
           height: 380px;
           flex-shrink: 0;
           cursor: pointer;
-          will-change: transform;
+          will-change: transform, width;
           perspective: 1200px;
           animation: folderFloat 6s ease-in-out infinite;
-          transition: transform 0.65s cubic-bezier(0.19, 1, 0.22, 1);
+          transition: transform 0.65s cubic-bezier(0.19, 1, 0.22, 1), width 0.65s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         @keyframes folderFloat {
@@ -201,7 +205,7 @@ export default function Expertise() {
         /* FOLDER BACK */
         .folder-back {
           position: absolute;
-          top: 0; right: 0;
+          top: 0; left: 0;
           width: 320px;
           height: 380px;
           z-index: 1;
@@ -213,7 +217,7 @@ export default function Expertise() {
           background: linear-gradient(135deg, #4F59F7, #262BDE);
           border-radius: 16px 16px 0 0;
           position: absolute;
-          top: 0; right: 180px; /* Aligned to left edge of folder */
+          top: 0; left: 0;
         }
 
         .folder-back-main {
@@ -222,14 +226,14 @@ export default function Expertise() {
           background: linear-gradient(135deg, #4A55F7, #1E22A8);
           border-radius: 0 16px 16px 16px;
           position: absolute;
-          top: 32px; right: 0;
+          top: 32px; left: 0;
           box-shadow: inset 0 2px 20px rgba(0,0,0,0.15);
         }
 
         /* FOLDER FRONT */
         .folder-front {
           position: absolute;
-          top: 32px; right: 0;
+          top: 32px; left: 0;
           width: 320px;
           height: calc(380px - 32px);
           background: linear-gradient(135deg, #626CFF, #3238FF);
@@ -284,11 +288,11 @@ export default function Expertise() {
           backdrop-filter: blur(4px);
         }
 
-        /* THE PAPER (Slides to the left) */
+        /* THE PAPER (Slides to the right) */
         .folder-paper {
           position: absolute;
           top: 40px; 
-          right: 10px;
+          left: 10px;
           width: 300px;
           height: calc(380px - 50px);
           background: #fdfdfd;
@@ -310,9 +314,13 @@ export default function Expertise() {
           box-shadow: 0 12px 30px rgba(0,0,0,0.12);
         }
 
-        /* Slide out to the LEFT on click */
+        /* Slide out to the RIGHT on click */
+        .folder-card-wrapper.is-open {
+          width: 630px;
+        }
+
         .folder-card-wrapper.is-open .folder-paper {
-          transform: translateX(-310px) translateY(-10px);
+          transform: translateX(310px) translateY(-10px);
           box-shadow: 0 20px 40px rgba(0,0,0,0.08);
           z-index: 4;
           height: calc(380px - 10px);
@@ -423,11 +431,15 @@ export default function Expertise() {
 
           .expertise-split-layout {
             grid-template-columns: 1fr;
+            grid-template-areas: 
+              "details"
+              "folder";
             gap: var(--space-8);
           }
 
           .expertise-left-panel {
             min-height: auto;
+            padding-left: 0;
           }
 
           .expertise-right-panel {
@@ -436,6 +448,7 @@ export default function Expertise() {
 
           .folder-card-wrapper.is-open {
             height: 700px;
+            width: 320px;
           }
 
           .folder-card-wrapper.is-open .folder-paper {
