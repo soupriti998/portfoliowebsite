@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useScroll, useMotionValueEvent } from 'framer-motion'
 import { FadeUp, Label } from './utils'
 
 const tools = [
@@ -106,6 +106,22 @@ export default function Tools() {
   const [isMobile, setIsMobile] = useState(false)
   const [overlap, setOverlap] = useState(-100)
   const [hoveredIndex, setHoveredIndex] = useState(null)
+  const [folderOpen, setFolderOpen] = useState(false)
+
+  // Track scroll position of the section to trigger folder opening
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "center center"]
+  })
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    // Open the folder as the user scrolls the section into view
+    if (latest > 0.35) {
+      setFolderOpen(true)
+    } else {
+      setFolderOpen(false)
+    }
+  })
 
   useEffect(() => {
     const handleResize = () => {
@@ -151,7 +167,7 @@ export default function Tools() {
             <span style={{ color: 'var(--accent)' }}>with these tools.</span>
           </h2>
           <p style={{ fontSize: 15, color: 'var(--text-secondary)', marginBottom: 'var(--space-9)', maxWidth: '50ch' }}>
-            Hover over a card to focus it and reveal the details underneath. Drag cards to sort them as you wish.
+            Scroll down to open the folder and deal the cards. Drag cards anywhere, or hover over them to focus and reveal their outcomes.
           </p>
         </FadeUp>
 
@@ -165,10 +181,87 @@ export default function Tools() {
             alignItems: 'center',
             padding: '60px 10px',
             overflow: 'visible',
-            minHeight: '450px',
+            minHeight: '480px',
             width: '100%',
           }}
         >
+          {/* Blue File Folder (renders in the center when folder is closed) */}
+          <AnimatePresence>
+            {!folderOpen && (
+              <motion.div
+                className="tools-folder"
+                initial={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.8, y: 60 }}
+                transition={{ type: 'spring', stiffness: 220, damping: 22 }}
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  x: '-50%',
+                  y: '-50%',
+                  width: '320px',
+                  height: '240px',
+                  zIndex: 200,
+                  cursor: 'pointer',
+                  perspective: '1000px',
+                }}
+                onClick={() => setFolderOpen(true)}
+              >
+                {/* Back Flap & Tab */}
+                <div style={{
+                  position: 'absolute',
+                  top: 0, left: 0,
+                  width: '320px',
+                  height: '240px',
+                  background: 'linear-gradient(135deg, #4A55F7, #1E22A8)',
+                  borderRadius: '0 16px 16px 16px',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+                }}>
+                  <div style={{
+                    width: '120px',
+                    height: '24px',
+                    background: 'linear-gradient(135deg, #4F59F7, #262BDE)',
+                    borderRadius: '12px 12px 0 0',
+                    position: 'absolute',
+                    top: '-24px', left: 0,
+                  }} />
+                </div>
+
+                {/* Front Flap */}
+                <motion.div 
+                  style={{
+                    position: 'absolute',
+                    top: 24, left: 0,
+                    width: '320px',
+                    height: '216px',
+                    background: 'linear-gradient(135deg, #626CFF, #3238FF)',
+                    borderRadius: '0 16px 16px 16px',
+                    zIndex: 3,
+                    padding: '24px',
+                    color: '#fff',
+                    boxShadow: '0 -4px 15px rgba(0,0,0,0.1), inset 0 1px 1px rgba(255,255,255,0.25)',
+                    transformOrigin: 'bottom center',
+                  }}
+                  animate={{
+                    rotateX: 0
+                  }}
+                  whileHover={{
+                    rotateX: -15
+                  }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: 20, fontFamily: 'var(--font-display)', fontWeight: 700 }}>Toolkit</h3>
+                      <span style={{ fontSize: 12, opacity: 0.8 }}>8 records inside</span>
+                    </div>
+                    <div style={{ fontSize: 11, fontFamily: 'var(--font-mono)', opacity: 0.7, letterSpacing: '0.05em' }}>SCROLL TO DECLASSIFY</div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Draggable Cards */}
           {tools.map(({ name, category, icon, contribution, outcome, bg, color, rotate, x, y }, i) => {
             // Calculate hover shifting offsets
             let xShift = 0
@@ -192,69 +285,35 @@ export default function Tools() {
               <motion.div
                 key={name}
                 className="tool-card-wrapper"
-                animate={{
+                animate={folderOpen ? {
                   x: xShift,
                   rotate: (isMobile ? rotate / 2 : rotate) + extraRotate,
+                  scale: 1,
+                  opacity: 1,
+                  y: 0,
+                } : {
+                  x: 0,
+                  rotate: 0,
+                  scale: 0.1,
+                  opacity: 0,
+                  y: 60,
                 }}
                 transition={{
                   type: 'spring',
-                  stiffness: 260,
-                  damping: 25,
+                  stiffness: folderOpen ? 220 : 150,
+                  damping: folderOpen ? 22 : 18,
+                  delay: folderOpen ? i * 0.05 : 0, // Staggered deal animation!
                 }}
                 style={{
                   marginLeft: isMobile ? '0' : (i === 0 ? '0' : `${overlap}px`),
                   zIndex: hoveredIndex === i ? 50 : i,
                   position: 'relative',
                   transition: 'margin-left 0.3s ease',
+                  pointerEvents: folderOpen ? 'auto' : 'none',
                 }}
                 onMouseEnter={() => setHoveredIndex(i)}
                 onMouseLeave={() => setHoveredIndex(null)}
               >
-                {/* Floating Tooltip Pill pointing down */}
-                <AnimatePresence>
-                  {hoveredIndex === i && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 15, x: '-50%', scale: 0.8 }}
-                      animate={{ opacity: 1, y: 0, x: '-50%', scale: 1 }}
-                      exit={{ opacity: 0, y: 15, x: '-50%', scale: 0.8 }}
-                      transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-                      style={{
-                        position: 'absolute',
-                        top: '-50px',
-                        left: '50%',
-                        background: tooltipBg,
-                        color: tooltipColor,
-                        padding: '6px 14px',
-                        borderRadius: 'var(--radius-pill)',
-                        fontSize: '11.5px',
-                        fontWeight: 700,
-                        fontFamily: 'var(--font-mono)',
-                        whiteSpace: 'nowrap',
-                        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.12)',
-                        zIndex: 100,
-                        pointerEvents: 'none',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                      }}
-                    >
-                      🎯 {outcome}
-                      {/* Arrow */}
-                      <div 
-                        style={{
-                          position: 'absolute',
-                          bottom: '-4px',
-                          left: '50%',
-                          transform: 'translateX(-50%) rotate(45deg)',
-                          width: '8px',
-                          height: '8px',
-                          background: tooltipBg,
-                        }}
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
                 <motion.div
                   className="tool-card-motion"
                   drag={!isMobile}
@@ -287,7 +346,8 @@ export default function Tools() {
                     border: '1px solid rgba(0, 0, 0, 0.05)',
                     boxShadow: 'var(--shadow-sm)',
                     position: 'relative',
-                    overflow: 'hidden',
+                    // overflow: 'visible' (removing overflow: hidden allows tooltip to drag alongside the card without clipping)
+                    overflow: 'visible', 
                     cursor: isMobile ? 'default' : 'grab',
                     display: 'flex',
                     flexDirection: 'column',
@@ -297,6 +357,51 @@ export default function Tools() {
                     touchAction: isMobile ? 'auto' : 'none',
                   }}
                 >
+                  {/* Floating Tooltip Pill pointing down - Nested inside the draggable element so it drags with it */}
+                  <AnimatePresence>
+                    {hoveredIndex === i && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 15, x: '-50%', scale: 0.8 }}
+                        animate={{ opacity: 1, y: 0, x: '-50%', scale: 1 }}
+                        exit={{ opacity: 0, y: 15, x: '-50%', scale: 0.8 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                        style={{
+                          position: 'absolute',
+                          top: '-50px',
+                          left: '50%',
+                          background: tooltipBg,
+                          color: tooltipColor,
+                          padding: '6px 14px',
+                          borderRadius: 'var(--radius-pill)',
+                          fontSize: '11.5px',
+                          fontWeight: 700,
+                          fontFamily: 'var(--font-mono)',
+                          whiteSpace: 'nowrap',
+                          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.12)',
+                          zIndex: 100,
+                          pointerEvents: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                        }}
+                      >
+                        🎯 {outcome}
+                        {/* Arrow */}
+                        <div 
+                          style={{
+                            position: 'absolute',
+                            bottom: '-4px',
+                            left: '50%',
+                            transform: 'translateX(-50%) rotate(45deg)',
+                            width: '8px',
+                            height: '8px',
+                            background: tooltipBg,
+                          }}
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   {/* Blueprint grid on hover */}
                   <div 
                     className="tool-blueprint-bg" 
@@ -305,6 +410,7 @@ export default function Tools() {
                       inset: 0,
                       opacity: 0,
                       pointerEvents: 'none',
+                      borderRadius: 'var(--radius-xl)',
                       backgroundSize: '16px 16px',
                       backgroundImage: `radial-gradient(${color} 0.8px, transparent 0.8px)`,
                       transition: 'opacity 400ms cubic-bezier(0.16, 1, 0.3, 1)',
