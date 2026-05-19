@@ -1,12 +1,21 @@
 import { useState, useEffect, useRef } from 'react'
 
-const WORDS = [
-  { word: "Breath", progress: 20, chime: 523.25 },     // C5
-  { word: "Live", progress: 40, chime: 587.33 },       // D5
-  { word: "Love", progress: 60, chime: 659.25 },       // E5
-  { word: "Design", progress: 80, chime: 783.99 },     // G5
-  { word: "Drink Water", progress: 100, chime: 880.00 } // A5
+const rawWords = [
+  "Drink Water", "Create Daily", "Think Clearly", "Stay Curious", "Design Slowly",
+  "Feel Human", "Build Calmly", "Dream Bigger", "Seek Clarity", "Ship Better",
+  "Move Gently", "Stay Present", "Observe More", "Design Mindfully", "Simplify Things",
+  "Think Systems", "Explore Freely", "Rest Properly", "Breathe Deeply", "Make Magic",
+  "Build Thoughtfully", "Stay Weird", "Think Deeply", "Learn Always", "Create Fearlessly",
+  "Sleep Better", "Protect Energy", "Notice Details", "Stay Soft", "Trust Process"
 ]
+
+const pentatonic = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50, 1174.66, 1318.51]
+
+const WORDS = rawWords.map((word, i) => ({
+  word,
+  progress: ((i + 1) / rawWords.length) * 100,
+  chime: pentatonic[i % pentatonic.length] + (Math.floor(i / pentatonic.length) * 50)
+}))
 
 // Pure synthesized client-side sound engine to avoid asset dependencies
 class CalmSoundscape {
@@ -156,7 +165,7 @@ class CalmSoundscape {
 /* ── Emil Kowalski Style Vertical Rolling Digit Component ── */
 function DigitColumn({ digit }) {
   return (
-    <div style={{
+    <span style={{
       height: 24,
       overflow: 'hidden',
       position: 'relative',
@@ -165,7 +174,7 @@ function DigitColumn({ digit }) {
       justifyContent: 'center',
       alignItems: 'center'
     }}>
-      <div style={{
+      <span style={{
         transform: `translateY(-${digit * 10}%)`,
         transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
         display: 'flex',
@@ -179,8 +188,8 @@ function DigitColumn({ digit }) {
             {n}
           </span>
         ))}
-      </div>
-    </div>
+      </span>
+    </span>
   )
 }
 
@@ -229,12 +238,7 @@ export default function Preloader({ onComplete }) {
 
   // 2. Dynamic Word Resolver based on progress
   useEffect(() => {
-    let targetWordIdx = 0
-    if (progress <= 20) targetWordIdx = 0
-    else if (progress <= 40) targetWordIdx = 1
-    else if (progress <= 60) targetWordIdx = 2
-    else if (progress <= 80) targetWordIdx = 3
-    else targetWordIdx = 4
+    const targetWordIdx = Math.min(WORDS.length - 1, Math.floor(progress / (100 / WORDS.length)))
 
     if (targetWordIdx !== wordIndex) {
       setWordIndex(targetWordIdx)
@@ -435,7 +439,7 @@ export default function Preloader({ onComplete }) {
             textTransform: 'uppercase',
             opacity: 0.8
           }}>
-            Soupriti Das
+            soupriti
           </span>
           <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#ffffff' }} />
           <span style={{
@@ -548,7 +552,7 @@ export default function Preloader({ onComplete }) {
         </div>
         
         {/* Subtle breathing subtext layer with rolling progress number */}
-        <p
+        <div
           style={{
             fontSize: 12,
             fontFamily: 'var(--font-mono)',
@@ -566,7 +570,7 @@ export default function Preloader({ onComplete }) {
           <span>Mindful boot process</span>
           <span style={{ display: 'inline-block', width: 20, height: 1, background: '#ffffff', opacity: 0.4 }} />
           <RollingNumber value={progress} />
-        </p>
+        </div>
       </main>
 
       {/* Right Edge: Vertical Loader system with anchored glowing node */}

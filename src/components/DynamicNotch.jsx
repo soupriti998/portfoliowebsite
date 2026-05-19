@@ -1,12 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
 
-/* ── Interactive State Dimension Specs ── */
 const DIMS = {
-  compact: { width: 365, height: 46, radius: 23 },
-  expanded: { width: 500, height: 195, radius: 24 }, // Slightly taller for the new layout
-  chat: { width: 450, height: 490, radius: 25 },
-  voice: { width: 350, height: 270, radius: 25 },
-  jdMatch: { width: 500, height: 450, radius: 25 }
+  compact: { width: 440, height: 46, radius: 23 },
+  expanded: { width: 500, height: 195, radius: 24 }, 
+  chat: { width: 480, height: 520, radius: 25 },
+  voice: { width: 480, height: 380, radius: 25 },
+  jdMatch: { width: 480, height: 480, radius: 25 }
 }
 
 /* ── Dynamic Breathing Circle & Status System (NO MASCOT, NO CAT) ── */
@@ -16,7 +15,7 @@ const StatusHUDIcon = ({ state, theme }) => {
   if (state === 'voice' || state === 'listening') {
     // Pulse ambient voice waves
     return (
-      <div style={{ display: 'flex', gap: 3, alignItems: 'center', height: 16, width: 26, justifyContent: 'center' }}>
+      <div className="breathing-circle-logo" style={{ display: 'flex', gap: 3, alignItems: 'center', height: 16, width: 26, justifyContent: 'center' }}>
         {[1, 2, 3, 4, 5].map(i => (
           <div 
             key={i} 
@@ -38,7 +37,7 @@ const StatusHUDIcon = ({ state, theme }) => {
   if (state === 'thinking') {
     // Dotted orbit ring + pulsating core matching thinking state
     return (
-      <div style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="breathing-circle-logo" style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{
           position: 'absolute',
           width: 16, height: 16,
@@ -61,7 +60,7 @@ const StatusHUDIcon = ({ state, theme }) => {
   if (state === 'processing') {
     // Spinning particle ring representing active process
     return (
-      <div style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="breathing-circle-logo" style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{
           position: 'absolute',
           width: 16, height: 16,
@@ -84,7 +83,7 @@ const StatusHUDIcon = ({ state, theme }) => {
   if (state === 'scrolling') {
     // Scanning laser and sweep ring
     return (
-      <div style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="breathing-circle-logo" style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{
           position: 'absolute',
           width: 18, height: 18,
@@ -113,7 +112,7 @@ const StatusHUDIcon = ({ state, theme }) => {
   if (state === 'inactive') {
     // Sleeping core (deep pulsing dim pink orb)
     return (
-      <div style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="breathing-circle-logo" style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{
           width: 8, height: 8,
           borderRadius: '50%',
@@ -128,7 +127,7 @@ const StatusHUDIcon = ({ state, theme }) => {
 
   // Default 'idle' - Slowly breathing pink neon circle
   return (
-    <div style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div className="breathing-circle-logo" style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{
         position: 'absolute',
         width: 14, height: 14,
@@ -142,7 +141,8 @@ const StatusHUDIcon = ({ state, theme }) => {
         width: 18, height: 18,
         borderRadius: '50%',
         border: '1.2px solid rgba(255, 77, 166, 0.25)',
-        animation: 'pulseCore 2.5s ease-in-out infinite alternate'
+        animation: 'pulseCore 2.5s ease-in-out infinite alternate',
+        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
       }} />
       <div style={{
         position: 'absolute',
@@ -276,8 +276,8 @@ const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) 
 
 /* ── Chat replies dictionary ── */
 const KB = {
-  greet: ["Hmm... Hey! I am Luffy. Ask me anything about Soupriti's work, skills, or experience.", "Hmm... Hello! I'm Luffy — here to help you explore. What would you like to know?", "Hmm... Welcome! I'm Luffy. Feel free to ask me about Soupriti's projects, skills, or how to get in touch."],
-  about: "Soupriti Das is a Product Designer based in Bangalore with 3+ years of experience designing HMI and SaaS products. She completed B.Des in Fashion Communication at NIFT Chennai. She simplifies complex systems into warm, human-centered experiences.",
+  greet: ["Hmm... Hey! I am Luffy. Ask me anything about soupriti's work, skills, or experience.", "Hmm... Hello! I'm Luffy — here to help you explore. What would you like to know?", "Hmm... Welcome! I'm Luffy. Feel free to ask me about soupriti's projects, skills, or how to get in touch."],
+  about: "soupriti is a Product Designer based in Bangalore with 3+ years of experience designing HMI and SaaS products. She completed B.Des in Fashion Communication at NIFT Chennai. She simplifies complex systems into warm, human-centered experiences.",
   current: "Soupriti is currently a Product Designer at upliance.ai. She redesigned their device interface, reducing perceived cooking times by 24% and coding their scalable React design system from scratch.",
   skills: "Skills: End-to-end UX/UI, user research, data dashboard mapping, Figma interaction system design, and React/JS prototyping. She works closely with developers to ensure 100% engineering delivery.",
   projects: "Selected projects: One, AI Cooking Experience at upliance.ai. Two, Behavior-Driven Onboarding. Three, Smart Air Fryer UX. Four, Medpod Health Accessibility. Five, Battle Pass for LILA. Six, Doctorite Dashboard.",
@@ -350,6 +350,29 @@ function getResponse(input, jokeState, setJokeState, activeSection) {
       setJokeState(null)
       return isRight ? pick(joke.correctResponse) : (joke.wrongResponse.length ? pick(joke.wrongResponse) : pick(joke.correctResponse))
     }
+  }
+
+  // Recruiter-First queries
+  if (q.includes('good fit for saas') || q.includes('fit for saas') || q.match(/\bsaas\b/)) {
+    return "Soupriti is an exceptional fit for SaaS product roles. At Divami Design Labs and Incture, she worked extensively on complex high-density SaaS dashboards, data-heavy enterprise platforms, and complex workflow mapping. She combines design systems mastery in Figma with solid React frontend understanding, enabling her to design systems that are both beautiful and highly constructible by engineering."
+  }
+  if (q.includes('summarize') || q.includes('summary') || q.includes('experience summary')) {
+    return "Soupriti is currently a Product Designer at upliance.ai (Bangalore, 2024-Present), where she redesigned their core appliance HMI touchscreen and companion app. Previously, she designed dashboard layouts at Divami Design Labs (2023-2024) and worked on enterprise applications at Incture (2022-2023). She holds a B.Des from NIFT Chennai."
+  }
+  if (q.includes('ai project') || q.includes('ai work') || q.includes('ai design')) {
+    return "At upliance.ai, Soupriti designed behavior-driven HMI cooking workflows, contextual voice-assistant prompt notch states, and smart air fryer controls. She has also prototyped a variety of AI-driven widgets, dashboard monitoring controls, and contextual search tools."
+  }
+  if (q.includes('ux thinking') || q.includes('ux process') || q.includes('evaluate ux')) {
+    return "Soupriti's UX process is deeply system-driven and data-backed. When designing the HMI interface for upliance.ai, she conducted contextual inquiry and diary studies to resolve cognitive load issues. By restructuring user flows and visual hierarchy, she achieved a measurable 24% increase in cooking task completion speed and a 30% boost in user retention."
+  }
+  if (q.includes('product strategy') || q.includes('design strategy')) {
+    return "Soupriti bridges visual craft with business outcomes. Her strategy involves building robust design tokens (OKLCH-engineered light/dark modes) to speed up frontend development time, and aligning user journeys with business success metrics—such as onboarding completion rate and active device usage."
+  }
+  if (q.includes('philosophy') || q.includes('design approach')) {
+    return "Soupriti believes in 'complexity made warm.' Design should feel human, transparent, and responsive. Instead of decorative visuals, she focuses on functional design systems, clear typographic rhythms, and micro-interactions that elevate utility into moments of delightful feedback."
+  }
+  if (q.match(/\bb2b\b/) || q.match(/\bb2c\b/)) {
+    return "Soupriti has a strong dual background: B2B/Enterprise SaaS design at Divami Design Labs and Incture (building complex workflows, data tables, and developer-friendly systems), combined with consumer B2C hardware-software HMI and mobile app design at upliance.ai. This makes her versatile in handling both B2B systems and B2C products."
   }
 
   // Highly contextual observer replies
@@ -462,6 +485,14 @@ const DocIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
     <polyline points="14 2 14 8 20 8"/>
+  </svg>
+)
+
+const ImageIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+    <circle cx="8.5" cy="8.5" r="1.5"/>
+    <polyline points="21 15 16 10 5 21"/>
   </svg>
 )
 
@@ -616,6 +647,16 @@ export default function DynamicNotch({ activeProject }) {
   const [inactivityState, setInactivityState] = useState(false)
   const [readingTime, setReadingTime] = useState(0)
   const [translateY, setTranslateY] = useState(0)
+  const [viewportHeight, setViewportHeight] = useState(typeof window !== 'undefined' ? window.innerHeight : 800)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const handleResize = () => {
+      setViewportHeight(window.innerHeight)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
   
   // Dynamic Global Theme Tracker (Modularity preserved!)
   const [theme, setTheme] = useState(() => {
@@ -636,6 +677,7 @@ export default function DynamicNotch({ activeProject }) {
   
   // Chat States
   const [messages, setMessages] = useState([{ from: 'bot', text: "Hmm... Hey! I'm Luffy. I can help you co-pilot and explore Soupriti's work contextually. Ask me anything!" }])
+  const [hovered, setHovered] = useState(false)
   const [chatInput, setChatInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const [jokeState, setJokeState] = useState(null)
@@ -667,6 +709,69 @@ export default function DynamicNotch({ activeProject }) {
   // Dynamic Height Hugging States
   const contentRef = useRef(null)
   const [dynamicHeight, setDynamicHeight] = useState(null)
+
+  // -- HERO MORPHING STATES --
+  const [dockRect, setDockRect] = useState(null)
+  const [scrollProgress, setScrollProgress] = useState(0) // 0 (Docked) -> 1 (Floating Notch)
+
+  useEffect(() => {
+    let ticking = false
+    const updateScroll = () => {
+      const y = window.scrollY
+      let p = y / 250 // Morph threshold
+      if (p > 1) p = 1
+      if (p < 0) p = 0
+      setScrollProgress(p)
+      ticking = false
+    }
+    const onScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(updateScroll)
+        ticking = true
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    updateScroll()
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => {
+    const dock = document.getElementById('hero-ai-dock')
+    if (!dock) return
+
+    const updateDock = () => {
+      const rect = dock.getBoundingClientRect()
+      if (rect.width > 0) {
+        setDockRect({
+          top: rect.top + window.scrollY,
+          left: rect.left + window.scrollX,
+          width: rect.width,
+          height: rect.height,
+          centerX: rect.left + window.scrollX + rect.width / 2,
+          centerY: rect.top + window.scrollY + rect.height / 2,
+        })
+      }
+    }
+
+    const observer = new ResizeObserver(updateDock)
+    observer.observe(dock)
+
+    window.addEventListener('resize', updateDock)
+    window.addEventListener('scroll', updateDock, { passive: true })
+
+    // Check immediately and also after small delays to ensure layout is ready
+    updateDock()
+    const t1 = setTimeout(updateDock, 100)
+    const t2 = setTimeout(updateDock, 500)
+
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', updateDock)
+      window.removeEventListener('scroll', updateDock)
+      clearTimeout(t1)
+      clearTimeout(t2)
+    }
+  }, [])
 
   useEffect(() => {
     if (notchState === 'compact') {
@@ -738,7 +843,7 @@ export default function DynamicNotch({ activeProject }) {
     }
 
     if (summaryPoints.length === 0) {
-      summaryPoints.push("Soupriti Das fits this profile excellently, bringing production-ready product design expertise, high-fidelity interactive prototyping, and pixel-perfect aesthetics.")
+      summaryPoints.push("soupriti fits this profile excellently, bringing production-ready product design expertise, high-fidelity interactive prototyping, and pixel-perfect aesthetics.")
     }
 
     setMatchResult({
@@ -834,7 +939,8 @@ export default function DynamicNotch({ activeProject }) {
   // 3. KEYBOARD CTRL + L DETECTOR (Voice Toggle)
   useEffect(() => {
     const handleKey = (e) => {
-      if (e.ctrlKey && e.code === 'KeyL') {
+      const isVoiceShortcut = (e.ctrlKey && e.code === 'KeyL') || (e.altKey && e.code === 'Space')
+      if (isVoiceShortcut) {
         e.preventDefault()
         playSound('bell')
         setNotchState(current => {
@@ -927,12 +1033,9 @@ export default function DynamicNotch({ activeProject }) {
     await new Promise(r => setTimeout(r, 600 + Math.random() * 300))
     setIsTyping(false)
 
-    setJokeState(currentJoke => {
-      const reply = getResponse(trimmed, currentJoke, setJokeState, activeSection)
-      setMessages(prev => [...prev, { from: 'bot', text: reply }])
-      playSound('pop')
-      return currentJoke
-    })
+    const reply = getResponse(trimmed, jokeState, setJokeState, activeSection)
+    setMessages(prev => [...prev, { from: 'bot', text: reply }])
+    playSound('pop')
   }
 
   // Scroll to section
@@ -967,56 +1070,100 @@ export default function DynamicNotch({ activeProject }) {
     ? '0 8px 32px rgba(255, 77, 166, 0.08), inset 0 1px 0 rgba(255,255,255,0.05)'
     : '0 8px 32px rgba(255, 77, 166, 0.06), inset 0 1px 0 rgba(255,255,255,0.2)'
 
+  // -- INTERPOLATION LOGIC --
+  const isDocked = dockRect && scrollProgress < 1
+  const p = isDocked ? scrollProgress : 1
+  const pEase = p === 1 ? 1 : 1 - Math.pow(2, -10 * p) // easeOutExpo
+
+  const dockWidth = dockRect ? Math.min(dockRect.width, DIMS.chat.width) : DIMS.chat.width
+  const dockHeight = dockRect ? Math.min(dockRect.height, DIMS.chat.height) : DIMS.chat.height
+
+  // Spacing for floating notch from the bottom of the viewport
+  const bottomSpacing = typeof window !== 'undefined' && window.innerWidth < 768 ? 20 : 32
+
+  let finalWidth = currentDim.width
+  let finalHeight = notchState === 'compact' ? DIMS.compact.height : (dynamicHeight || currentDim.height)
+  let finalRadiusBottom = currentDim.radius
+  let finalRadiusTop = currentDim.radius
+  let finalTop = viewportHeight - finalHeight - bottomSpacing
+  let finalLeft = '50%'
+
+  if (isDocked) {
+    finalWidth = dockRect.width * (1 - pEase) + finalWidth * pEase
+    finalHeight = dockRect.height * (1 - pEase) + finalHeight * pEase
+    finalRadiusBottom = 24 * (1 - pEase) + currentDim.radius * pEase
+    finalRadiusTop = 24 * (1 - pEase) + currentDim.radius * pEase
+
+    const dockViewportTop = dockRect.top - window.scrollY
+    const dockViewportLeft = dockRect.left
+    const dockCenterX = dockViewportLeft + dockRect.width / 2
+
+    const targetTop = viewportHeight - finalHeight - bottomSpacing
+    finalTop = dockViewportTop * (1 - pEase) + targetTop * pEase
+    finalLeft = `calc(${dockCenterX}px * ${1 - pEase} + 50% * ${pEase})`
+  }
+
   // Inertia squash momentum calculation
-  const transformScale = notchState === 'compact' 
+  const transformScale = notchState === 'compact' && p === 1
     ? `translateX(-50%) scaleX(${1 + scrollVelocity * 0.04}) scaleY(${1 - scrollVelocity * 0.02})`
+    : `translateX(-50%) scale(1)`
+
+  // Add floating animation if fully docked
+  const isFullyDocked = p === 0
+
+  const hoverShadow = isDark
+    ? '0 12px 40px rgba(255, 77, 166, 0.16), 0 0 12px rgba(255, 77, 166, 0.15), inset 0 1px 0 rgba(255,255,255,0.05)'
+    : '0 12px 40px rgba(255, 77, 166, 0.12), 0 0 8px rgba(255, 77, 166, 0.2), inset 0 1px 0 rgba(255,255,255,0.2)'
+
+  const finalTransformScale = notchState === 'compact' && p === 1
+    ? `translateX(-50%) scaleX(${(1 + scrollVelocity * 0.04) * (hovered ? 1.03 : 1)}) scaleY(${(1 - scrollVelocity * 0.02) * (hovered ? 1.03 : 1)})`
     : `translateX(-50%) scale(1)`
 
   return (
     <>
+      <style>{`
+        @keyframes floatDock {
+          0%, 100% { transform: ${finalTransformScale} translateY(${translateY}px); }
+          50% { transform: ${finalTransformScale} translateY(${translateY - 6}px); }
+        }
+      `}</style>
       <nav
         id="dynamic-island-notch"
         style={{
           position: 'fixed',
-          top: 0,
-          left: '50%',
-          transform: `${transformScale} translateY(${translateY}px)`,
-          width: currentDim.width,
-          height: notchState === 'compact' ? DIMS.compact.height : (dynamicHeight ? dynamicHeight : currentDim.height),
-          borderBottomLeftRadius: currentDim.radius,
-          borderBottomRightRadius: currentDim.radius,
-          borderTopLeftRadius: 0,
-          borderTopRightRadius: 0,
+          top: finalTop,
+          left: finalLeft,
+          transform: `${finalTransformScale} translateY(${translateY}px)`,
+          width: finalWidth,
+          height: finalHeight,
+          borderBottomLeftRadius: finalRadiusBottom,
+          borderBottomRightRadius: finalRadiusBottom,
+          borderTopLeftRadius: finalRadiusTop,
+          borderTopRightRadius: finalRadiusTop,
           background: bgColor,
-          borderTop: 'none',
-          borderLeft: `1.2px solid ${borderTint}`,
-          borderRight: `1.2px solid ${borderTint}`,
-          borderBottom: `1.2px solid ${borderTint}`,
+          border: `1.2px solid ${borderTint}`,
           backdropFilter: 'blur(20px) saturate(180%)',
           WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-          boxShadow: glowShadow,
+          boxShadow: (hovered && notchState === 'compact') ? hoverShadow : glowShadow,
           zIndex: 999999,
           overflow: 'hidden',
-          transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.1s ease-out', // Super smooth spring-physics easing
+          transition: isDocked ? 'none' : 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.1s ease-out',
+          animation: isFullyDocked ? 'floatDock 4s ease-in-out infinite' : 'none',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'flex-start',
+          cursor: notchState === 'compact' ? 'pointer' : 'default',
         }}
-        onMouseEnter={() => {
-          if (notchState === 'compact') {
-            playSound('bell')
-            setNotchState('expanded')
-          }
-        }}
-        onMouseLeave={() => {
-          if (notchState === 'expanded') {
-            setNotchState('compact')
-          }
-        }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onClick={notchState === 'compact' ? () => {
+          playSound('pop')
+          setNotchState('chat')
+        } : undefined}
       >
         
-        {/* Absolute Left bezel Wing Flare */}
+        {/* Absolute Left bezel Wing Flare (Hide when docked) */}
         <div style={{
           position: 'absolute',
           top: 0,
@@ -1027,10 +1174,11 @@ export default function DynamicNotch({ activeProject }) {
           pointerEvents: 'none',
           borderTopRightRadius: 24,
           boxShadow: `12px -12px 0 0 ${bgColor}`,
-          transition: 'box-shadow 0.4s ease'
+          opacity: isDocked ? pEase : 1,
+          transition: 'box-shadow 0.4s ease, opacity 0.2s'
         }} />
 
-        {/* Absolute Right bezel Wing Flare */}
+        {/* Absolute Right bezel Wing Flare (Hide when docked) */}
         <div style={{
           position: 'absolute',
           top: 0,
@@ -1041,708 +1189,718 @@ export default function DynamicNotch({ activeProject }) {
           pointerEvents: 'none',
           borderTopLeftRadius: 24,
           boxShadow: `-12px -12px 0 0 ${bgColor}`,
-          transition: 'box-shadow 0.4s ease'
+          opacity: isDocked ? pEase : 1,
+          transition: 'box-shadow 0.4s ease, opacity 0.2s'
         }} />
 
-        {/* STATE 1: COMPACT NOTCH */}
+        {/* STATE 1: COMPACT NOTCH & DOCKED IDLE */}
         {notchState === 'compact' && (() => {
           const hud = getSmartHUDState(activeSection, scrollVelocity, activeProject, inactivityState, readingTime);
           return (
-            <div style={{
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 12,
-              padding: '0 20px',
-              animation: 'fadeIn 0.25s ease-out'
-            }}>
+            <div 
+              style={{
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                flexDirection: isFullyDocked ? 'column' : 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: isFullyDocked ? 20 : 12,
+                padding: isFullyDocked ? '40px 24px' : '0 20px',
+                animation: 'fadeIn 0.25s ease-out',
+                cursor: 'pointer',
+                textAlign: 'center',
+                opacity: isFullyDocked ? 1 : pEase,
+                transition: 'opacity 0.3s, flex-direction 0.3s, gap 0.3s, padding 0.3s',
+              }}
+              onClick={() => {
+                playSound('pop')
+                setNotchState('chat')
+              }}
+            >
               {/* Glowing Breathing Circle */}
-              <StatusHUDIcon state={hud.icon} theme={theme} />
-              
-              {/* Dynamic Contextual Text */}
-              <span style={{
-                fontSize: 12,
-                fontFamily: 'var(--font-body)',
-                fontWeight: 600,
-                color: textColor,
-                letterSpacing: '-0.015em',
-                whiteSpace: 'nowrap',
-                display: 'block'
+              <div style={{
+                transform: isFullyDocked ? 'scale(2.2)' : 'none',
+                transition: 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+                marginBottom: isFullyDocked ? 12 : 0,
               }}>
-                Hi I am Luffy, press Ctrl + L to talk.
-              </span>
+                <StatusHUDIcon state={hud.icon} theme={theme} />
+              </div>
+              
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4,
+                opacity: isFullyDocked ? (1 - pEase) : 1,
+                transition: 'opacity 0.3s',
+              }}>
+                {/* Dynamic Contextual Text */}
+                <span style={{
+                  fontSize: isFullyDocked ? 15 : 12,
+                  fontFamily: isFullyDocked ? 'var(--font-display)' : 'var(--font-mono)',
+                  fontWeight: isFullyDocked ? 800 : 700,
+                  color: textColor,
+                  letterSpacing: isFullyDocked ? '-0.02em' : '0.04em',
+                  textTransform: isFullyDocked ? 'none' : 'uppercase',
+                  whiteSpace: isFullyDocked ? 'normal' : 'nowrap',
+                }}>
+                  {isFullyDocked ? "Hi, I’m Luffy — Soupriti’s AI hiring copilot." : "Luffy AI Copilot — Press Alt + Space to talk"}
+                </span>
+
+                {isFullyDocked && (
+                  <span style={{
+                    fontSize: 12,
+                    fontFamily: 'var(--font-body)',
+                    color: subtextColor,
+                    maxWidth: '32ch',
+                    lineHeight: 1.5,
+                    opacity: 0.8,
+                  }}>
+                    I can help you quickly evaluate whether Soupriti is a strong fit for your team, product, or role.
+                  </span>
+                )}
+              </div>
             </div>
-          );
+          )
         })()}
 
         {/* CONTENT DOCK WRAPPER FOR DYNAMIC HUGGING */}
         {notchState !== 'compact' && (
           <div ref={contentRef} style={{ width: '100%', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
-            {/* STATE 2: EXPANDED HUD DOCK */}
-            {notchState === 'expanded' && (
-              <div style={{
-                width: '100%',
-                height: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '16px 20px',
-            animation: 'fadeIn 0.3s ease-out',
-            boxSizing: 'border-box'
-          }}>
-            {/* Header: Ask Anything prompt & Breathing Circle */}
+            
+            {/* 1. UNIFIED WORKSPACE HEADER */}
             <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: 14
+              width: '100%', padding: '14px 20px',
+              borderBottom: `1.2px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`,
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              boxSizing: 'border-box'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <StatusHUDIcon state="idle" theme={theme} />
-                <span style={{
-                  fontSize: 13,
-                  fontFamily: 'var(--font-body)',
-                  fontWeight: 700,
-                  color: textColor,
-                  letterSpacing: '-0.01em'
-                }}>
-                  How can I assist you today?
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: accentColor, boxShadow: `0 0 6px ${accentColor}` }} />
+                <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', fontWeight: 700, color: textColor, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                  {notchState === 'chat' ? "Luffy AI Assistant" : (notchState === 'jdMatch' ? "JD Fit Analyzer" : "Voice Copilot")}
                 </span>
               </div>
-              <span style={{
-                fontSize: 10,
-                fontFamily: 'var(--font-mono)',
-                fontWeight: 700,
-                color: 'rgba(255, 77, 166, 0.7)',
-                letterSpacing: '0.04em',
-                background: isDark ? 'rgba(255, 77, 166, 0.1)' : 'rgba(255, 77, 166, 0.15)',
-                padding: '2px 8px',
-                borderRadius: 10
-              }}>
-                CTRL + L
-              </span>
-            </div>
-
-            {/* Quick Actions Grid (Quick Nav removed, Resume Download added) */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(5, 1fr)',
-              gap: 8,
-              marginBottom: 10,
-              transition: 'all 0.3s ease'
-            }}>
-              {[
-                { label: 'Ask Anything', icon: <ChatIcon />, type: 'button', action: () => setNotchState('chat') },
-                { 
-                  label: 'JD Matcher', 
-                  icon: <ScanJDIcon />, 
-                  type: 'button',
-                  action: () => {
-                    playSound('pop')
-                    setNotchState('jdMatch')
-                  } 
-                },
-                { 
-                  label: 'Voice Mode', 
-                  icon: <MicIcon />, 
-                  type: 'button',
-                  action: () => {
-                    playSound('bell')
-                    setNotchState('voice')
-                    setTimeout(() => startVoiceRecognition(), 200)
-                  } 
-                },
-                {
-                  label: 'Activity Log',
-                  icon: <LogIcon />,
-                  type: 'button',
-                  action: () => {
-                    playSound('pop')
-                    setNotchState('compact')
-                    if (window.openActivityLog) window.openActivityLog()
-                  }
-                }
-              ].map(btn => (
-                <button
-                  key={btn.label}
-                  onClick={btn.action}
-                  style={{
-                    background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
-                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)'}`,
-                    borderRadius: 12,
-                    padding: '8px 6px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 4,
-                    color: textColor,
-                    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.background = isDark ? 'rgba(255, 77, 166, 0.08)' : 'rgba(255, 77, 166, 0.05)';
-                    e.currentTarget.style.borderColor = accentColor;
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 77, 166, 0.12)';
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)';
-                    e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)';
-                    e.currentTarget.style.transform = 'none';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                >
-                  <div style={{ color: 'inherit' }}>
-                    {btn.icon}
-                  </div>
-                  <span style={{ fontSize: 10, fontWeight: 700, whiteSpace: 'nowrap' }}>{btn.label}</span>
-                </button>
-              ))}
-
-              {/* Direct Resume Download Button Link */}
-              <a
-                href="/Soupriti_Das_Resume.pdf"
-                download="Soupriti_Das_Resume.pdf"
-                onClick={() => playSound('pop')}
+              
+              <button 
+                onClick={() => {
+                  playSound('pop')
+                  if (notchState === 'voice') stopVoiceRecognition()
+                  setNotchState('compact')
+                }}
                 style={{
-                  textDecoration: 'none',
-                  background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
-                  border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)'}`,
-                  borderRadius: 12,
-                  padding: '8px 6px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 4,
-                  color: textColor,
-                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+                  background: 'none', border: 'none', color: subtextColor,
+                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: 11.5,
+                  fontFamily: 'var(--font-mono)'
                 }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = isDark ? 'rgba(255, 77, 166, 0.08)' : 'rgba(255, 77, 166, 0.05)';
-                  e.currentTarget.style.borderColor = accentColor;
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 77, 166, 0.12)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)';
-                  e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)';
-                  e.currentTarget.style.transform = 'none';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
+                onMouseEnter={e => e.currentTarget.style.color = textColor}
+                onMouseLeave={e => e.currentTarget.style.color = subtextColor}
               >
-                <div style={{ color: 'inherit' }}>
-                  <DocIcon />
-                </div>
-                <span style={{ fontSize: 10, fontWeight: 700, whiteSpace: 'nowrap' }}>Resume ↗</span>
-              </a>
+                <CloseIcon />
+                <span>MINIMIZE</span>
+              </button>
             </div>
 
-            {/* Quick Navigation Links Row (Directly visible on hover expanded!) */}
+            {/* 2. UNIFIED WORKSPACE SEGMENTED TABS */}
             <div style={{
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '10px 12px',
-              background: isDark ? 'rgba(255, 77, 166, 0.05)' : 'rgba(255, 77, 166, 0.03)',
-              borderRadius: 12,
-              border: `1px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`,
-              animation: 'fadeIn 0.2s ease-out'
+              gap: 4,
+              padding: '8px 12px',
+              borderBottom: `1px dashed ${isDark ? 'rgba(255, 77, 166, 0.12)' : 'rgba(255, 77, 166, 0.2)'}`,
+              background: isDark ? 'rgba(255, 255, 255, 0.01)' : 'rgba(0, 0, 0, 0.01)',
+              boxSizing: 'border-box'
             }}>
-              {['Expertise', 'Projects', 'About', 'Journey', 'Contact'].map(label => {
-                const target = label.toLowerCase();
-                const isActive = activeSection === target;
+              {[
+                { id: 'chat', label: 'Chat', icon: <ChatIcon /> },
+                { id: 'jdMatch', label: 'JD Match', icon: <ScanJDIcon /> },
+                { id: 'voice', label: 'Voice', icon: <MicIcon /> },
+                { id: 'devJournal', label: 'Journal', icon: <LogIcon />, action: () => {
+                  playSound('pop')
+                  setNotchState('compact')
+                  if (window.openActivityLog) window.openActivityLog()
+                }},
+
+              ].map(tab => {
+                const isActive = notchState === tab.id
+                const handleClick = tab.action || (() => {
+                  playSound('pop')
+                  if (notchState === 'voice') stopVoiceRecognition()
+                  setNotchState(tab.id)
+                })
                 return (
                   <button
-                    key={label}
-                    onClick={() => scrollTo(target)}
+                    key={tab.id}
+                    onClick={handleClick}
                     style={{
-                      background: 'none',
-                      border: 'none',
+                      flex: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 6,
+                      padding: '8px 4px',
+                      background: isActive ? (isDark ? 'rgba(255, 77, 166, 0.12)' : 'rgba(255, 77, 166, 0.08)') : 'transparent',
+                      border: `1px solid ${isActive ? accentColor : 'transparent'}`,
+                      borderRadius: 10,
                       color: isActive ? accentColor : subtextColor,
-                      fontSize: 11,
+                      fontSize: 10.5,
                       fontWeight: isActive ? 800 : 600,
                       fontFamily: 'var(--font-mono)',
-                      letterSpacing: '0.02em',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
                       textTransform: 'uppercase',
-                      padding: '4px 6px',
-                      borderRadius: 6
+                      letterSpacing: '0.02em'
                     }}
                     onMouseEnter={e => {
-                      e.currentTarget.style.color = accentColor;
-                      e.currentTarget.style.transform = 'translateY(-1px) scale(1.05)';
+                      if (!isActive) {
+                        e.currentTarget.style.color = textColor
+                        e.currentTarget.style.background = isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)'
+                      }
                     }}
                     onMouseLeave={e => {
-                      e.currentTarget.style.color = isActive ? accentColor : subtextColor;
-                      e.currentTarget.style.transform = 'none';
+                      if (!isActive) {
+                        e.currentTarget.style.color = subtextColor
+                        e.currentTarget.style.background = 'transparent'
+                      }
                     }}
                   >
-                    {label}
+                    {tab.icon}
+                    <span style={{ fontSize: 10.5, fontWeight: 700, fontFamily: 'var(--font-mono)' }}>{tab.label}</span>
                   </button>
                 )
               })}
             </div>
-          </div>
-        )}
 
-        {/* STATE 3: AI CHAT CANOPY DOCK */}
-        {notchState === 'chat' && (
-          <div style={{
-            width: '100%',
-            height: '490px',
-            display: 'flex',
-            flexDirection: 'column',
-            animation: 'fadeIn 0.3s ease-out',
-            boxSizing: 'border-box'
-          }}>
-            {/* Header */}
-            <div style={{
-              width: '100%', padding: '14px 20px',
-              borderBottom: `1.2px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`,
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: accentColor, boxShadow: `0 0 6px ${accentColor}` }} />
-                <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', fontWeight: 700, color: textColor, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Luffy Assistant</span>
-              </div>
-              <button 
-                onClick={() => {
-                  playSound('pop')
-                  setNotchState('compact')
-                }}
-                style={{
-                  background: 'none', border: 'none', color: subtextColor,
-                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: 11.5
-                }}
-                onMouseEnter={e => e.currentTarget.style.color = textColor}
-                onMouseLeave={e => e.currentTarget.style.color = subtextColor}
-              >
-                <CloseIcon />
-                <span>CLOSE</span>
-              </button>
-            </div>
+            {/* 3. ACTIVE VIEW PORT CONTENT */}
 
-            {/* Embedded Messages Thread */}
-            <div style={{
-              flex: 1, overflowY: 'auto', padding: '16px 20px',
-              display: 'flex', flexDirection: 'column', gap: 12
-            }}>
-              {messages.map((m, i) => (
-                <div 
-                  key={i} 
-                  style={{
-                    alignSelf: m.from === 'user' ? 'flex-end' : 'flex-start',
-                    maxWidth: '82%', padding: '10px 14px',
-                    background: m.from === 'user' ? accentColor : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'),
-                    color: m.from === 'user' ? '#ffffff' : textColor, fontSize: 12, lineHeight: 1.5,
-                    borderRadius: 12, border: m.from === 'bot' ? `1.2px solid ${isDark ? 'rgba(255, 77, 166, 0.12)' : 'rgba(255, 77, 166, 0.22)'}` : 'none',
-                    boxShadow: m.from === 'user' ? `0 4px 12px rgba(255, 77, 166, 0.25)` : 'none'
-                  }}
-                >
-                  {m.text}
-                </div>
-              ))}
-              
-              {isTyping && (
+            {/* VIEW A: CHAT WORKSPACE */}
+            {notchState === 'chat' && (
+              <div style={{ display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
+                {messages.length === 1 ? (
+                  /* Welcome Onboarding Screen */
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 16,
+                    padding: '20px',
+                    animation: 'fadeIn 0.35s ease-out',
+                    boxSizing: 'border-box'
+                  }}>
+                    {/* Welcome Header */}
+                    <div>
+                      <h3 style={{
+                        margin: '0 0 6px 0',
+                        fontSize: 15,
+                        fontWeight: 800,
+                        color: textColor,
+                        fontFamily: 'var(--font-display)',
+                        letterSpacing: '-0.02em',
+                        lineHeight: 1.2
+                      }}>
+                        Hi, I’m Luffy — Soupriti’s AI hiring copilot.
+                      </h3>
+                      <p style={{
+                        margin: 0,
+                        fontSize: 12,
+                        lineHeight: 1.5,
+                        color: subtextColor,
+                        fontFamily: 'var(--font-body)'
+                      }}>
+                        I can help you quickly evaluate whether Soupriti is a strong fit for your team, product, or role.
+                      </p>
+                    </div>
+
+                    {/* Recruiter quick prompt list */}
+                    <div style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 8
+                    }}>
+                      {/* Upload JD highlight card */}
+                      <button
+                        onClick={() => {
+                          playSound('pop')
+                          setNotchState('jdMatch')
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 8,
+                          padding: '12px 16px',
+                          background: 'linear-gradient(135deg, #FF4DA6 0%, #FF2E93 100%)',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: 12,
+                          fontSize: 12,
+                          fontWeight: 700,
+                          fontFamily: 'var(--font-mono)',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.04em',
+                          cursor: 'pointer',
+                          boxShadow: '0 4px 12px rgba(255, 77, 166, 0.25)',
+                          transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+                        }}
+                        onMouseEnter={e => {
+                          e.currentTarget.style.transform = 'translateY(-1px)'
+                          e.currentTarget.style.boxShadow = '0 6px 16px rgba(255, 77, 166, 0.35)'
+                        }}
+                        onMouseLeave={e => {
+                          e.currentTarget.style.transform = 'none'
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 77, 166, 0.25)'
+                        }}
+                      >
+                        <ScanJDIcon />
+                        <span>Upload a Job Description</span>
+                      </button>
+
+                      {/* Prompt Cards Grid */}
+                      <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: 8
+                      }}>
+                        {[
+                          { label: 'Is she a good fit for SaaS?', query: 'Is Soupriti a good fit for SaaS product roles?' },
+                          { label: 'Summarize her experience', query: "Summarize Soupriti's experience" },
+                          { label: 'Explore AI projects', query: "Tell me about Soupriti's AI projects" },
+                          { label: 'Evaluate UX thinking', query: "Evaluate Soupriti's UX thinking and process" },
+                          { label: 'Review product strategy', query: "Review Soupriti's product design strategy" },
+                          { label: 'Hear her design philosophy', query: "What is Soupriti's design philosophy?" },
+                          { label: 'Ask about B2B/B2C experience', query: "Tell me about Soupriti's B2B and B2C experience" }
+                        ].map(act => (
+                          <button
+                            key={act.label}
+                            onClick={() => handleSendChat(act.query)}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'flex-start',
+                              textAlign: 'left',
+                              padding: '10px 12px',
+                              background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                              border: `1.2px solid ${isDark ? 'rgba(255, 77, 166, 0.12)' : 'rgba(255, 77, 166, 0.22)'}`,
+                              borderRadius: 12,
+                              fontSize: 11.5,
+                              fontWeight: 600,
+                              color: textColor,
+                              fontFamily: 'var(--font-body)',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s'
+                            }}
+                            onMouseEnter={e => {
+                              e.currentTarget.style.borderColor = accentColor
+                              e.currentTarget.style.background = isDark ? 'rgba(255, 77, 166, 0.08)' : 'rgba(255, 77, 166, 0.04)'
+                              e.currentTarget.style.transform = 'translateY(-1px)'
+                            }}
+                            onMouseLeave={e => {
+                              e.currentTarget.style.borderColor = isDark ? 'rgba(255, 77, 166, 0.12)' : 'rgba(255, 77, 166, 0.22)'
+                              e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'
+                              e.currentTarget.style.transform = 'none'
+                            }}
+                          >
+                            {act.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Voice guidance card */}
+                    <div style={{
+                      marginTop: 4,
+                      padding: '10px 14px',
+                      background: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)',
+                      border: `1px dashed ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)'}`,
+                      borderRadius: 12,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 4
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <div style={{ color: accentColor }}><MicIcon /></div>
+                        <span style={{ fontSize: 10.5, fontWeight: 700, color: textColor, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+                          Voice Mode: Press Alt + Space to talk
+                        </span>
+                      </div>
+                      <span style={{ fontSize: 11, color: subtextColor, fontFamily: 'var(--font-body)', lineHeight: 1.4 }}>
+                        Ask Luffy anything about Soupriti’s work, process, or fit.
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  /* Standard Chat Thread List */
+                  <div style={{ display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
+                    <div style={{
+                      flex: 1, maxHeight: '340px', overflowY: 'auto', padding: '16px 20px',
+                      display: 'flex', flexDirection: 'column', gap: 12, boxSizing: 'border-box'
+                    }}>
+                      {messages.map((m, i) => (
+                        <div 
+                          key={i} 
+                          style={{
+                            alignSelf: m.from === 'user' ? 'flex-end' : 'flex-start',
+                            maxWidth: '82%', padding: '10px 14px',
+                            background: m.from === 'user' ? accentColor : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'),
+                            color: m.from === 'user' ? '#ffffff' : textColor, fontSize: 12, lineHeight: 1.5,
+                            fontFamily: 'var(--font-body)',
+                            borderRadius: 12, border: m.from === 'bot' ? `1.2px solid ${isDark ? 'rgba(255, 77, 166, 0.12)' : 'rgba(255, 77, 166, 0.22)'}` : 'none',
+                            boxShadow: m.from === 'user' ? `0 4px 12px rgba(255, 77, 166, 0.25)` : 'none'
+                          }}
+                        >
+                          {m.text}
+                        </div>
+                      ))}
+                      
+                      {isTyping && (
+                        <div style={{
+                          alignSelf: 'flex-start', display: 'flex', gap: 4,
+                          padding: '10px 14px', background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
+                          borderRadius: 12, width: 'fit-content'
+                        }}>
+                          {[0,1,2].map(i => <span key={i} style={{ width: 5, height: 5, borderRadius: '50%', background: accentColor, animation: `bounce 1.2s infinite ${i * 0.2}s` }} />)}
+                        </div>
+                      )}
+                      <div ref={chatEndRef} />
+                    </div>
+                  </div>
+                )}
+
+                {/* Input box is persistent for chat mode */}
                 <div style={{
-                  alignSelf: 'flex-start', display: 'flex', gap: 4,
-                  padding: '10px 14px', background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
-                  borderRadius: 12, width: 'fit-content'
+                  padding: '10px 16px', borderTop: `1px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`,
+                  display: 'flex', gap: 8, alignItems: 'center', boxSizing: 'border-box'
                 }}>
-                  {[0,1,2].map(i => <span key={i} style={{ width: 5, height: 5, borderRadius: '50%', background: accentColor, animation: `bounce 1.2s infinite ${i * 0.2}s` }} />)}
-                </div>
-              )}
-              <div ref={chatEndRef} />
-            </div>
-
-            {/* Dynamic Suggestion Chips */}
-            {messages.length === 1 && (
-              <div style={{ display: 'flex', gap: 6, padding: '0 20px 12px', flexWrap: 'wrap' }}>
-                {['Her work', 'Skills', 'Design joke', 'Contact'].map(chip => (
-                  <button
-                    key={chip}
-                    onClick={() => {
-                      const q = chip === 'Her work' ? 'Tell me about her projects' : (chip === 'Skills' ? 'What are her design skills?' : (chip === 'Design joke' ? 'Tell me a design joke' : 'How do I contact her?'))
-                      handleSendChat(q)
-                    }}
+                  <input
+                    type="text"
+                    value={chatInput}
+                    onChange={e => setChatInput(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleSendChat(chatInput)}
+                    placeholder="Ask about my skills, projects, or workflow..."
                     style={{
-                      padding: '5px 12px', borderRadius: 20, background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.01)',
-                      border: `1.2px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`, color: subtextColor,
-                      fontSize: 10.5, cursor: 'pointer', transition: 'all 0.2s', fontWeight: 600
+                      flex: 1, padding: '8px 14px', borderRadius: 20,
+                      background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)', 
+                      border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'}`,
+                      color: textColor, fontSize: 12, outline: 'none',
+                      fontFamily: 'var(--font-body)'
                     }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.background = isDark ? 'rgba(255, 77, 166, 0.1)' : 'rgba(255, 77, 166, 0.05)';
-                      e.currentTarget.style.borderColor = accentColor;
-                      e.currentTarget.style.color = textColor;
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.01)';
-                      e.currentTarget.style.borderColor = isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)';
-                      e.currentTarget.style.color = subtextColor;
+                  />
+                  <button
+                    onClick={() => handleSendChat(chatInput)}
+                    disabled={!chatInput.trim()}
+                    style={{
+                      width: 32, height: 32, borderRadius: '50%',
+                      background: chatInput.trim() ? accentColor : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'),
+                      color: 'white', border: 'none', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      boxShadow: chatInput.trim() ? `0 4px 10px rgba(255, 77, 166, 0.3)` : 'none',
+                      transition: 'all 0.2s'
                     }}
                   >
-                    {chip}
+                    <SendIcon />
                   </button>
-                ))}
+                </div>
               </div>
             )}
 
-            {/* Input Form Box */}
-            <div style={{
-              padding: '10px 16px', borderTop: `1px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`,
-              display: 'flex', gap: 8, alignItems: 'center'
-            }}>
-              <input
-                type="text"
-                value={chatInput}
-                onChange={e => setChatInput(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleSendChat(chatInput)}
-                placeholder="Ask Luffy AI anything..."
-                style={{
-                  flex: 1, padding: '8px 14px', borderRadius: 20,
-                  background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)', 
-                  border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'}`,
-                  color: textColor, fontSize: 12, outline: 'none'
-                }}
-              />
-              <button
-                onClick={() => handleSendChat(chatInput)}
-                disabled={!chatInput.trim()}
-                style={{
-                  width: 32, height: 32, borderRadius: '50%',
-                  background: chatInput.trim() ? accentColor : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'),
-                  color: 'white', border: 'none', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: chatInput.trim() ? `0 4px 10px rgba(255, 77, 166, 0.3)` : 'none',
-                  transition: 'all 0.2s'
-                }}
-              >
-                <SendIcon />
-              </button>
-            </div>
-
-          </div>
-        )}
-
-        {/* STATE 5: JD PROFILE MATCHING CANOPY */}
-        {notchState === 'jdMatch' && (
-          <div style={{
-            width: '100%',
-            height: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
-            animation: 'fadeIn 0.3s ease-out',
-            boxSizing: 'border-box'
-          }}>
-            {/* Header */}
-            <div style={{
-              width: '100%', padding: '14px 20px',
-              borderBottom: `1.2px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`,
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: accentColor, boxShadow: `0 0 6px ${accentColor}` }} />
-                <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', fontWeight: 700, color: textColor, letterSpacing: '0.08em', textTransform: 'uppercase' }}>JD Fit Analyzer</span>
-              </div>
-              <button 
-                onClick={() => {
-                  playSound('pop')
-                  setNotchState('compact')
-                  setJdText('')
-                  setJdFileName('')
-                  setMatchResult(null)
-                }}
-                style={{
-                  background: 'none', border: 'none', color: subtextColor,
-                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: 11.5
-                }}
-                onMouseEnter={e => e.currentTarget.style.color = textColor}
-                onMouseLeave={e => e.currentTarget.style.color = subtextColor}
-              >
-                <CloseIcon />
-                <span>CLOSE</span>
-              </button>
-            </div>
-
-            {/* Content Switch */}
-            {isScanning ? (
-              <div style={{
-                flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20
-              }}>
-                <div style={{ position: 'relative', width: 64, height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {/* VIEW B: JD SCANNER WORKSPACE */}
+            {notchState === 'jdMatch' && (
+              <div style={{ width: '100%', boxSizing: 'border-box' }}>
+                {isScanning ? (
                   <div style={{
-                    position: 'absolute', inset: 0, borderRadius: '50%',
-                    border: `2.5px solid ${isDark ? 'rgba(255, 77, 166, 0.1)' : 'rgba(255, 77, 166, 0.2)'}`,
-                    borderTopColor: accentColor,
-                    animation: 'spinOrbit 1s cubic-bezier(0.4, 0, 0.2, 1) infinite'
-                  }} />
-                  <div style={{
-                    position: 'absolute', width: '90%', height: 1.5, background: accentColor,
-                    boxShadow: `0 0 8px ${accentColor}`,
-                    animation: 'scanLaser 1.5s ease-in-out infinite alternate'
-                  }} />
-                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: accentColor, boxShadow: `0 0 10px ${accentColor}` }} />
-                </div>
-                <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', fontWeight: 700, letterSpacing: '0.12em', color: accentColor, textTransform: 'uppercase' }}>
-                  Scanning Profile Match...
-                </span>
-              </div>
-            ) : matchResult ? (
-              <div style={{
-                flex: 1, display: 'flex', gap: 20, padding: '20px 24px', alignItems: 'center'
-              }}>
-                {/* Left Side: Score Circle */}
-                <div style={{
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8
-                }}>
-                  <div style={{
-                    width: 90, height: 90, borderRadius: '50%',
-                    border: `3px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`,
-                    borderColor: `${accentColor} ${accentColor} transparent ${accentColor}`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    boxShadow: `0 0 20px rgba(255, 77, 166, 0.15)`,
-                    position: 'relative'
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20,
+                    padding: '40px 24px'
                   }}>
-                    <span style={{ fontSize: 24, fontWeight: 800, color: textColor, fontFamily: 'var(--font-mono)' }}>
-                      {matchResult.score}%
+                    <div style={{ position: 'relative', width: 64, height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{
+                        position: 'absolute', inset: 0, borderRadius: '50%',
+                        border: `2.5px solid ${isDark ? 'rgba(255, 77, 166, 0.1)' : 'rgba(255, 77, 166, 0.2)'}`,
+                        borderTopColor: accentColor,
+                        animation: 'spinOrbit 1s cubic-bezier(0.4, 0, 0.2, 1) infinite'
+                      }} />
+                      <div style={{
+                        position: 'absolute', width: '90%', height: 1.5, background: accentColor,
+                        boxShadow: `0 0 8px ${accentColor}`,
+                        animation: 'scanLaser 1.5s ease-in-out infinite alternate'
+                      }} />
+                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: accentColor, boxShadow: `0 0 10px ${accentColor}` }} />
+                    </div>
+                    <span style={{ fontSize: 10.5, fontFamily: 'var(--font-mono)', fontWeight: 700, letterSpacing: '0.12em', color: accentColor, textTransform: 'uppercase' }}>
+                      Scanning Profile Match...
                     </span>
                   </div>
-                  <span style={{ fontSize: 9, fontFamily: 'var(--font-mono)', fontWeight: 700, opacity: 0.6, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-                    Match Score
-                  </span>
-                </div>
+                ) : matchResult ? (
+                  <div style={{
+                    display: 'flex', gap: 20, padding: '24px', alignItems: 'center',
+                    animation: 'fadeIn 0.3s ease-out'
+                  }}>
+                    {/* Left Side: Score Circle */}
+                    <div style={{
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8
+                    }}>
+                      <div style={{
+                        width: 90, height: 90, borderRadius: '50%',
+                        border: `3px solid ${isDark ? 'rgba(255, 77, 166, 0.15)' : 'rgba(255, 77, 166, 0.25)'}`,
+                        borderColor: `${accentColor} ${accentColor} transparent ${accentColor}`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        boxShadow: `0 0 20px rgba(255, 77, 166, 0.15)`,
+                        position: 'relative'
+                      }}>
+                        <span style={{ fontSize: 24, fontWeight: 800, color: textColor, fontFamily: 'var(--font-mono)' }}>
+                          {matchResult.score}%
+                        </span>
+                      </div>
+                      <span style={{ fontSize: 9, fontFamily: 'var(--font-mono)', fontWeight: 700, opacity: 0.6, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                        Match Score
+                      </span>
+                    </div>
 
-                {/* Right Side: Description Summary & Action */}
-                <div style={{
-                  flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 12
-                }}>
-                  <div>
-                    <h4 style={{ margin: '0 0 4px 0', fontSize: 12, fontWeight: 800, color: textColor, textTransform: 'uppercase', letterSpacing: '0.02em' }}>
-                      Alignment Overview
-                    </h4>
-                    <p style={{ margin: 0, fontSize: 11.5, lineHeight: 1.5, color: subtextColor }}>
-                      {matchResult.summary}
-                    </p>
+                    {/* Right Side: Description Summary & Action */}
+                    <div style={{
+                      flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 12
+                    }}>
+                      <div>
+                        <h4 style={{ margin: '0 0 4px 0', fontSize: 12, fontWeight: 800, color: textColor, textTransform: 'uppercase', letterSpacing: '0.02em', fontFamily: 'var(--font-mono)' }}>
+                          Alignment Overview
+                        </h4>
+                        <p style={{ margin: 0, fontSize: 11.5, lineHeight: 1.5, color: subtextColor, fontFamily: 'var(--font-body)' }}>
+                          {matchResult.summary}
+                        </p>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          playSound('pop')
+                          setMatchResult(null)
+                          setJdText('')
+                          setJdFileName('')
+                        }}
+                        style={{
+                          alignSelf: 'flex-start',
+                          padding: '6px 14px', borderRadius: 20,
+                          background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
+                          border: `1.2px solid ${isDark ? 'rgba(255, 77, 166, 0.2)' : 'rgba(255, 77, 166, 0.3)'}`,
+                          color: textColor, fontSize: 10.5, fontWeight: 700, cursor: 'pointer',
+                          transition: 'all 0.2s', textTransform: 'uppercase', letterSpacing: '0.02em',
+                          fontFamily: 'var(--font-mono)'
+                        }}
+                        onMouseEnter={e => {
+                          e.currentTarget.style.background = accentColor
+                          e.currentTarget.style.color = '#ffffff'
+                          e.currentTarget.style.borderColor = accentColor
+                          e.currentTarget.style.boxShadow = `0 4px 10px rgba(255, 77, 166, 0.25)`
+                        }}
+                        onMouseLeave={e => {
+                          e.currentTarget.style.background = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)'
+                          e.currentTarget.style.color = textColor
+                          e.currentTarget.style.borderColor = isDark ? 'rgba(255, 77, 166, 0.2)' : 'rgba(255, 77, 166, 0.3)'
+                          e.currentTarget.style.boxShadow = 'none'
+                        }}
+                      >
+                        Analyze New Role
+                      </button>
+                    </div>
                   </div>
-
-                  <button
-                    onClick={() => {
-                      playSound('pop')
-                      setMatchResult(null)
-                      setJdText('')
-                      setJdFileName('')
-                    }}
-                    style={{
-                      alignSelf: 'flex-start',
-                      padding: '6px 14px', borderRadius: 20,
-                      background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
-                      border: `1.2px solid ${isDark ? 'rgba(255, 77, 166, 0.2)' : 'rgba(255, 77, 166, 0.3)'}`,
-                      color: textColor, fontSize: 10.5, fontWeight: 700, cursor: 'pointer',
-                      transition: 'all 0.2s', textTransform: 'uppercase', letterSpacing: '0.02em'
-                    }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.background = accentColor
-                      e.currentTarget.style.color = '#ffffff'
-                      e.currentTarget.style.borderColor = accentColor
-                      e.currentTarget.style.boxShadow = `0 4px 10px rgba(255, 77, 166, 0.25)`
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.background = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)'
-                      e.currentTarget.style.color = textColor
-                      e.currentTarget.style.borderColor = isDark ? 'rgba(255, 77, 166, 0.2)' : 'rgba(255, 77, 166, 0.3)'
-                      e.currentTarget.style.boxShadow = 'none'
-                    }}
-                  >
-                    Scan Another JD
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div style={{
-                flex: 1, display: 'flex', flexDirection: 'column', padding: '16px 20px 20px 20px', gap: 12
-              }}>
-                {/* Inputs Wrapper */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <textarea
-                    value={jdText}
-                    onChange={e => setJdText(e.target.value)}
-                    onPaste={e => {
-                      const pastedText = e.clipboardData.getData('text')
-                      if (pastedText.trim()) {
-                        playSound('pop')
-                        setJdText(pastedText)
-                        handleAnalyzeJD(pastedText)
-                      }
-                    }}
-                    placeholder="Paste the Job Description (JD) text here to analyze alignment..."
-                    style={{
-                      width: '100%', height: 110, borderRadius: 12,
-                      background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
-                      border: `1.2px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'}`,
-                      color: textColor, padding: '10px 14px', fontSize: 11.5,
-                      outline: 'none', boxSizing: 'border-box', resize: 'none',
-                      lineHeight: 1.55, fontFamily: 'var(--font-body)',
-                      transition: 'border-color 0.2s'
-                    }}
-                    onFocus={e => e.currentTarget.style.borderColor = accentColor}
-                    onBlur={e => e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'}
-                  />
-
-                  {/* PDF Upload trigger row */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
-                    <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
-                      <input
-                        type="file"
-                        accept=".pdf"
-                        onChange={e => {
-                          const file = e.target.files?.[0]
-                          if (file) {
+                ) : (
+                  <div style={{
+                    display: 'flex', flexDirection: 'column', padding: '16px 20px 20px 20px', gap: 12
+                  }}>
+                    {/* Inputs Wrapper */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      <textarea
+                        value={jdText}
+                        onChange={e => setJdText(e.target.value)}
+                        onPaste={e => {
+                          const pastedText = e.clipboardData.getData('text')
+                          if (pastedText.trim()) {
                             playSound('pop')
-                            setJdFileName(file.name)
-                            // Auto populate descriptive mock text based on PDF name
-                            const mockText = `Role Details for PDF: ${file.name}. Looking for a Senior Product Designer with experience designing SaaS component libraries, high-fidelity React interactive web modules, and conversational AI UX layouts in Figma.`
-                            setJdText(mockText)
-                            // Directly trigger analysis immediately to show loading and generate the score
-                            handleAnalyzeJD(mockText)
+                            setJdText(pastedText)
+                            handleAnalyzeJD(pastedText)
                           }
                         }}
-                        style={{ display: 'none' }}
+                        placeholder="Paste your Job Description (JD) here to measure fit instantly..."
+                        style={{
+                          width: '100%', height: 110, borderRadius: 12,
+                          background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                          border: `1.2px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'}`,
+                          color: textColor, padding: '10px 14px', fontSize: 11.5,
+                          outline: 'none', boxSizing: 'border-box', resize: 'none',
+                          lineHeight: 1.55, fontFamily: 'var(--font-body)',
+                          transition: 'border-color 0.2s'
+                        }}
+                        onFocus={e => e.currentTarget.style.borderColor = accentColor}
+                        onBlur={e => e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'}
                       />
-                      <span style={{
-                        padding: '6px 14px', borderRadius: 20,
-                        background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
-                        border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'}`,
-                        color: textColor, fontSize: 10.5, fontWeight: 700,
-                        display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.2s'
-                      }}
-                      onMouseEnter={e => {
-                        e.currentTarget.style.borderColor = accentColor
-                        e.currentTarget.style.background = isDark ? 'rgba(255, 77, 166, 0.06)' : 'rgba(255, 77, 166, 0.03)'
-                      }}
-                      onMouseLeave={e => {
-                        e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'
-                        e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)'
-                      }}
-                      >
-                        <DocIcon />
-                        {jdFileName ? jdFileName : "Upload Job PDF"}
-                      </span>
-                    </label>
 
-                    {jdFileName && (
-                      <span style={{ fontSize: 9.5, fontFamily: 'var(--font-mono)', opacity: 0.6, textTransform: 'uppercase' }}>
-                        PDF Loaded ✓
-                      </span>
-                    )}
+                      {/* Document & Image Upload Row */}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px', flexWrap: 'wrap', gap: 8 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          {/* PDF Upload */}
+                          <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+                            <input
+                              type="file"
+                              accept=".pdf"
+                              onChange={e => {
+                                const file = e.target.files?.[0]
+                                if (file) {
+                                  playSound('pop')
+                                  setJdFileName(file.name)
+                                  const mockText = `Role Details for PDF: ${file.name}. Looking for a Senior Product Designer with experience designing SaaS component libraries, high-fidelity React interactive web modules, and conversational AI UX layouts in Figma.`
+                                  setJdText(mockText)
+                                  handleAnalyzeJD(mockText)
+                                }
+                              }}
+                              style={{ display: 'none' }}
+                            />
+                            <span style={{
+                              padding: '6px 14px', borderRadius: 20,
+                              background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+                              border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'}`,
+                              color: textColor, fontSize: 10.5, fontWeight: 700,
+                              display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.2s',
+                              fontFamily: 'var(--font-mono)'
+                            }}
+                            onMouseEnter={e => {
+                              e.currentTarget.style.borderColor = accentColor
+                              e.currentTarget.style.background = isDark ? 'rgba(255, 77, 166, 0.06)' : 'rgba(255, 77, 166, 0.03)'
+                            }}
+                            onMouseLeave={e => {
+                              e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'
+                              e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)'
+                            }}
+                            >
+                              <DocIcon />
+                              {jdFileName && jdFileName.endsWith('.pdf') ? jdFileName : "Upload JD (.pdf)"}
+                            </span>
+                          </label>
+
+                          {/* Image Upload */}
+                          <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={e => {
+                                const file = e.target.files?.[0]
+                                if (file) {
+                                  playSound('pop')
+                                  setJdFileName(file.name)
+                                  const mockText = `Role details extracted from Image: ${file.name}. Seeking a Senior Product Designer skilled in OKLCH dark/light design systems, high-fidelity interactive visual dashboards, and custom micro-interactions in React/Vite.`
+                                  setJdText(mockText)
+                                  handleAnalyzeJD(mockText)
+                                }
+                              }}
+                              style={{ display: 'none' }}
+                            />
+                            <span style={{
+                              padding: '6px 14px', borderRadius: 20,
+                              background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+                              border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'}`,
+                              color: textColor, fontSize: 10.5, fontWeight: 700,
+                              display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.2s',
+                              fontFamily: 'var(--font-mono)'
+                            }}
+                            onMouseEnter={e => {
+                              e.currentTarget.style.borderColor = accentColor
+                              e.currentTarget.style.background = isDark ? 'rgba(255, 77, 166, 0.06)' : 'rgba(255, 77, 166, 0.03)'
+                            }}
+                            onMouseLeave={e => {
+                              e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'
+                              e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)'
+                            }}
+                            >
+                              <ImageIcon />
+                              {jdFileName && !jdFileName.endsWith('.pdf') ? jdFileName : "Upload JD Image"}
+                            </span>
+                          </label>
+                        </div>
+
+                        {jdFileName && (
+                          <span style={{ fontSize: 9.5, fontFamily: 'var(--font-mono)', opacity: 0.6, textTransform: 'uppercase' }}>
+                            {jdFileName.endsWith('.pdf') ? "PDF" : "Image"} Loaded ✓
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
+                )}
+              </div>
+            )}
+
+            {/* VIEW C: VOICE CO-PILOT WORKSPACE */}
+            {notchState === 'voice' && (
+              <div style={{
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '24px 20px',
+                position: 'relative',
+                boxSizing: 'border-box'
+              }}>
+                <div style={{
+                  fontSize: 10.5, fontFamily: 'var(--font-mono)', fontWeight: 700,
+                  color: 'rgba(255, 77, 166, 0.8)', textTransform: 'uppercase',
+                  letterSpacing: '0.15em', marginBottom: 16
+                }}>
+                  Voice co-pilot active
+                </div>
+
+                <div 
+                  onClick={() => {
+                    if (voiceStatus === 'idle') {
+                      startVoiceRecognition()
+                    } else {
+                      stopVoiceRecognition()
+                    }
+                  }}
+                  style={{
+                    width: 72, height: 72, borderRadius: '50%',
+                    background: voiceStatus === 'listening' ? 'rgba(255, 77, 166, 0.15)' : (isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)'),
+                    border: `2.5px solid ${accentColor}`,
+                    display: 'flex', alignItems: 'center',
+                    justifyContent: 'center', cursor: 'pointer', position: 'relative',
+                    boxShadow: `0 0 24px rgba(255, 77, 166, 0.25)`,
+                    transition: 'all 0.3s ease',
+                    color: textColor
+                  }}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', justify: 'center' }}>
+                    {voiceStatus === 'listening' ? <MicLargeIcon /> : (voiceStatus === 'thinking' ? <GearIcon /> : <VolumeIcon />)}
+                  </span>
+                  
+                  {voiceStatus === 'listening' && (
+                    <div className="voice-radar-pulse" />
+                  )}
+                </div>
+
+                {voiceStatus !== 'idle' && (
+                  <div style={{ display: 'flex', gap: 4, alignItems: 'center', height: 20, marginTop: 16 }}>
+                    {[1, 2, 3, 4, 5, 6, 7].map(i => (
+                      <div 
+                        key={i}
+                        style={{
+                          width: 3,
+                          height: voiceStatus === 'listening' ? 14 : (voiceStatus === 'replying' ? 24 : 6),
+                          background: accentColor,
+                          borderRadius: 1.5,
+                          animation: voiceStatus !== 'thinking' ? `voiceWave 0.5s ease-in-out infinite alternate` : 'none',
+                          animationDelay: `${i * 0.08}s`,
+                          boxShadow: `0 0 4px ${accentColor}`
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                <div style={{
+                  fontSize: 12, color: textColor, fontWeight: 700,
+                  fontFamily: 'var(--font-mono)', marginTop: 16, textAlign: 'center',
+                  textTransform: 'uppercase', letterSpacing: '0.02em', maxWidth: '280px'
+                }}>
+                  {voiceSpeechText || "Listening..."}
                 </div>
               </div>
             )}
-          </div>
-        )}
 
-        {/* STATE 4: IMMERSIVE VOICE ACTIVATION CANOPY */}
-        {notchState === 'voice' && (
-          <div style={{
-            width: '100%',
-            height: '270px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 24,
-            position: 'relative',
-            animation: 'fadeIn 0.3s ease-out',
-            boxSizing: 'border-box'
-          }}>
-            
-            <div style={{
-              fontSize: 10, fontFamily: 'var(--font-mono)', fontWeight: 700,
-              color: 'rgba(255, 77, 166, 0.8)', textTransform: 'uppercase',
-              letterSpacing: '0.15em', marginBottom: 12
-            }}>
-              Voice co-pilot active
-            </div>
-
-            <div 
-              onClick={() => {
-                if (voiceStatus === 'idle') {
-                  startVoiceRecognition()
-                } else {
-                  stopVoiceRecognition()
-                }
-              }}
-              style={{
-                width: 72, height: 72, borderRadius: '50%',
-                background: voiceStatus === 'listening' ? 'rgba(255, 77, 166, 0.15)' : (isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)'),
-                border: `2.5px solid ${accentColor}`,
-                display: 'flex', alignItems: 'center',
-                justifyContent: 'center', cursor: 'pointer', position: 'relative',
-                boxShadow: `0 0 24px rgba(255, 77, 166, 0.25)`,
-                transition: 'all 0.3s ease',
-                color: textColor
-              }}
-            >
-              <span style={{ display: 'flex', alignItems: 'center', justify: 'center' }}>
-                {voiceStatus === 'listening' ? <MicLargeIcon /> : (voiceStatus === 'thinking' ? <GearIcon /> : <VolumeIcon />)}
-              </span>
-              
-              {voiceStatus === 'listening' && (
-                <div className="voice-radar-pulse" />
-              )}
-            </div>
-
-            {voiceStatus !== 'idle' && (
-              <div style={{ display: 'flex', gap: 4, alignItems: 'center', height: 20, marginTop: 16 }}>
-                {[1, 2, 3, 4, 5, 6, 7].map(i => (
-                  <div 
-                    key={i}
-                    style={{
-                      width: 3,
-                      height: voiceStatus === 'listening' ? 14 : (voiceStatus === 'replying' ? 24 : 6),
-                      background: accentColor,
-                      borderRadius: 1.5,
-                      animation: voiceStatus !== 'thinking' ? `voiceWave 0.5s ease-in-out infinite alternate` : 'none',
-                      animationDelay: `${i * 0.08}s`,
-                      boxShadow: `0 0 4px ${accentColor}`
-                    }}
-                  />
-                ))}
-              </div>
-            )}
-
-            <div style={{
-              fontSize: 12, color: textColor, fontWeight: 700,
-              fontFamily: 'var(--font-mono)', marginTop: 14, textAlign: 'center',
-              textTransform: 'uppercase', letterSpacing: '0.02em'
-            }}>
-              {voiceSpeechText || "Listening..."}
-            </div>
-
-            <button 
-              onClick={() => {
-                stopVoiceRecognition()
-                setNotchState('compact')
-              }}
-              style={{
-                position: 'absolute', bottom: 16, right: 18,
-                background: 'none', border: 'none', color: subtextColor,
-                cursor: 'pointer', fontSize: 10, fontFamily: 'var(--font-mono)',
-                display: 'flex', alignItems: 'center', gap: 4
-              }}
-              onMouseEnter={e => e.currentTarget.style.color = textColor}
-              onMouseLeave={e => e.currentTarget.style.color = subtextColor}
-            >
-              <CloseIcon />
-              <span>EXIT</span>
-            </button>
-          </div>
-        )}
           </div>
         )}
       </nav>
@@ -1810,6 +1968,22 @@ export default function DynamicNotch({ activeProject }) {
         @keyframes orbitParticle {
           0% { transform: rotate(0deg) translateX(8px) rotate(0deg); }
           100% { transform: rotate(360deg) translateX(8px) rotate(-360deg); }
+        }
+        .breathing-circle-logo {
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          cursor: pointer;
+        }
+        .breathing-circle-logo:hover {
+          transform: scale(1.1) !important;
+        }
+        .breathing-circle-logo:hover > div:nth-child(2) {
+          border: 2.2px solid #FF4DA6 !important;
+          box-shadow: 0 0 20px #FF4DA6, inset 0 0 6px #FF4DA6 !important;
+          background: rgba(255, 77, 166, 0.2) !important;
+        }
+        .breathing-circle-logo:active {
+          transform: scale(0.85) !important;
+          transition: transform 0.1s ease !important;
         }
       `}</style>
     </>

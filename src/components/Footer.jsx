@@ -23,7 +23,7 @@ export default function Footer() {
             fontWeight: 800, fontSize: 12, fontFamily: 'var(--font-display)',
             boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
           }}>S</div>
-          <span style={{ color: '#ffffff', fontSize: 13.5, fontWeight: 600, letterSpacing: '-0.01em' }}>Soupriti Das</span>
+          <span style={{ color: '#ffffff', fontSize: 13.5, fontWeight: 600, letterSpacing: '-0.01em' }}>soupriti</span>
           <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: 12 }}>· Product Designer</span>
           <button
             onClick={() => window.openSpecSheet && window.openSpecSheet()}

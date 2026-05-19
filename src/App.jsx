@@ -13,6 +13,7 @@ import Footer from './components/Footer'
 import Preloader from './components/Preloader'
 import SpecSheet from './components/SpecSheet'
 import ActivityLog from './components/ActivityLog'
+import Nav from './components/Nav'
 
 export default function App() {
   const [activeProject, setActiveProject] = useState(null)
@@ -52,6 +53,7 @@ export default function App() {
       
       {!loading && (
         <>
+          <Nav />
           <DynamicNotch activeProject={activeProject} />
           <main>
             <Hero />

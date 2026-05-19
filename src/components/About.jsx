@@ -271,7 +271,7 @@ export default function About() {
             </FadeUp>
             <FadeUp delay={120}>
               <p style={{ fontSize: 16.5, lineHeight: 1.75, color: 'var(--text-secondary)', fontFamily: 'var(--font-body)', margin: 0, maxWidth: '720px' }}>
-                I'm <strong style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Soupriti Das</strong>, a Product Designer based in Bangalore. With a visual design foundation from <strong style={{ color: 'var(--text-primary)', fontWeight: 600 }}>NIFT Chennai</strong>, I specialize in combining rigorous user ethnography with high-end, functional React prototypes.
+                I'm <strong style={{ color: 'var(--text-primary)', fontWeight: 600 }}>soupriti</strong>, a Product Designer based in Bangalore. With a visual design foundation from <strong style={{ color: 'var(--text-primary)', fontWeight: 600 }}>NIFT Chennai</strong>, I specialize in combining rigorous user ethnography with high-end, functional React prototypes.
               </p>
             </FadeUp>
           </div>
@@ -283,7 +283,6 @@ export default function About() {
             width: '100%'
           }}>
 
-            {/* Unified Bento Grid layout */}
             <div 
               ref={trackRef}
               className="about-bento-grid-inner" 
@@ -294,7 +293,8 @@ export default function About() {
                 gap: 24,
                 width: isMobile ? '100%' : 'max-content',
                 transform: isMobile ? undefined : `translateX(-${translateX}px)`,
-                transition: isMobile ? undefined : 'transform 0.08s cubic-bezier(0.25, 1, 0.5, 1)'
+                transition: isMobile ? undefined : 'transform 0.08s cubic-bezier(0.25, 1, 0.5, 1)',
+                paddingRight: isMobile ? 0 : 120
               }}
             >
 
@@ -873,62 +873,6 @@ export default function About() {
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
-
-            {/* MASTER COCKPIT HEADER: Luffy AI copilot thought stream bubble */}
-            <div 
-              className="bento-thought-bubble shadow-card" 
-              style={{
-                width: isMobile ? '100%' : '580px',
-                height: isMobile ? 'auto' : '380px',
-                flexShrink: 0,
-                gridColumn: isMobile ? 'span 12' : undefined,
-                background: 'var(--bg-card)',
-                border: '1.5px solid var(--border)',
-                borderRadius: 24,
-                padding: '24px 28px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 20,
-                position: 'relative',
-                overflow: 'hidden',
-                marginTop: isMobile ? 8 : 0
-              }}
-            >
-              {/* Animated soft wave line pattern behind the text */}
-              <div style={{
-                position: 'absolute', right: 0, bottom: -10, width: '160px', height: '80px',
-                opacity: 0.08, background: 'radial-gradient(ellipse at bottom right, var(--accent) 0%, transparent 80%)',
-                pointerEvents: 'none'
-              }} />
-
-              {/* Pulsating system beacon */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 3, flexShrink: 0, alignItems: 'center' }}>
-                <div style={{
-                  width: 12, height: 12, borderRadius: '50%',
-                  background: 'var(--accent)',
-                  boxShadow: '0 0 12px var(--accent)',
-                  animation: 'pulseCore 2s ease-in-out infinite'
-                }} />
-                <span style={{ fontSize: 8, fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)', letterSpacing: '0.05em', textAlign: 'center', marginTop: 4 }}>Luffy</span>
-              </div>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                <span style={{ fontSize: 9.5, fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                  Luffy Copilot Engine
-                </span>
-                <p style={{
-                  fontSize: 14,
-                  lineHeight: 1.55,
-                  color: 'var(--text-primary)',
-                  fontFamily: 'var(--font-body)',
-                  margin: 0,
-                  fontWeight: 500,
-                  fontStyle: 'italic'
-                }}>
-                  "{activeExplain}"
-                </p>
               </div>
             </div>
           </div>

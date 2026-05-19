@@ -1,20 +1,21 @@
 import { useState, useEffect, useRef } from 'react'
+import { User, Briefcase, TrendingUp, Code, Mail, FileText } from 'lucide-react'
 
-const links = [
-  { label: 'Expertise', href: '#expertise' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'About', href: '#about' },
-  { label: 'Journey', href: '#journey' },
-  { label: 'Contact', href: '#contact' },
+const menuItems = [
+  { label: 'About', href: '#about', icon: User },
+  { label: 'Work', href: '#projects', icon: Briefcase },
+  { label: 'Experience', href: '#journey', icon: TrendingUp },
+  { label: 'Skills', href: '#expertise', icon: Code },
+  { label: 'Resume', href: '/Soupriti_Das_Resume.pdf', icon: FileText, download: 'Soupriti_Das_Resume.pdf' },
+  { label: 'Contact', href: '#contact', icon: Mail },
 ]
 
 export default function Nav() {
-  const [visible, setVisible] = useState(true)
-  const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const lastY = useRef(0)
+  const [scrolled, setScrolled] = useState(false)
+  const menuRef = useRef(null)
 
-  // ── Light/Dark Mode State ──
+  // ── Light/Dark Mode Initialization ──
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('theme')
@@ -29,212 +30,239 @@ export default function Nav() {
     localStorage.setItem('theme', theme)
   }, [theme])
 
-  // ── Responsive screen width check ──
-  const [isMobile, setIsMobile] = useState(false)
+  // ── Track scrolling for header styling ──
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768)
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // ── Click outside to close dropdown ──
   useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY
-      // Show nav when scrolling UP or near top; hide when scrolling DOWN
-      if (y < 80) {
-        setVisible(true)
-      } else if (y > lastY.current + 8) {
-        setVisible(false)  // scrolling down
-      } else if (y < lastY.current - 8) {
-        setVisible(true)   // scrolling up
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false)
       }
-      setScrolled(y > 40)
-      lastY.current = y
     }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
+
+  // ── Smooth Scroll Handler using Lenis ──
+  const handleItemClick = (e, href) => {
+    e.preventDefault()
+    setMenuOpen(false)
+    if (window.__lenis) {
+      window.__lenis.scrollTo(href)
+    } else {
+      const target = document.querySelector(href)
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    }
+  }
 
   return (
     <>
-      {/* ── Unified Main Navigation Pill ── */}
       <header
-        id="nav"
         style={{
           position: 'fixed',
-          top: 20,
-          left: '50%',
-          transform: `translateX(-50%) translateY(${visible ? '0' : '-140%'})`,
-          zIndex: 100,
-          transition: 'transform 0.4s var(--ease-out-expo), box-shadow 0.3s ease, background 0.3s',
-          width: 'auto',
-          maxWidth: isMobile ? 'calc(100vw - 32px)' : 'calc(100vw - 48px)',
+          top: 0,
+          left: 0,
+          width: '100%',
+          zIndex: 1000000,
+          paddingTop: scrolled ? '16px' : '32px',
+          paddingBottom: scrolled ? '16px' : '0px',
+          background: scrolled ? 'var(--bg-overlay)' : 'transparent',
+          borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent',
+          backdropFilter: scrolled ? 'blur(20px)' : 'none',
+          WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'none',
+          transition: 'all 0.3s var(--ease-out-expo)',
         }}
       >
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'var(--space-3)',
-          padding: isMobile ? '6px 8px 6px 10px' : '6px 8px 6px 12px',
-          background: theme === 'dark' 
-            ? (scrolled ? 'rgba(24, 26, 31, 0.96)' : 'rgba(24, 26, 31, 0.85)')
-            : (scrolled ? 'rgba(255, 255, 255, 0.96)' : 'rgba(255, 255, 255, 0.85)'),
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderRadius: 'var(--radius-pill)',
-          border: '1px solid var(--border)',
-          boxShadow: scrolled ? 'var(--shadow-md)' : 'var(--shadow-sm)',
-        }}>
+        <div 
+          className="container" 
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            maxWidth: 1440,
+            paddingInline: 'clamp(24px, 5vw, 72px)',
+          }}
+        >
+          {/* Left Side: Name and Title */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <a 
+              href="#home" 
+              onClick={(e) => handleItemClick(e, '#home')}
+              style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column' }}
+            >
+              <span style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '20px',
+                fontWeight: 700,
+                color: 'var(--text-primary)',
+                letterSpacing: '-0.02em',
+                lineHeight: 1.2,
+              }}>
+                soupriti
+              </span>
+              <span style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '13px',
+                fontWeight: 400,
+                color: 'var(--text-secondary)',
+                marginTop: 2,
+              }}>
+                Product Designer
+              </span>
+            </a>
+          </div>
 
-          {/* Logo Avatar */}
-          <a href="#" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', flexShrink: 0 }}>
-            <img 
-              src="/soupriti.jpg" 
-              alt="Soupriti Das Logo"
+          {/* Right Side: Menu Button and Dropdown Menu */}
+          <div ref={menuRef} style={{ position: 'relative' }}>
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-expanded={menuOpen}
               style={{
-                width: 32,
-                height: 32,
-                borderRadius: '50%',
-                objectFit: 'cover',
-                border: '1.5px solid var(--accent)',
-                transition: 'transform 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                padding: '10px 18px',
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-pill)',
+                boxShadow: 'var(--shadow-sm)',
+                cursor: 'pointer',
+                transition: 'all 0.25s var(--ease-out-expo)',
+                outline: 'none',
               }}
-              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.08)'}
-              onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-            />
-          </a>
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = 'translateY(-1px)'
+                e.currentTarget.style.boxShadow = 'var(--shadow-md)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'var(--shadow-sm)'
+              }}
+            >
+              <span style={{
+                fontSize: 14,
+                fontWeight: 600,
+                color: 'var(--text-primary)',
+                fontFamily: 'var(--font-body)',
+                letterSpacing: '-0.015em',
+              }}>
+                Menu
+              </span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <span style={{
+                  display: 'block',
+                  width: 16,
+                  height: 1.5,
+                  background: 'var(--text-primary)',
+                  borderRadius: 1,
+                  transform: menuOpen ? 'translateY(5.5px) rotate(45deg)' : 'none',
+                  transition: 'transform 0.3s var(--ease-out-expo)',
+                }} />
+                <span style={{
+                  display: 'block',
+                  width: 16,
+                  height: 1.5,
+                  background: 'var(--text-primary)',
+                  borderRadius: 1,
+                  opacity: menuOpen ? 0 : 1,
+                  transition: 'opacity 0.2s ease',
+                }} />
+                <span style={{
+                  display: 'block',
+                  width: 16,
+                  height: 1.5,
+                  background: 'var(--text-primary)',
+                  borderRadius: 1,
+                  transform: menuOpen ? 'translateY(-5.5px) rotate(-45deg)' : 'none',
+                  transition: 'transform 0.3s var(--ease-out-expo)',
+                }} />
+              </div>
+            </button>
 
-          {/* Nav links */}
-          <nav className="pill-nav" style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            {links.map(l => (
-              <a
-                key={l.label}
-                href={l.href}
-                className="pill-nav-link"
-              >{l.label}</a>
-            ))}
-          </nav>
-
-          {/* Resume CTA */}
-          <a
-            href="/Soupriti_Das_Resume.pdf"
-            download="Soupriti_Das_Resume.pdf"
-            target="_blank"
-            rel="noopener"
-            className="resume-cta-btn"
-          >
-            Resume ↗
-          </a>
-
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Toggle menu"
-            className="hamburger"
-            style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', flexDirection: 'column', gap: 5, padding: '4px 8px' }}
-          >
-            {[0, 1, 2].map(i => (
-              <span key={i} style={{ display: 'block', width: 20, height: 1.5, background: 'var(--text-primary)', borderRadius: 2, transition: 'all 0.3s' }} />
-            ))}
-          </button>
+            {/* Dropdown Menu Overlay */}
+            {menuOpen && (
+              <div 
+                style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 12px)',
+                  right: 0,
+                  width: 220,
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 'var(--radius-md)',
+                  boxShadow: 'var(--shadow-lg)',
+                  padding: '8px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 4,
+                  zIndex: 110,
+                  animation: 'slideDownFade 0.25s var(--ease-out-expo) forwards',
+                }}
+              >
+                {menuItems.map(item => {
+                  const Icon = item.icon
+                  const isDownload = !!item.download
+                  return (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      download={isDownload ? item.download : undefined}
+                      onClick={(e) => {
+                        if (isDownload) {
+                          setMenuOpen(false)
+                        } else {
+                          handleItemClick(e, item.href)
+                        }
+                      }}
+                      className="dropdown-item"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 12,
+                        padding: '10px 14px',
+                        borderRadius: 'var(--radius-sm)',
+                        color: 'var(--text-secondary)',
+                        fontSize: 14,
+                        fontWeight: 500,
+                        textDecoration: 'none',
+                        transition: 'all 0.2s var(--ease-out-expo)',
+                      }}
+                    >
+                      <Icon size={16} strokeWidth={2} style={{ color: 'var(--text-muted)' }} />
+                      <span>{item.label}</span>
+                    </a>
+                  )
+                })}
+              </div>
+            )}
+          </div>
         </div>
-
-        <style>{`
-          @media (max-width: 768px) {
-            .pill-nav { display: none !important; }
-            .resume-cta-btn { display: none !important; }
-            .hamburger { display: flex !important; }
-            .theme-toggle-pill-embedded { height: 28px !important; width: 105px !important; }
-            .theme-toggle-pill-embedded button { font-size: 9px !important; }
-          }
-        `}</style>
       </header>
 
-      {/* Mobile menu overlay */}
-      {menuOpen && (
-        <div style={{
-          position: 'fixed', inset: 0,
-          background: 'var(--bg)',
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          gap: 'var(--space-7)', zIndex: 99,
-        }}>
-          {links.map(l => (
-            <a key={l.label} href={l.href} onClick={() => setMenuOpen(false)}
-              style={{ fontSize: 28, fontFamily: 'var(--font-display)', fontWeight: 400, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}
-            >{l.label}</a>
-          ))}
-        </div>
-      )}
-
-      {/* Micro-interaction styling rules */}
+      {/* Styled components custom animations */}
       <style>{`
-        /* Emil Kowalski Premium Navbar Microinteractions */
-        .pill-nav-link {
-          font-size: 13px;
-          font-weight: 500;
-          color: var(--text-secondary) !important;
-          padding: 6px 14px;
-          border-radius: var(--radius-pill);
-          transition: transform 150ms var(--ease-out-expo), background-color 200ms ease, color 200ms ease !important;
-          white-space: nowrap;
-          letter-spacing: -0.015em;
-          position: relative;
-          display: inline-block;
-          text-decoration: none;
+        @keyframes slideDownFade {
+          from { opacity: 0; transform: translateY(-8px); filter: blur(4px); }
+          to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
-        .pill-nav-link:hover {
-          background-color: var(--bg-warm) !important;
+
+        .dropdown-item:hover {
+          background: var(--bg-warm);
           color: var(--text-primary) !important;
-          transform: translateY(-1px) scale(1.03);
-        }
-        .pill-nav-link:active {
-          transform: translateY(0) scale(0.95) !important;
+          transform: translateX(4px);
         }
 
-        .resume-cta-btn {
-          font-size: 12px;
-          font-weight: 600;
-          color: white !important;
-          padding: 7px 16px;
-          background: var(--accent) !important;
-          border-radius: var(--radius-pill);
-          transition: transform 150ms var(--ease-out-expo), background-color 200ms ease, box-shadow 200ms ease !important;
-          white-space: nowrap;
-          letter-spacing: -0.01em;
-          flex-shrink: 0;
-          text-decoration: none;
-        }
-        .resume-cta-btn:hover {
-          background: var(--accent-light) !important;
-          transform: translateY(-1px) scale(1.03);
-          box-shadow: 0 4px 12px rgba(0, 82, 255, 0.25);
-        }
-        .resume-cta-btn:active {
-          transform: translateY(0) scale(0.95) !important;
-        }
-
-        .theme-toggle-option {
-          flex: 1;
-          height: 100%;
-          border: none;
-          background: none;
-          border-radius: 16px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 4px;
-          font-size: 11px;
-          font-weight: 600;
-          cursor: pointer;
-          z-index: 2;
-          transition: color 0.25s ease, transform 120ms var(--ease-out-expo) !important;
-          outline: none;
-          padding: 0;
-        }
-        .theme-toggle-option:active {
-          transform: scale(0.94);
+        .dropdown-item:active {
+          transform: translateX(2px) scale(0.97);
         }
       `}</style>
     </>
