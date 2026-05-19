@@ -111,12 +111,12 @@ export default function Tools() {
   // Track scroll position of the section to trigger folder opening
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start 85%", "start 50%"]
+    offset: ["center 60%", "center 20%"]
   })
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    // Open the folder as the user scrolls the section into view
-    if (latest > 0.5) {
+    // Open the folder when it has scrolled past the center of the screen
+    if (latest > 0.15) {
       setFolderOpen(true)
     } else {
       setFolderOpen(false)
