@@ -238,7 +238,13 @@ const CorePurposeCarousel = () => {
                 mass: 0.8 
               }}
               onClick={isFront ? handleNext : undefined}
-              whileHover={isFront ? { scale: 1.02, y: -4, rotateX: 2, rotateY: -2 } : {}}
+              whileHover={isFront ? { 
+                scale: 1.01, 
+                y: -3, 
+                rotateX: 1.5, 
+                rotateY: -1.5,
+                boxShadow: '0 20px 40px -12px rgba(15, 23, 42, 0.07), 0 6px 18px -6px rgba(15, 23, 42, 0.03)'
+              } : {}}
               style={{
                 position: 'absolute',
                 width: '100%',
@@ -249,7 +255,9 @@ const CorePurposeCarousel = () => {
                 border: '1.2px solid var(--border)',
                 padding: '24px 28px',
                 cursor: isFront ? 'pointer' : 'default',
-                boxShadow: isFront ? `0 24px 48px -12px ${card.glow}, 0 4px 24px -4px rgba(0,0,0,0.06)` : '0 10px 30px -10px rgba(0,0,0,0.04)',
+                boxShadow: isFront 
+                  ? '0 12px 32px -8px rgba(15, 23, 42, 0.05), 0 4px 12px -5px rgba(15, 23, 42, 0.02)' 
+                  : '0 2px 8px -4px rgba(15, 23, 42, 0.02)',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
@@ -265,7 +273,7 @@ const CorePurposeCarousel = () => {
                     border: '1.2px solid var(--border)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     color: card.color,
-                    boxShadow: isFront ? `0 8px 24px -4px ${card.glow}` : 'none'
+                    boxShadow: isFront ? '0 4px 10px -2px rgba(15, 23, 42, 0.08)' : 'none'
                   }}
                   animate={isFront ? { scale: [1, 1.05, 1], rotate: [0, 4, -4, 0] } : {}}
                   transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
