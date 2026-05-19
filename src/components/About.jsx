@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FadeUp, Label } from './utils'
+import PassionsPlayground from './PassionsPlayground'
 
 /* ── High-Fidelity Custom SVG Icons (Replacing Emojis) ── */
 const CheckIcon = () => (
@@ -937,41 +938,14 @@ export default function About() {
               border: '1.5px solid var(--border)',
               borderRadius: 24,
               padding: '24px 28px',
+              display: 'flex',
+              flexDirection: 'column'
             }}>
               <h4 className="bento-card-header">
                 05 // PASSIONS & DRIVE
               </h4>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-                {[
-                  { label: 'Learning always', icon: <BookIcon />, text: "Always reading books, studying interaction patterns, and prototyping in code." },
-                  { label: 'Coffee & talks', icon: <CoffeeIcon />, text: "Loves chatting about design systems, user behavior, and technology over hot coffee." },
-                  { label: 'Exploring places', icon: <CameraIcon />, text: "Draws fresh visual inspiration from travel, local architecture, and fashion communication." },
-                  { label: 'Sketching ideas', icon: <PencilIcon />, text: "Always carries a sketchbook to map visual hierarchies and screen flows by hand." },
-                  { label: 'Design challenges', icon: <BrainIcon />, text: "Thrives on tricky layout problems, complex data densities, and accessibility targets." }
-                ].map((item) => (
-                  <div 
-                    key={item.label}
-                    className="bento-passion-badge"
-                    onClick={() => triggerCatSpeak(item.text)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 10,
-                      cursor: 'pointer',
-                      padding: '8px 16px',
-                      borderRadius: 30,
-                      border: '1.2px solid var(--border)',
-                      background: 'var(--bg-warm)',
-                      transition: 'all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                      userSelect: 'none'
-                    }}
-                  >
-                    <span style={{ color: 'var(--accent)', display: 'flex' }}>{item.icon}</span>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em', fontFamily: 'var(--font-mono)' }}>
-                      {item.label}
-                    </span>
-                  </div>
-                ))}
+              <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <PassionsPlayground triggerCatSpeak={triggerCatSpeak} />
               </div>
             </div>
 
