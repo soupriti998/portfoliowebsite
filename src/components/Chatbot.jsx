@@ -3,7 +3,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 /* ── Abstract Technical Design Thoughts Database ── */
 const THOUGHTS = {
   hero: [
-    { text: "Welcome! I'm Soup, your design systems assistant ✨", target: null },
+    { text: "Welcome! I'm Luffy, your design systems assistant ✨", target: null },
     { text: "Soupriti designs things that feel clean and fast...", target: "about" },
     { text: "Click on my core node to chat with me!", target: null },
     { text: "Psst… scroll down to see some serious design work!", target: "expertise" },
@@ -72,7 +72,7 @@ const matchesAny = (q, list) => list.some(s => q.includes(s))
 
 /* ── Chat replies dictionary ── */
 const KB = {
-  greet: ["Hi! I'm Soup, Soupriti's portfolio assistant ✨ Ask me anything about her work, skills, or experience.", "Hello! I'm Soup — here to help you explore Soupriti's portfolio. What would you like to know?", "Welcome! I'm Soup. Feel free to ask me about Soupriti's projects, skills, or how to get in touch."],
+  greet: ["Hi! I'm Luffy, Soupriti's portfolio assistant ✨ Ask me anything about her work, skills, or experience.", "Hello! I'm Luffy — here to help you explore Soupriti's portfolio. What would you like to know?", "Welcome! I'm Luffy. Feel free to ask me about Soupriti's projects, skills, or how to get in touch."],
   about: "soupriti is a Product Designer based in Bangalore, India with 3+ years of experience designing AI-powered and SaaS products. She holds a Bachelor of Design in Fashion Communication from NIFT Chennai. She's passionate about simplifying complex systems into intuitive, human-centered experiences.",
   current: "Soupriti is currently a Product Designer at upliance.ai — an AI-powered cooking platform. She redesigned their core mobile and device UX, reducing perceived cooking time by 24% and building a scalable design system from scratch.",
   skills: "Soupriti's core skills span — UX and Product Design: User research, personas, journey mapping, wireframing, prototyping, usability testing. UI and Visual Design: Interaction design, design systems, data visualization, typography, accessibility. Tools: Figma, Framer, Midjourney, Claude, Cursor, Lottie, Whimsical. Technical: Working knowledge of HTML, CSS, and JavaScript.",
@@ -206,7 +206,7 @@ function getResponse(input, jokeState, setJokeState, activeSection) {
   if (q.match(/thank|thanks|thx/)) return pick(FUN.playful.thanks)
   if (q.match(/love|amazing|great|awesome|beautiful|nice/)) return pick(FUN.playful.compliment)
 
-  if (q.match(/hi|hello|hey|greet/)) return "hey I am Soup, I can help you being more contextual about soupriti's portfolio."
+  if (q.match(/hi|hello|hey|greet/)) return "hey I am luffy, I can help you being more contextual about soupriti's portfolio."
   if (q.match(/who|about|soupriti|herself|person|background/)) return KB.about
   if (q.match(/current|now|today|upliance|ai cook/)) return KB.current
   if (q.match(/fuck|bitch/)) return KB.fuck
@@ -311,7 +311,7 @@ function ThinkingCircle({ isPanelOpen, isHovered, onClick, onMouseEnter, onMouse
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      aria-label="Chat with Soup"
+      aria-label="Chat with Luffy"
       style={{
         width: 64,
         height: 64,
@@ -416,7 +416,7 @@ function SharpPillThoughtBubble({ text, onClick, onMouseEnter, onMouseLeave, isH
 }
 
 /* ── Main Chatbot Drawer & Gravity Companion Component ── */
-const OPENING = "hey I am Soup, I can help you being more contextual about soupriti's portfolio."
+const OPENING = "hey I am luffy, I can help you being more contextual about soupriti's portfolio."
 
 export default function Chatbot({ activeProject }) {
   const [open, setOpen] = useState(false)
@@ -707,7 +707,7 @@ export default function Chatbot({ activeProject }) {
               </div>
               
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: 'white', letterSpacing: '-0.01em' }}>Soup</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: 'white', letterSpacing: '-0.01em' }}>Luffy</div>
                 <div style={{ fontSize: 11, color: '#a8acb3', display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span style={{ width: 6, height: 6, borderRadius: '50%', background: speaking ? '#ff3b30' : '#34c759', display: 'inline-block', animation: speaking ? 'speakPulse 0.8s ease-in-out infinite' : 'none' }} />
                   {speaking ? 'Speaking...' : jokeState ? '🎭 Joke mode...' : "Soupriti's AI Companion"}
@@ -784,7 +784,7 @@ export default function Chatbot({ activeProject }) {
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && send()}
-                placeholder={listening ? '🎤 Listening...' : jokeState ? 'Type your answer...' : 'Ask Soup anything...'}
+                placeholder={listening ? '🎤 Listening...' : jokeState ? 'Type your answer...' : 'Ask Luffy anything...'}
                 style={{ flex: 1, padding: 'var(--space-3) var(--space-4)', borderRadius: 'var(--radius-pill)', border: '1px solid var(--border)', background: 'var(--bg)', fontSize: 13, fontFamily: 'var(--font-body)', color: 'var(--text-primary)', outline: 'none', transition: 'border-color 0.2s' }}
                 onFocus={e => e.target.style.borderColor = 'var(--accent)'}
                 onBlur={e => e.target.style.borderColor = 'var(--border)'}

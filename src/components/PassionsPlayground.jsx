@@ -32,6 +32,15 @@ const BrainIcon = () => (
   </svg>
 )
 
+// Pentatonic frequencies in C major (Harmonically safe: no matter what you play, it sounds good!)
+const NOTES = [
+  261.63, // C4
+  293.66, // D4
+  329.63, // E4
+  392.00, // G4
+  440.00  // A4
+]
+
 const PASSIONS = [
   { label: 'Learning always', icon: <BookIcon />, text: "Always reading books, studying interaction patterns, and prototyping in code." },
   { label: 'Coffee & talks', icon: <CoffeeIcon />, text: "Loves chatting about design systems, user behavior, and technology over hot coffee." },
@@ -39,6 +48,45 @@ const PASSIONS = [
   { label: 'Sketching ideas', icon: <PencilIcon />, text: "Always carries a sketchbook to map visual hierarchies and screen flows by hand." },
   { label: 'Design challenges', icon: <BrainIcon />, text: "Thrives on tricky layout problems, complex data densities, and accessibility targets." }
 ]
+
+// Pure synthesized piano chime engine using Web Audio API
+const playTone = (freq, type = 'sine', volume = 0.12, duration = 0.6) => {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext
+    if (!AudioCtx) return
+    const ctx = new AudioCtx()
+    
+    const osc = ctx.createOscillator()
+    const oscHarmonic = ctx.createOscillator() // subtle octave sparkle
+    const gainNode = ctx.createGain()
+    const filter = ctx.createBiquadFilter()
+    
+    osc.type = type
+    osc.frequency.setValueAtTime(freq, ctx.currentTime)
+    
+    oscHarmonic.type = 'sine'
+    oscHarmonic.frequency.setValueAtTime(freq * 2, ctx.currentTime)
+    
+    filter.type = 'lowpass'
+    filter.frequency.setValueAtTime(1200, ctx.currentTime)
+    
+    gainNode.gain.setValueAtTime(0, ctx.currentTime)
+    gainNode.gain.linearRampToValueAtTime(volume, ctx.currentTime + 0.006) // soft attack
+    gainNode.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration) // exponential piano decay
+    
+    osc.connect(filter)
+    oscHarmonic.connect(filter)
+    filter.connect(gainNode)
+    gainNode.connect(ctx.destination)
+    
+    osc.start()
+    oscHarmonic.start()
+    osc.stop(ctx.currentTime + duration)
+    oscHarmonic.stop(ctx.currentTime + duration)
+  } catch (e) {
+    // browser auto-play policy blocker
+  }
+}
 
 export default function PassionsPlayground({ triggerCatSpeak }) {
   const containerRef = useRef(null)
@@ -48,19 +96,16 @@ export default function PassionsPlayground({ triggerCatSpeak }) {
   useEffect(() => {
     if (!containerRef.current) return
     
-    // We defer physics engine startup slightly so that the browser has fully calculated the auto-hugging widths of the absolute DOM elements.
     const startTimeout = setTimeout(() => {
       const width = containerRef.current.clientWidth || 380
       const height = containerRef.current.clientHeight || 280
       
       const { Engine, World, Bodies, Runner, Mouse, MouseConstraint, Events, Body, Composite } = Matter
       
-      // 1. Setup physics engine with soft gravity
       const engine = Engine.create({
-        gravity: { y: 0.5 } // soft natural falling speed
+        gravity: { y: 0.55 }
       })
       
-      // 2. Setup containment boundaries
       const thickness = 200
       const ground = Bodies.rectangle(width / 2, height + thickness / 2, width * 3, thickness, { 
         isStatic: true,
@@ -77,8 +122,6 @@ export default function PassionsPlayground({ triggerCatSpeak }) {
         restitution: 0.4,
         friction: 0.1 
       })
-      
-      // Setup ceiling slightly higher than bounds to allow cards to go up a bit but block escape
       const ceiling = Bodies.rectangle(width / 2, -thickness, width * 3, thickness, { 
         isStatic: true,
         restitution: 0.4,
@@ -87,21 +130,19 @@ export default function PassionsPlayground({ triggerCatSpeak }) {
       
       Composite.add(engine.world, [ground, leftWall, rightWall, ceiling])
       
-      // 3. Create bodies based on actual measured elements
       const pillBodies = PASSIONS.map((p, idx) => {
         const dom = pillRefs.current[idx]
         const measuredWidth = dom ? dom.offsetWidth : 140
         const measuredHeight = dom ? dom.offsetHeight : 36
         
-        // Spawn them cascading from the top center/left within safe bounds (avoiding ceiling overlap)
         const startX = width / 2 + (idx - 2) * 35
-        const startY = 30 + (idx * 40) // safe interior range, staggered fall
+        const startY = 30 + (idx * 40)
         
         const body = Bodies.rectangle(startX, startY, measuredWidth, measuredHeight, {
           restitution: 0.5, 
           friction: 0.05,
           frictionAir: 0.04, 
-          chamfer: { radius: measuredHeight / 2 }, // Perfect capsule boundaries
+          chamfer: { radius: measuredHeight / 2 },
           angle: Math.random() * 0.4 - 0.2
         })
         
@@ -111,7 +152,6 @@ export default function PassionsPlayground({ triggerCatSpeak }) {
       
       Composite.add(engine.world, pillBodies)
       
-      // 4. Mouse constraint for dragging/throwing
       const mouse = Mouse.create(containerRef.current)
       const mouseConstraint = MouseConstraint.create(engine, {
         mouse: mouse,
@@ -125,7 +165,30 @@ export default function PassionsPlayground({ triggerCatSpeak }) {
       mouseConstraint.mouse.element.removeEventListener("mousewheel", mouseConstraint.mouse.mousewheel);
       mouseConstraint.mouse.element.removeEventListener("DOMMouseScroll", mouseConstraint.mouse.mousewheel);
       
-      // 5. Update Loop
+      // Tactile physical chimes on wall/pill impact collisions
+      Events.on(engine, 'collisionStart', (event) => {
+        event.pairs.forEach((pair) => {
+          const speed = pair.bodyA.speed + pair.bodyB.speed
+          // Filter out tiny micro-settling noises (only chime on real drag/fall collisions)
+          if (speed > 1.8) {
+            const labelA = pair.bodyA.label || ''
+            const labelB = pair.bodyB.label || ''
+            
+            let pillIdx = -1
+            if (labelA.startsWith('pill-')) {
+              pillIdx = parseInt(labelA.split('-')[1])
+            } else if (labelB.startsWith('pill-')) {
+              pillIdx = parseInt(labelB.split('-')[1])
+            }
+            
+            if (pillIdx !== -1) {
+              // Play a quiet octave chime of the pill's note
+              playTone(NOTES[pillIdx] * 2, 'sine', 0.02, 0.35)
+            }
+          }
+        })
+      })
+      
       Events.on(engine, 'afterUpdate', () => {
         pillBodies.forEach((body, idx) => {
           const dom = pillRefs.current[idx]
@@ -134,13 +197,11 @@ export default function PassionsPlayground({ triggerCatSpeak }) {
           const measuredWidth = dom.offsetWidth
           const measuredHeight = dom.offsetHeight
           
-          // Center the DOM element on the physics body coordinates
           const x = body.position.x - measuredWidth / 2
           const y = body.position.y - measuredHeight / 2
           
           dom.style.transform = `translate3d(${x}px, ${y}px, 0px) rotate(${body.angle}rad)`
           
-          // Floating idle motion
           if (body.speed < 0.04) {
             const time = Date.now() * 0.001
             const floatY = Math.sin(time + idx) * 0.1
@@ -150,7 +211,6 @@ export default function PassionsPlayground({ triggerCatSpeak }) {
         })
       })
       
-      // 6. Handle Resizing
       const handleResize = () => {
         if (!containerRef.current) return
         const w = containerRef.current.clientWidth
@@ -164,7 +224,6 @@ export default function PassionsPlayground({ triggerCatSpeak }) {
       
       window.addEventListener('resize', handleResize)
       
-      // 7. Start runner
       const runner = Runner.create()
       Runner.run(runner, engine)
       
@@ -175,7 +234,7 @@ export default function PassionsPlayground({ triggerCatSpeak }) {
         Runner.stop(runner)
         Engine.clear(engine)
       }
-    }, 150) // Defer 150ms to allow layout paint to complete
+    }, 150)
     
     return () => clearTimeout(startTimeout)
   }, [])
@@ -207,10 +266,17 @@ export default function PassionsPlayground({ triggerCatSpeak }) {
         <div
           key={item.label}
           ref={el => pillRefs.current[idx] = el}
-          onClick={() => triggerCatSpeak(item.text)}
+          onClick={() => {
+            playTone(NOTES[idx], 'triangle', 0.18, 0.9) // Warm rhodes click
+            triggerCatSpeak(item.text)
+          }}
+          onMouseEnter={e => {
+            playTone(NOTES[idx], 'sine', 0.05, 0.5) // Light shimmer hover
+            e.currentTarget.style.borderColor = 'rgba(0, 82, 255, 0.3)'
+          }}
           style={{
             position: 'absolute',
-            left: 10 + idx * 25, // Initial spread before engine updates it
+            left: 10 + idx * 25,
             top: 20, 
             display: 'inline-flex',
             alignItems: 'center',
@@ -223,10 +289,10 @@ export default function PassionsPlayground({ triggerCatSpeak }) {
             boxShadow: '0 2px 8px -3px rgba(15, 23, 42, 0.04)',
             transition: 'box-shadow 0.2s ease, border-color 0.2s ease',
             userSelect: 'none',
-            whiteSpace: 'nowrap', // Force single line text
-            width: 'max-content', // Hug the content width
+            whiteSpace: 'nowrap',
+            width: 'max-content',
             zIndex: 5,
-            opacity: isInitialized ? 1 : 0 // Hide briefly until engine initializes to prevent jitter
+            opacity: isInitialized ? 1 : 0
           }}
           onMouseDown={e => {
             e.currentTarget.style.cursor = 'grabbing'
@@ -235,9 +301,6 @@ export default function PassionsPlayground({ triggerCatSpeak }) {
           onMouseUp={e => {
             e.currentTarget.style.cursor = 'grab'
             e.currentTarget.style.boxShadow = '0 2px 8px -3px rgba(15, 23, 42, 0.04)'
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.borderColor = 'rgba(0, 82, 255, 0.3)'
           }}
           onMouseLeave={e => {
             e.currentTarget.style.borderColor = 'var(--border)'
