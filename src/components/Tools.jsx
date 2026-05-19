@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { FadeUp, Label } from './utils'
 
 const tools = [
@@ -165,7 +165,7 @@ export default function Tools() {
             alignItems: 'center',
             padding: '60px 10px',
             overflow: 'visible',
-            minHeight: '480px',
+            minHeight: '450px',
             width: '100%',
           }}
         >
@@ -183,6 +183,10 @@ export default function Tools() {
                 extraRotate = 4
               }
             }
+
+            // Determine custom tooltip background and text colors to match the card theme
+            const tooltipBg = color === '#FFFFFF' ? '#FFFFFF' : '#2C3E50'
+            const tooltipColor = bg
 
             return (
               <motion.div
@@ -206,6 +210,51 @@ export default function Tools() {
                 onMouseEnter={() => setHoveredIndex(i)}
                 onMouseLeave={() => setHoveredIndex(null)}
               >
+                {/* Floating Tooltip Pill pointing down */}
+                <AnimatePresence>
+                  {hoveredIndex === i && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 15, x: '-50%', scale: 0.8 }}
+                      animate={{ opacity: 1, y: 0, x: '-50%', scale: 1 }}
+                      exit={{ opacity: 0, y: 15, x: '-50%', scale: 0.8 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                      style={{
+                        position: 'absolute',
+                        top: '-50px',
+                        left: '50%',
+                        background: tooltipBg,
+                        color: tooltipColor,
+                        padding: '6px 14px',
+                        borderRadius: 'var(--radius-pill)',
+                        fontSize: '11.5px',
+                        fontWeight: 700,
+                        fontFamily: 'var(--font-mono)',
+                        whiteSpace: 'nowrap',
+                        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.12)',
+                        zIndex: 100,
+                        pointerEvents: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                      }}
+                    >
+                      🎯 {outcome}
+                      {/* Arrow */}
+                      <div 
+                        style={{
+                          position: 'absolute',
+                          bottom: '-4px',
+                          left: '50%',
+                          transform: 'translateX(-50%) rotate(45deg)',
+                          width: '8px',
+                          height: '8px',
+                          background: tooltipBg,
+                        }}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 <motion.div
                   className="tool-card-motion"
                   drag={!isMobile}
@@ -230,7 +279,7 @@ export default function Tools() {
                   }}
                   style={{
                     width: '260px',
-                    height: '340px',
+                    height: '300px',
                     padding: 'var(--space-6)',
                     background: bg,
                     color: color,
@@ -242,7 +291,7 @@ export default function Tools() {
                     cursor: isMobile ? 'default' : 'grab',
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'space-between',
+                    justifyContent: 'flex-start',
                     boxSizing: 'border-box',
                     userSelect: 'none',
                     touchAction: isMobile ? 'auto' : 'none',
@@ -279,29 +328,11 @@ export default function Tools() {
                       lineHeight: 1.6, 
                       color: color, 
                       opacity: 0.9,
-                      margin: '0 0 var(--space-5) 0',
+                      margin: 0,
                       fontFamily: 'var(--font-body)'
                     }}>
                       {contribution}
                     </p>
-                  </div>
-
-                  <div 
-                    style={{
-                      position: 'relative',
-                      zIndex: 2,
-                      fontSize: 11,
-                      fontFamily: 'var(--font-mono)',
-                      fontWeight: 600,
-                      color: color,
-                      background: color === '#FFFFFF' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.06)',
-                      padding: '6px 12px',
-                      borderRadius: 'var(--radius-pill)',
-                      width: 'fit-content',
-                      border: color === '#FFFFFF' ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.05)',
-                    }}
-                  >
-                    🎯 {outcome}
                   </div>
                 </motion.div>
               </motion.div>
