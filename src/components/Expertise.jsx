@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { FadeUp, Label } from './utils'
 
 const expertise = [
@@ -11,154 +11,180 @@ const expertise = [
 ]
 
 export default function Expertise() {
-  const containerRef = useRef(null)
-  const trackRef = useRef(null)
-  
-  const scrollProgress = useRef(0)
-  const currentTranslation = useRef(0)
-  const [progress, setProgress] = useState(0)
+  const [isOpen, setIsOpen] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(null)
 
-  // 1. PINNED VERTICAL TO HORIZONTAL SCROLL INTERACTION (Desktop only)
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!containerRef.current || window.innerWidth <= 900) return
-      
-      const rect = containerRef.current.getBoundingClientRect()
-      const totalHeight = containerRef.current.offsetHeight
-      const windowHeight = window.innerHeight
-      
-      const scrollOffset = -rect.top
-      const maxScrollDist = totalHeight - windowHeight
-      
-      let prog = scrollOffset / maxScrollDist
-      prog = Math.max(0, Math.min(1, prog))
-      scrollProgress.current = prog
-      setProgress(prog)
-    }
+  // Use the active index if selected, otherwise fallback to the general section introduction
+  const activeItem = activeIndex !== null ? expertise[activeIndex] : {
+    title: "What I do really well.",
+    body: "Six craft areas honed across complex consumer IoT, SaaS dashboard architecture, and conversational interfaces. Hover and click the folder to explore each file."
+  }
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    window.addEventListener('resize', handleScroll)
-    handleScroll()
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('resize', handleScroll)
-    }
-  }, [])
-
-  // 2. Buttery spring drift loop
-  useEffect(() => {
-    let animId
-    const updatePhysics = () => {
-      if (trackRef.current && window.innerWidth > 900) {
-        const scrollWidth = trackRef.current.scrollWidth
-        const maxTranslation = scrollWidth - window.innerWidth + 120
-        const targetTranslation = -scrollProgress.current * Math.max(0, maxTranslation)
-        
-        currentTranslation.current += (targetTranslation - currentTranslation.current) * 0.08
-        trackRef.current.style.transform = `translateX(${currentTranslation.current}px)`
-      }
-      animId = requestAnimationFrame(updatePhysics)
-    }
-    animId = requestAnimationFrame(updatePhysics)
-    return () => cancelAnimationFrame(animId)
-  }, [])
+  const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }).replace(/,/g, '')
+  const timeStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
 
   return (
     <div 
-      ref={containerRef} 
       id="expertise" 
       style={{ 
         position: 'relative',
-        height: '240vh',
+        minHeight: '85vh',
         background: 'var(--bg-warm)',
+        display: 'flex',
+        alignItems: 'center',
+        padding: 'var(--space-10) 0',
+        overflow: 'hidden'
       }}
       className="expertise-wrapper-container"
     >
-      {/* Sticky section container */}
-      <div style={{
-        position: 'sticky',
-        top: 0,
-        height: '100vh',
-        width: '100vw',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-      }} className="expertise-sticky-section">
-        
-        <div className="container" style={{ marginBottom: 'var(--space-6)', position: 'relative', zIndex: 10 }}>
-          <FadeUp>
-            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 'var(--space-5)', alignItems: 'flex-end' }}>
-              <div>
-                <Label>Expertise</Label>
-                <h2 style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 'clamp(32px, 3.8vw, 46px)',
-                  fontWeight: 400,
-                  letterSpacing: '-0.025em',
-                  lineHeight: 1.15,
-                  color: 'var(--text-primary)',
-                  marginTop: 'var(--space-4)',
-                }}>
-                  What I do<br />
-                  <span style={{ color: 'var(--accent)' }}>really well.</span>
+      <div className="container" style={{ position: 'relative', zIndex: 10 }}>
+        <FadeUp>
+          <div className="expertise-split-layout">
+            
+            {/* ── LEFT PANEL: DYNAMIC DETAILS ── */}
+            <div className="expertise-left-panel">
+              <Label>Expertise</Label>
+              <div className="active-details-wrapper" key={activeIndex ?? 'default'}>
+                <h2 className="expertise-active-title">
+                  {activeItem.title}
                 </h2>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', alignItems: 'flex-end' }} className="expertise-meta">
-                <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0, textAlign: 'right', maxWidth: '36ch', lineHeight: 1.6 }}>
-                  Six craft areas honed across complex consumer IoT, SaaS dashboard architecture, and conversational interfaces.
+                <p className="expertise-active-body">
+                  {activeItem.body}
                 </p>
-                {/* Horizontal Progress Track */}
-                <div style={{
-                  width: 160,
-                  height: 3,
-                  background: 'var(--border)',
-                  borderRadius: 'var(--radius-pill)',
-                  position: 'relative',
-                  overflow: 'hidden',
-                }} className="scroll-hint-desktop">
-                  <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    height: '100%',
-                    width: `${progress * 100}%`,
-                    background: 'var(--accent)',
-                    borderRadius: 'var(--radius-pill)',
-                    transition: 'width 100ms linear',
-                  }} />
-                </div>
               </div>
             </div>
-          </FadeUp>
-        </div>
 
-        {/* ── Horizontal Glide Cards Track ── */}
-        <div 
-          ref={trackRef}
-          className="expertise-horizontal-track"
-          style={{
-            display: 'flex',
-            gap: 'var(--space-6)',
-            paddingLeft: 'max(40px, calc((100vw - 1200px) / 2))',
-            paddingRight: 'max(40px, calc((100vw - 1200px) / 2))',
-            willChange: 'transform',
-            alignItems: 'center'
-          }}
-        >
-          {expertise.map(({ icon, title, body }, i) => (
-            <FolderCard key={title} icon={icon} title={title} body={body} index={i} />
-          ))}
-        </div>
+            {/* ── RIGHT PANEL: THE 3D INTERACTIVE FOLDER ── */}
+            <div className="expertise-right-panel">
+              <div 
+                className={`folder-card-wrapper ${isOpen ? 'is-open' : ''}`}
+                onClick={() => setIsOpen(!isOpen)}
+                onMouseLeave={() => {
+                  setIsOpen(false)
+                  setActiveIndex(null)
+                }}
+              >
+                {/* BACK FLAP */}
+                <div className="folder-back">
+                  <div className="folder-tab" />
+                  <div className="folder-back-main" />
+                </div>
+
+                {/* SLIDING PAPER CHECKLIST */}
+                <div className="folder-paper">
+                  <div className="paper-header">
+                    <div className="paper-date-wrap">
+                      <span>{dateStr}</span>
+                      <span className="paper-time">{timeStr}</span>
+                    </div>
+                    <span>...</span>
+                  </div>
+                  <div className="paper-content">
+                    <div className="paper-subtitle">CRAFT INDEX</div>
+                    
+                    <div className="paper-checklist-flow">
+                      {expertise.map((item, idx) => (
+                        <div 
+                          key={item.title}
+                          className={`paper-checkbox-item ${activeIndex === idx ? 'active' : ''}`}
+                          onMouseEnter={() => setActiveIndex(idx)}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setActiveIndex(idx)
+                          }}
+                        >
+                          <div className="checkbox-box">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                              <path d="M20 6L9 17l-5-5"/>
+                            </svg>
+                          </div>
+                          <span className="paper-item-title">{item.title}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* FRONT FLAP */}
+                <div className="folder-front">
+                  <div className="folder-front-header">
+                     <div className="folder-title-wrap">
+                       <h3>Expertise</h3>
+                       <span className="folder-subtitle">6 notes</span>
+                     </div>
+                     <div className="folder-icons">
+                       <div className="folder-icon-btn">
+                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                       </div>
+                       <div className="folder-icon-btn">
+                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                       </div>
+                     </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </FadeUp>
       </div>
 
       <style>{`
-        /* ── FOLDER CARD CSS ── */
+        /* ── SPLIT LAYOUT ── */
+        .expertise-split-layout {
+          display: grid;
+          grid-template-columns: 1.2fr 1fr;
+          gap: var(--space-8);
+          align-items: center;
+        }
+
+        .expertise-left-panel {
+          display: flex;
+          flex-direction: column;
+          gap: var(--space-3);
+          min-height: 280px;
+          justify-content: center;
+        }
+
+        .active-details-wrapper {
+          animation: detailFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes detailFadeIn {
+          from { opacity: 0; transform: translateY(12px); filter: blur(4px); }
+          to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        .expertise-active-title {
+          font-family: var(--font-display);
+          font-size: clamp(28px, 3.2vw, 42px);
+          fontWeight: 400;
+          letter-spacing: -0.025em;
+          line-height: 1.15;
+          color: var(--text-primary);
+          margin: var(--space-2) 0;
+        }
+
+        .expertise-active-body {
+          font-size: 16px;
+          line-height: 1.7;
+          color: var(--text-secondary);
+          max-width: 48ch;
+          margin: 0;
+        }
+
+        .expertise-right-panel {
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+        }
+
+        /* ── FOLDER CARD CSS (RIGHT-ALIGNED) ── */
         .folder-card-wrapper {
           position: relative;
           width: 320px;
-          height: 280px;
+          height: 360px;
           flex-shrink: 0;
           cursor: pointer;
           transition: width 0.65s cubic-bezier(0.19, 1, 0.22, 1);
@@ -179,9 +205,9 @@ export default function Expertise() {
         /* FOLDER BACK */
         .folder-back {
           position: absolute;
-          top: 0; left: 0;
+          top: 0; right: 0;
           width: 320px;
-          height: 280px;
+          height: 360px;
           z-index: 1;
         }
 
@@ -191,25 +217,25 @@ export default function Expertise() {
           background: linear-gradient(135deg, #4F59F7, #262BDE);
           border-radius: 16px 16px 0 0;
           position: absolute;
-          top: 0; left: 0;
+          top: 0; right: 180px; /* Aligned to left edge of folder */
         }
 
         .folder-back-main {
           width: 320px;
-          height: calc(280px - 32px);
+          height: calc(360px - 32px);
           background: linear-gradient(135deg, #4A55F7, #1E22A8);
           border-radius: 0 16px 16px 16px;
           position: absolute;
-          top: 32px; left: 0;
+          top: 32px; right: 0;
           box-shadow: inset 0 2px 20px rgba(0,0,0,0.15);
         }
 
         /* FOLDER FRONT */
         .folder-front {
           position: absolute;
-          top: 32px; left: 0;
+          top: 32px; right: 0;
           width: 320px;
-          height: calc(280px - 32px);
+          height: calc(360px - 32px);
           background: linear-gradient(135deg, #626CFF, #3238FF);
           border-radius: 0 16px 16px 16px;
           z-index: 3;
@@ -221,7 +247,6 @@ export default function Expertise() {
           transform-origin: bottom center;
         }
 
-        /* Front hinges open on hover and click */
         .folder-card-wrapper:hover .folder-front,
         .folder-card-wrapper.is-open .folder-front {
           transform: rotateX(-8deg) translateY(4px);
@@ -263,13 +288,13 @@ export default function Expertise() {
           backdrop-filter: blur(4px);
         }
 
-        /* THE PAPER */
+        /* THE PAPER (Slides to the left) */
         .folder-paper {
           position: absolute;
           top: 40px; 
-          left: 10px;
+          right: 10px;
           width: 300px;
-          height: calc(280px - 50px);
+          height: calc(360px - 50px);
           background: #fdfdfd;
           border-radius: 12px;
           z-index: 2;
@@ -288,12 +313,12 @@ export default function Expertise() {
           box-shadow: 0 12px 30px rgba(0,0,0,0.12);
         }
 
-        /* Slide out on click */
+        /* Slide out to the LEFT on click */
         .folder-card-wrapper.is-open .folder-paper {
-          transform: translateX(330px) translateY(-20px);
+          transform: translateX(-330px) translateY(-10px);
           box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-          z-index: 4; /* Pops above folder */
-          height: calc(280px - 10px); /* Taller when fully out */
+          z-index: 4;
+          height: calc(360px - 10px);
         }
 
         /* Paper Content */
@@ -301,7 +326,7 @@ export default function Expertise() {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 24px;
+          margin-bottom: 20px;
           font-family: var(--font-mono);
           font-size: 11px;
           color: #888;
@@ -327,149 +352,103 @@ export default function Expertise() {
           font-weight: 700;
           letter-spacing: 0.05em;
           color: #111;
-          margin-bottom: 16px;
+          margin-bottom: 12px;
+        }
+
+        .paper-checklist-flow {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
         }
 
         .paper-checkbox-item {
           display: flex;
           gap: 12px;
-          align-items: flex-start;
+          align-items: center;
+          padding: 6px 8px;
+          border-radius: 8px;
+          transition: all 0.2s ease;
+          cursor: pointer;
+        }
+
+        .paper-checkbox-item:hover,
+        .paper-checkbox-item.active {
+          background: rgba(0, 82, 255, 0.05);
+        }
+
+        .paper-checkbox-item.active .paper-item-title {
+          color: var(--accent);
+          font-weight: 600;
         }
 
         .checkbox-box {
           width: 16px;
           height: 16px;
           border-radius: 4px;
-          background: var(--accent);
+          border: 1px solid rgba(0, 82, 255, 0.15);
+          background: rgba(0, 82, 255, 0.03);
           display: flex;
           align-items: center;
           justify-content: center;
-          color: white;
-          margin-top: 2px;
+          color: rgba(0, 82, 255, 0.3);
+          transition: all 0.2s ease;
           flex-shrink: 0;
         }
 
-        .paper-body {
-          font-size: 13px;
-          line-height: 1.6;
-          color: #444;
-          margin: 0;
+        .checkbox-box svg {
+          width: 10px;
+          height: 10px;
+          opacity: 0.7;
         }
 
-        /* Mobile Adjustments */
+        .paper-checkbox-item.active .checkbox-box {
+          border-color: var(--accent);
+          background: var(--accent);
+          color: white;
+          box-shadow: 0 0 8px rgba(0, 82, 255, 0.3);
+        }
+        
+        .paper-checkbox-item.active .checkbox-box svg {
+          opacity: 1;
+        }
+
+        .paper-item-title {
+          font-size: 13.5px;
+          color: #444;
+          transition: color 0.2s;
+        }
+
+        /* ── RESPONSIVE MOBILE ADJUSTMENTS ── */
         @media (max-width: 900px) {
           .expertise-wrapper-container {
-            height: auto !important;
-            padding: var(--space-10) 0 !important;
+            padding: var(--space-8) 0 !important;
           }
 
-          .expertise-sticky-section {
-            position: relative !important;
-            height: auto !important;
-            width: auto !important;
-            overflow: visible !important;
+          .expertise-split-layout {
+            grid-template-columns: 1fr;
+            gap: var(--space-8);
           }
 
-          .scroll-hint-desktop {
-            display: none !important;
+          .expertise-left-panel {
+            min-height: auto;
           }
 
-          .expertise-meta {
-            align-items: flex-start !important;
-          }
-          
-          .expertise-meta p {
-            text-align: left !important;
+          .expertise-right-panel {
+            justify-content: center;
           }
 
-          .expertise-horizontal-track {
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            padding-top: var(--space-8);
-            padding-bottom: var(--space-10);
-            padding-left: var(--space-5);
-            padding-right: var(--space-5);
-            transform: none !important;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
+          /* Let folder slide to right or expand height on mobile */
+          .folder-card-wrapper.is-open {
+            width: 320px;
+            height: 640px;
           }
 
-          .expertise-horizontal-track::-webkit-scrollbar {
-            display: none;
-          }
-
-          .folder-card-wrapper {
-            scroll-snap-align: center;
+          .folder-card-wrapper.is-open .folder-paper {
+            transform: translateY(330px) translateX(0);
+            height: 280px;
           }
         }
       `}</style>
-    </div>
-  )
-}
-
-function FolderCard({ icon, title, body, index }) {
-  const [isOpen, setIsOpen] = useState(false)
-
-  // Format a realistic date to match the "Wed, 07 May 2025" aesthetic
-  const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }).replace(/,/g, '')
-  const timeStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
-
-  return (
-    <div 
-      className={`folder-card-wrapper ${isOpen ? 'is-open' : ''}`}
-      onClick={() => setIsOpen(!isOpen)}
-      onMouseLeave={() => setIsOpen(false)}
-      style={{ '--index': index }}
-    >
-      {/* BACKGROUND SHAPE */}
-      <div className="folder-back">
-        <div className="folder-tab" />
-        <div className="folder-back-main" />
-      </div>
-
-      {/* PAPER SLIDER */}
-      <div className="folder-paper">
-        <div className="paper-header">
-          <div className="paper-date-wrap">
-            <span>{dateStr}</span>
-            <span className="paper-time">{timeStr}</span>
-          </div>
-          <span>...</span>
-        </div>
-        <div className="paper-content">
-          <div className="paper-subtitle">THINGS TO DO TODAY</div>
-          <div className="paper-checkbox-item">
-            <div className="checkbox-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M20 6L9 17l-5-5"/></svg>
-            </div>
-            <p className="paper-body" style={{ textDecoration: 'line-through', opacity: 0.6 }}>Analyze requirements</p>
-          </div>
-          <div className="paper-checkbox-item" style={{ marginTop: 12 }}>
-            <div className="checkbox-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M20 6L9 17l-5-5"/></svg>
-            </div>
-            <p className="paper-body">{body}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* FRONT COVER */}
-      <div className="folder-front">
-        <div className="folder-front-header">
-           <div className="folder-title-wrap">
-             <h3>{title}</h3>
-             <span className="folder-subtitle">1 note</span>
-           </div>
-           <div className="folder-icons">
-             <div className="folder-icon-btn">
-               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-             </div>
-             <div className="folder-icon-btn">
-               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-             </div>
-           </div>
-        </div>
-      </div>
     </div>
   )
 }
