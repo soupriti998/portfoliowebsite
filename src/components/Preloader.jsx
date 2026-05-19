@@ -241,7 +241,7 @@ export default function Preloader({ onComplete }) {
           return 100
         }
       })
-    }, 72) // 7.2 seconds total, consecutive increments
+    }, 20) // 2.0 seconds total, consecutive increments
 
     return () => clearInterval(interval)
   }, [preloaderActive])
@@ -317,8 +317,8 @@ export default function Preloader({ onComplete }) {
       setPreloaderActive(false)
       setTimeout(() => {
         if (onComplete) onComplete()
-      }, 700) // Transition out delay
-    }, 400)
+      }, 200) // Fast transition out delay
+    }, 100)
   }
 
   // Floating Micro-particles

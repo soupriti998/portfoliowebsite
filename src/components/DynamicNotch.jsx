@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 
 const DIMS = {
   compact: { width: 440, height: 46, radius: 23 },
-  expanded: { width: 500, height: 195, radius: 24 }, 
+  expanded: { width: 500, height: 320, radius: 24 }, 
   chat: { width: 480, height: 520, radius: 25 },
   voice: { width: 480, height: 380, radius: 25 },
   jdMatch: { width: 480, height: 480, radius: 25 }
@@ -276,7 +276,7 @@ const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) 
 
 /* ── Chat replies dictionary ── */
 const KB = {
-  greet: ["Hmm... Hey! I am Luffy. Ask me anything about soupriti's work, skills, or experience.", "Hmm... Hello! I'm Luffy — here to help you explore. What would you like to know?", "Hmm... Welcome! I'm Luffy. Feel free to ask me about soupriti's projects, skills, or how to get in touch."],
+  greet: ["Hmm... Hey! I am Luffy, Soup's digital pet. Ask me anything about her work, skills, or experience.", "Hmm... Hello! I'm Luffy — here to help you explore. What would you like to know?", "Hmm... Welcome! I'm Luffy. Feel free to ask me about Soupriti's projects, skills, or how to get in touch."],
   about: "soupriti is a Product Designer based in Bangalore with 3+ years of experience designing HMI and SaaS products. She completed B.Des in Fashion Communication at NIFT Chennai. She simplifies complex systems into warm, human-centered experiences.",
   current: "Soupriti is currently a Product Designer at upliance.ai. She redesigned their device interface, reducing perceived cooking times by 24% and coding their scalable React design system from scratch.",
   skills: "Skills: End-to-end UX/UI, user research, data dashboard mapping, Figma interaction system design, and React/JS prototyping. She works closely with developers to ensure 100% engineering delivery.",
@@ -407,7 +407,7 @@ function getResponse(input, jokeState, setJokeState, activeSection) {
 
   if (q.match(/thank|thanks/)) return pick(FUN.playful.thanks)
   if (q.match(/love|amazing|great|nice|beautiful/)) return pick(FUN.playful.compliment)
-  if (q.match(/hi|hello|hey|luffy/)) return "Hmm... hey I am luffy, I can help you being more contextual about soupriti's portfolio."
+  if (q.match(/hi|hello|hey|luffy/)) return "Hmm... hey I am Luffy, Soup's digital pet. I can help you explore her portfolio."
   if (q.match(/who|about|soupriti|herself|person/)) return KB.about
   if (q.match(/current|now|today|upliance/)) return KB.current
   if (q.match(/fuck|bitch/)) return KB.fuck
@@ -676,7 +676,7 @@ export default function DynamicNotch({ activeProject }) {
   }, [])
   
   // Chat States
-  const [messages, setMessages] = useState([{ from: 'bot', text: "Hmm... Hey! I'm Luffy. I can help you co-pilot and explore Soupriti's work contextually. Ask me anything!" }])
+  const [messages, setMessages] = useState([{ from: 'bot', text: "Hmm... Hey! I'm Luffy, Soup's digital pet. I can help you sniff around and explore her work. Ask me anything!" }])
   const [hovered, setHovered] = useState(false)
   const [chatInput, setChatInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
@@ -1251,7 +1251,7 @@ export default function DynamicNotch({ activeProject }) {
                   textTransform: isFullyDocked ? 'none' : 'uppercase',
                   whiteSpace: isFullyDocked ? 'normal' : 'nowrap',
                 }}>
-                  {isFullyDocked ? "Hi, I’m Luffy — Soupriti’s AI hiring copilot." : "Luffy AI Copilot — Press Alt + Space to talk"}
+                  {isFullyDocked ? "Hi, I'm Luffy — Soup's digital pet." : "Luffy — Press Alt + Space to talk"}
                 </span>
 
                 {isFullyDocked && (
@@ -1263,7 +1263,7 @@ export default function DynamicNotch({ activeProject }) {
                     lineHeight: 1.5,
                     opacity: 0.8,
                   }}>
-                    I can help you quickly evaluate whether Soupriti is a strong fit for your team, product, or role.
+                    I can help you sniff around and see if Soupriti is a strong fit for your team, product, or role.
                   </span>
                 )}
               </div>
@@ -1285,7 +1285,7 @@ export default function DynamicNotch({ activeProject }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: accentColor, boxShadow: `0 0 6px ${accentColor}` }} />
                 <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', fontWeight: 700, color: textColor, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                  {notchState === 'chat' ? "Luffy AI Assistant" : (notchState === 'jdMatch' ? "JD Fit Analyzer" : "Voice Copilot")}
+                  {notchState === 'chat' ? "Luffy Chat" : (notchState === 'jdMatch' ? "Match Scanner" : "Voice Mode")}
                 </span>
               </div>
               
@@ -1403,7 +1403,7 @@ export default function DynamicNotch({ activeProject }) {
                         letterSpacing: '-0.02em',
                         lineHeight: 1.2
                       }}>
-                        Hi, I’m Luffy — Soupriti’s AI hiring copilot.
+                        Hi, I'm Luffy — Soup's digital pet.
                       </h3>
                       <p style={{
                         margin: 0,
@@ -1412,7 +1412,7 @@ export default function DynamicNotch({ activeProject }) {
                         color: subtextColor,
                         fontFamily: 'var(--font-body)'
                       }}>
-                        I can help you quickly evaluate whether Soupriti is a strong fit for your team, product, or role.
+                        I can help you sniff around and see if Soupriti is a strong fit for your team, product, or role.
                       </p>
                     </div>
 

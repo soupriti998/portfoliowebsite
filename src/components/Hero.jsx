@@ -90,7 +90,7 @@ export default function Hero() {
   const heroRef = useRef(null)
 
   useEffect(() => {
-    const t = setTimeout(() => setLoaded(true), 100)
+    const t = setTimeout(() => setLoaded(true), 10)
     return () => clearTimeout(t)
   }, [])
 
@@ -223,7 +223,7 @@ export default function Hero() {
                   maxWidth: 'none',
                   opacity: loaded ? 1 : 0,
                   transform: loaded ? 'translateY(0)' : 'translateY(28px)',
-                  transition: 'all 0.9s var(--ease-out-expo) 0.2s',
+                  transition: 'all 0.9s var(--ease-out-expo)',
                 }}
               >
                 Designing thoughtful <span style={{ color: 'var(--accent)' }}>digital</span><br />
@@ -241,7 +241,7 @@ export default function Hero() {
                   marginBottom: 'var(--space-8)',
                   opacity: loaded ? 1 : 0,
                   transform: loaded ? 'translateY(0)' : 'translateY(16px)',
-                  transition: 'all 0.8s var(--ease-out-expo) 0.35s',
+                  transition: 'all 0.8s var(--ease-out-expo)',
                 }}
               >
                 Product Designer with 3+ years shaping AI-powered and SaaS products.
