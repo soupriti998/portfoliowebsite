@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { FadeUp, Label } from './utils'
 
 /* ── High-Fidelity Custom SVG Icons (Replacing Emojis) ── */
@@ -126,6 +127,183 @@ const RocketIcon = () => (
   </svg>
 )
 
+const RadarIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+  </svg>
+)
+
+const GridPlusIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><path d="M6.5 17.5h4M8.5 15.5v4"/>
+  </svg>
+)
+
+const GrowthMetricsIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+  </svg>
+)
+
+const CAROUSEL_CARDS = [
+  {
+    id: 1,
+    title: 'Solving real problems',
+    text: 'Designing systems that reduce friction and create meaningful user outcomes.',
+    icon: <RadarIcon />,
+    glow: 'rgba(0, 82, 255, 0.5)',
+    color: '#0052ff'
+  },
+  {
+    id: 2,
+    title: 'Simplifying complex systems',
+    text: 'Turning technical workflows into intuitive and scalable experiences.',
+    icon: <GridPlusIcon />,
+    glow: 'rgba(79, 70, 229, 0.5)',
+    color: '#4f46e5'
+  },
+  {
+    id: 3,
+    title: 'Creating business impact',
+    text: 'Bridging user needs with measurable product and business growth.',
+    icon: <GrowthMetricsIcon />,
+    glow: 'rgba(37, 99, 235, 0.5)',
+    color: '#2563eb'
+  }
+]
+
+const CorePurposeCarousel = () => {
+  const [cards, setCards] = useState(CAROUSEL_CARDS)
+  const [isHovered, setIsHovered] = useState(false)
+  
+  // Auto-swipe effect
+  useEffect(() => {
+    if (isHovered) return
+    const timer = setInterval(() => {
+      setCards(prev => {
+        const newCards = [...prev]
+        const first = newCards.shift()
+        newCards.push(first)
+        return newCards
+      })
+    }, 3800)
+    return () => clearInterval(timer)
+  }, [isHovered])
+
+  const handleNext = () => {
+    setCards(prev => {
+      const newCards = [...prev]
+      const first = newCards.shift()
+      newCards.push(first)
+      return newCards
+    })
+  }
+
+  return (
+    <div 
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: 250,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        perspective: 1000,
+        marginTop: 20
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <AnimatePresence mode="popLayout">
+        {cards.map((card, index) => {
+          const isFront = index === 0
+          
+          return (
+            <motion.div
+              key={card.id}
+              layout
+              initial={{ scale: 0.8, opacity: 0, x: 100 }}
+              animate={{ 
+                scale: isFront ? 1 : 1 - (index * 0.05), 
+                opacity: isFront ? 1 : 1 - (index * 0.15), 
+                x: isFront ? 0 : index * 14,
+                y: isFront ? 0 : index * 8,
+                zIndex: cards.length - index
+              }}
+              exit={{ scale: 0.8, opacity: 0, x: -100, transition: { duration: 0.2 } }}
+              transition={{ 
+                type: 'spring', 
+                stiffness: 300, 
+                damping: 30, 
+                mass: 0.8 
+              }}
+              onClick={isFront ? handleNext : undefined}
+              whileHover={isFront ? { scale: 1.02, y: -4, rotateX: 2, rotateY: -2 } : {}}
+              style={{
+                position: 'absolute',
+                width: '100%',
+                maxWidth: 380,
+                height: 180,
+                background: 'var(--bg-card)',
+                borderRadius: 28,
+                border: '1.2px solid var(--border)',
+                padding: '24px 28px',
+                cursor: isFront ? 'pointer' : 'default',
+                boxShadow: isFront ? `0 24px 48px -12px ${card.glow}, 0 4px 24px -4px rgba(0,0,0,0.06)` : '0 10px 30px -10px rgba(0,0,0,0.04)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                gap: 16,
+                transformStyle: 'preserve-3d',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <motion.div 
+                  style={{
+                    width: 48, height: 48, borderRadius: '50%',
+                    background: `linear-gradient(135deg, var(--bg-card), var(--bg-warm))`,
+                    border: '1.2px solid var(--border)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: card.color,
+                    boxShadow: isFront ? `0 8px 24px -4px ${card.glow}` : 'none'
+                  }}
+                  animate={isFront ? { scale: [1, 1.05, 1], rotate: [0, 4, -4, 0] } : {}}
+                  transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                >
+                  {card.icon}
+                </motion.div>
+                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}>
+                  {card.title}
+                </h3>
+              </div>
+              <p style={{ margin: 0, fontSize: 13.5, color: 'var(--text-secondary)', lineHeight: 1.5, fontFamily: 'var(--font-body)' }}>
+                {card.text}
+              </p>
+            </motion.div>
+          )
+        })}
+      </AnimatePresence>
+      
+      {/* Pagination indicators */}
+      <div style={{
+        position: 'absolute',
+        bottom: -24,
+        display: 'flex',
+        gap: 6
+      }}>
+        {CAROUSEL_CARDS.map((c) => (
+          <div key={c.id} style={{
+            width: cards[0].id === c.id ? 20 : 6,
+            height: 6,
+            borderRadius: 3,
+            background: cards[0].id === c.id ? 'var(--text-primary)' : 'var(--border)',
+            transition: 'all 0.3s var(--ease-out-expo)'
+          }} />
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export default function About() {
   const [activeExplain, setActiveExplain] = useState("Click on any highlight inside the Bento grid to activate the Luffy AI thought stream!")
@@ -720,47 +898,24 @@ export default function About() {
               border: '1.5px solid var(--border)',
               borderRadius: 24,
               padding: '24px 28px',
+              display: 'flex',
+              flexDirection: 'column',
+              position: 'relative',
+              overflow: 'hidden' // contain the floating depth bounds
             }}>
-              <h4 className="bento-card-header">
+              {/* Subtle Stage Background Blur & Glow */}
+              <div style={{
+                position: 'absolute', top: '50%', left: '50%', width: '80%', height: '80%',
+                background: 'radial-gradient(circle, rgba(0, 82, 255, 0.04) 0%, transparent 70%)',
+                transform: 'translate(-50%, -50%)', pointerEvents: 'none', zIndex: 0
+              }} />
+
+              <h4 className="bento-card-header" style={{ position: 'relative', zIndex: 1 }}>
                 04 // CORE PURPOSE & METRICS
               </h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {[
-                  { title: 'Solving real problems', icon: <TargetIcon />, text: "She focuses on actual usability barriers, like parallel prep stages, rather than ideal flows." },
-                  { title: 'Simplifying complex systems', icon: <PuzzleIcon />, text: "Simplifying IoT device setups into friendly, step-by-step guided cards." },
-                  { title: 'Creating business impact', icon: <PeopleIcon />, text: "Boosting recipe completion rates and protecting key retention metrics." }
-                ].map((item) => (
-                  <div 
-                    key={item.title}
-                    className="bento-list-item-long"
-                    onClick={() => triggerCatSpeak(item.text)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 16,
-                      padding: '12px 18px',
-                      borderRadius: 14,
-                      background: 'var(--bg-warm)',
-                      border: '1.2px solid var(--border)',
-                      cursor: 'pointer',
-                      transition: 'all 0.25s var(--ease-out-expo)',
-                      userSelect: 'none'
-                    }}
-                  >
-                    <div className="purpose-icon-container" style={{
-                      width: 28, height: 28, borderRadius: '50%',
-                      background: 'var(--bg-card)',
-                      border: '1.2px solid var(--border)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: 'var(--accent)', flexShrink: 0,
-                      transition: 'all 0.25s'
-                    }}>{item.icon}</div>
-                    
-                    <span style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-body)' }}>
-                      {item.title}
-                    </span>
-                  </div>
-                ))}
+              
+              <div style={{ position: 'relative', zIndex: 1, flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+                <CorePurposeCarousel />
               </div>
             </div>
 
