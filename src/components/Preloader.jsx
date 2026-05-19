@@ -9,12 +9,22 @@ const rawWords = [
   "Sleep Better", "Protect Energy", "Notice Details", "Stay Soft", "Trust Process"
 ]
 
-const pentatonic = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50, 1174.66, 1318.51]
+const beethovenOdeToJoy = [
+  659.25, 659.25, 698.46, 783.99, // E E F G
+  783.99, 698.46, 659.25, 587.33, // G F E D
+  523.25, 523.25, 587.33, 659.25, // C C D E
+  659.25, 587.33, 587.33,         // E D D (end of phrase 1)
+  
+  659.25, 659.25, 698.46, 783.99, // E E F G
+  783.99, 698.46, 659.25, 587.33, // G F E D
+  523.25, 523.25, 587.33, 659.25, // C C D E
+  587.33, 523.25, 523.25          // D C C (end of phrase 2)
+]
 
 const WORDS = rawWords.map((word, i) => ({
   word,
   progress: ((i + 1) / rawWords.length) * 100,
-  chime: pentatonic[i % pentatonic.length] + (Math.floor(i / pentatonic.length) * 50)
+  chime: beethovenOdeToJoy[i % beethovenOdeToJoy.length]
 }))
 
 // Pure synthesized client-side sound engine to avoid asset dependencies
