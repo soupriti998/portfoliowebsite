@@ -104,13 +104,33 @@ const tools = [
 export default function Tools() {
   const containerRef = useRef(null)
   const [isMobile, setIsMobile] = useState(false)
+  const [overlap, setOverlap] = useState(-100)
+  const [hoveredIndex, setHoveredIndex] = useState(null)
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768)
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
+    const handleResize = () => {
+      const width = window.innerWidth
+      const mobile = width < 768
+      setIsMobile(mobile)
+      
+      if (mobile) {
+        setOverlap(0)
+      } else if (width < 1024) {
+        setOverlap(-150) // High overlap for narrow desktops
+      } else if (width < 1280) {
+        setOverlap(-125) // Medium overlap
+      } else {
+        setOverlap(-100) // Standard overlap
+      }
+    }
+
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
   }, [])
+
+  // Calculate shift amount based on current overlap density
+  const shiftAmount = Math.abs(overlap) * 0.95
 
   return (
     <section id="tools" style={{ padding: 'var(--space-11) 0', background: 'var(--bg)', borderTop: '1px solid var(--border)', overflow: 'hidden' }}>
@@ -131,7 +151,7 @@ export default function Tools() {
             <span style={{ color: 'var(--accent)' }}>with these tools.</span>
           </h2>
           <p style={{ fontSize: 15, color: 'var(--text-secondary)', marginBottom: 'var(--space-9)', maxWidth: '50ch' }}>
-            No plain percentage meters. Grab and drag these cards to organize my toolkit, or hover over them to bring them to the front.
+            Hover over a card to focus it and reveal the details underneath. Drag cards to sort them as you wish.
           </p>
         </FadeUp>
 
@@ -140,116 +160,153 @@ export default function Tools() {
           style={{
             position: 'relative',
             display: 'flex',
-            flexWrap: 'wrap',
+            flexWrap: isMobile ? 'wrap' : 'nowrap',
             justifyContent: 'center',
-            gap: isMobile ? '16px' : '24px',
-            padding: '40px 10px',
+            alignItems: 'center',
+            padding: '60px 10px',
             overflow: 'visible',
+            minHeight: '480px',
+            width: '100%',
           }}
         >
-          {tools.map(({ name, category, icon, contribution, outcome, bg, color, rotate, x, y }) => (
-            <motion.div
-              key={name}
-              className="tool-card-motion"
-              drag={!isMobile}
-              dragConstraints={containerRef}
-              dragElastic={0.15}
-              dragMomentum={false}
-              whileHover={{ 
-                scale: 1.05, 
-                rotate: 0, 
-                zIndex: 50,
-                boxShadow: '0 20px 40px rgba(0,0,0,0.12)' 
-              }}
-              whileTap={{ cursor: 'grabbing' }}
-              whileDrag={{ 
-                scale: 1.08, 
-                rotate: 0, 
-                zIndex: 100,
-                boxShadow: '0 30px 60px rgba(0,0,0,0.18)' 
-              }}
-              initial={{ 
-                rotate: isMobile ? rotate / 2 : rotate,
-                x: isMobile ? x / 2 : x,
-                y: isMobile ? y / 2 : y
-              }}
-              style={{
-                width: '280px',
-                height: '330px',
-                padding: 'var(--space-6)',
-                background: bg,
-                color: color,
-                borderRadius: 'var(--radius-xl)',
-                border: '1px solid rgba(0, 0, 0, 0.05)',
-                boxShadow: 'var(--shadow-sm)',
-                position: 'relative',
-                overflow: 'hidden',
-                cursor: isMobile ? 'default' : 'grab',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                boxSizing: 'border-box',
-                userSelect: 'none',
-                touchAction: isMobile ? 'auto' : 'none',
-              }}
-            >
-              {/* Blueprint grid on hover */}
-              <div 
-                className="tool-blueprint-bg" 
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  opacity: 0,
-                  pointerEvents: 'none',
-                  backgroundSize: '16px 16px',
-                  backgroundImage: `radial-gradient(${color} 0.8px, transparent 0.8px)`,
-                  transition: 'opacity 400ms cubic-bezier(0.16, 1, 0.3, 1)',
-                  zIndex: 1
-                }} 
-              />
+          {tools.map(({ name, category, icon, contribution, outcome, bg, color, rotate, x, y }, i) => {
+            // Calculate hover shifting offsets
+            let xShift = 0
+            let extraRotate = 0
+            
+            if (hoveredIndex !== null && !isMobile) {
+              if (i < hoveredIndex) {
+                xShift = -shiftAmount
+                extraRotate = -4
+              } else if (i > hoveredIndex) {
+                xShift = shiftAmount
+                extraRotate = 4
+              }
+            }
 
-              <div style={{ position: 'relative', zIndex: 2 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <span style={{ fontSize: 24, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.05))' }}>{icon}</span>
-                    <div>
-                      <h3 style={{ fontWeight: 700, fontSize: 18, color: color, letterSpacing: '-0.015em', margin: 0 }}>{name}</h3>
-                      <span style={{ fontSize: 11, color: color, opacity: 0.8, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginTop: 2 }}>{category}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <p style={{ 
-                  fontSize: 13, 
-                  lineHeight: 1.6, 
-                  color: color, 
-                  opacity: 0.9,
-                  margin: '0 0 var(--space-5) 0',
-                  fontFamily: 'var(--font-body)'
-                }}>
-                  {contribution}
-                </p>
-              </div>
-
-              <div 
-                style={{
-                  position: 'relative',
-                  zIndex: 2,
-                  fontSize: 11,
-                  fontFamily: 'var(--font-mono)',
-                  fontWeight: 600,
-                  color: color,
-                  background: color === '#FFFFFF' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.06)',
-                  padding: '6px 12px',
-                  borderRadius: 'var(--radius-pill)',
-                  width: 'fit-content',
-                  border: color === '#FFFFFF' ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.05)',
+            return (
+              <motion.div
+                key={name}
+                className="tool-card-wrapper"
+                animate={{
+                  x: xShift,
+                  rotate: (isMobile ? rotate / 2 : rotate) + extraRotate,
                 }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 260,
+                  damping: 25,
+                }}
+                style={{
+                  marginLeft: isMobile ? '0' : (i === 0 ? '0' : `${overlap}px`),
+                  zIndex: hoveredIndex === i ? 50 : i,
+                  position: 'relative',
+                  transition: 'margin-left 0.3s ease',
+                }}
+                onMouseEnter={() => setHoveredIndex(i)}
+                onMouseLeave={() => setHoveredIndex(null)}
               >
-                🎯 {outcome}
-              </div>
-            </motion.div>
-          ))}
+                <motion.div
+                  className="tool-card-motion"
+                  drag={!isMobile}
+                  dragConstraints={containerRef}
+                  dragElastic={0.15}
+                  dragMomentum={false}
+                  whileHover={{ 
+                    scale: 1.06, 
+                    rotate: 0, 
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.15)' 
+                  }}
+                  whileTap={{ cursor: 'grabbing' }}
+                  whileDrag={{ 
+                    scale: 1.08, 
+                    rotate: 0, 
+                    zIndex: 100,
+                    boxShadow: '0 30px 60px rgba(0,0,0,0.2)' 
+                  }}
+                  initial={{ 
+                    x: isMobile ? x / 2 : x,
+                    y: isMobile ? y / 2 : y
+                  }}
+                  style={{
+                    width: '260px',
+                    height: '340px',
+                    padding: 'var(--space-6)',
+                    background: bg,
+                    color: color,
+                    borderRadius: 'var(--radius-xl)',
+                    border: '1px solid rgba(0, 0, 0, 0.05)',
+                    boxShadow: 'var(--shadow-sm)',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    cursor: isMobile ? 'default' : 'grab',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    boxSizing: 'border-box',
+                    userSelect: 'none',
+                    touchAction: isMobile ? 'auto' : 'none',
+                  }}
+                >
+                  {/* Blueprint grid on hover */}
+                  <div 
+                    className="tool-blueprint-bg" 
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      opacity: 0,
+                      pointerEvents: 'none',
+                      backgroundSize: '16px 16px',
+                      backgroundImage: `radial-gradient(${color} 0.8px, transparent 0.8px)`,
+                      transition: 'opacity 400ms cubic-bezier(0.16, 1, 0.3, 1)',
+                      zIndex: 1
+                    }} 
+                  />
+
+                  <div style={{ position: 'relative', zIndex: 2 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <span style={{ fontSize: 24, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.05))' }}>{icon}</span>
+                        <div>
+                          <h3 style={{ fontWeight: 700, fontSize: 18, color: color, letterSpacing: '-0.015em', margin: 0 }}>{name}</h3>
+                          <span style={{ fontSize: 11, color: color, opacity: 0.8, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginTop: 2 }}>{category}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p style={{ 
+                      fontSize: 13, 
+                      lineHeight: 1.6, 
+                      color: color, 
+                      opacity: 0.9,
+                      margin: '0 0 var(--space-5) 0',
+                      fontFamily: 'var(--font-body)'
+                    }}>
+                      {contribution}
+                    </p>
+                  </div>
+
+                  <div 
+                    style={{
+                      position: 'relative',
+                      zIndex: 2,
+                      fontSize: 11,
+                      fontFamily: 'var(--font-mono)',
+                      fontWeight: 600,
+                      color: color,
+                      background: color === '#FFFFFF' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.06)',
+                      padding: '6px 12px',
+                      borderRadius: 'var(--radius-pill)',
+                      width: 'fit-content',
+                      border: color === '#FFFFFF' ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.05)',
+                    }}
+                  >
+                    🎯 {outcome}
+                  </div>
+                </motion.div>
+              </motion.div>
+            )
+          })}
         </div>
 
         {/* Technical dialogue block */}
