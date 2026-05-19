@@ -1078,15 +1078,19 @@ export default function DynamicNotch({ activeProject }) {
   const dockWidth = dockRect ? Math.min(dockRect.width, DIMS.chat.width) : DIMS.chat.width
   const dockHeight = dockRect ? Math.min(dockRect.height, DIMS.chat.height) : DIMS.chat.height
 
-  // Spacing for floating notch from the bottom of the viewport
+  // Spacing for floating notch from the bottom and right of the viewport
   const bottomSpacing = typeof window !== 'undefined' && window.innerWidth < 768 ? 20 : 32
+  const rightSpacing = typeof window !== 'undefined' && window.innerWidth < 768 ? 20 : 32
 
   let finalWidth = currentDim.width
   let finalHeight = notchState === 'compact' ? DIMS.compact.height : (dynamicHeight || currentDim.height)
   let finalRadiusBottom = currentDim.radius
   let finalRadiusTop = currentDim.radius
+  
   let finalTop = viewportHeight - finalHeight - bottomSpacing
-  let finalLeft = '50%'
+  // Calculate target center X for the bottom right positioning
+  let targetCenterX = typeof window !== 'undefined' ? window.innerWidth - (finalWidth / 2) - rightSpacing : 0
+  let finalLeft = `${targetCenterX}px`
 
   if (isDocked) {
     finalWidth = dockRect.width * (1 - pEase) + finalWidth * pEase
@@ -1099,8 +1103,11 @@ export default function DynamicNotch({ activeProject }) {
     const dockCenterX = dockViewportLeft + dockRect.width / 2
 
     const targetTop = viewportHeight - finalHeight - bottomSpacing
+    // Use targetCenterX to interpolate towards the bottom right
+    targetCenterX = typeof window !== 'undefined' ? window.innerWidth - (finalWidth / 2) - rightSpacing : 0
+    
     finalTop = dockViewportTop * (1 - pEase) + targetTop * pEase
-    finalLeft = `calc(${dockCenterX}px * ${1 - pEase} + 50% * ${pEase})`
+    finalLeft = `calc(${dockCenterX}px * ${1 - pEase} + ${targetCenterX}px * ${pEase})`
   }
 
   // Inertia squash momentum calculation
