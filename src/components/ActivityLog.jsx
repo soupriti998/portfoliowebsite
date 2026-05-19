@@ -52,12 +52,12 @@ const LOG_ENTRIES = [
     time: '02:03 AM',
     date: 'May 15, 2026',
     category: 'AI Workflow',
-    title: 'Integrating Luffy AI Assistant Copilot',
-    description: 'Engineered a highly responsive, personalized client co-pilot right inside the dynamic notch. Programmed Luffy to answer questions about skills, process resumes, matches JDs, and talk in real-time. Added localized context tags specifically tailored to the Indian design ecosystem.',
+    title: 'Integrating Soup AI Assistant Copilot',
+    description: 'Engineered a highly responsive, personalized client co-pilot right inside the dynamic notch. Programmed Soup to answer questions about skills, process resumes, matches JDs, and talk in real-time. Added localized context tags specifically tailored to the Indian design ecosystem.',
     version: 'v1.5.0',
     commit: 'feat(chatbot): contextual responses and interactive JD analyzer tool',
     section: 'projects',
-    funNote: 'Taught Luffy to speak with authority but stay humble. A highly designed pairing!',
+    funNote: 'Taught Soup to speak with authority but stay humble. A highly designed pairing!',
     stats: { iterations: 22, hours: 32.5, stressLevel: 'High' }
   },
   {

@@ -315,7 +315,7 @@ const CorePurposeCarousel = () => {
 }
 
 export default function About() {
-  const [activeExplain, setActiveExplain] = useState("Click on any highlight inside the Bento grid to activate the Luffy AI thought stream!")
+  const [activeExplain, setActiveExplain] = useState("Click on any highlight inside the Bento grid to activate the Soup AI thought stream!")
 
   /* ── 01. Design Toolkit Auto-scroll index ── */
   const [toolkitIndex, setToolkitIndex] = useState(0)
