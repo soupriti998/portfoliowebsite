@@ -108,9 +108,14 @@ export default function Tools() {
   const [overlap, setOverlap] = useState(-100)
   const [hoveredIndex, setHoveredIndex] = useState(null)
   
-  // Stages: !folderCentered (Stage 1), folderCentered && !folderOpen (Stage 2), folderCentered && folderOpen (Stage 3)
+  // Stages: 
+  // 1. !folderCentered && folderVisible: Closed in right panel
+  // 2. folderCentered && !folderOpen && folderVisible: Closed in center
+  // 3. folderCentered && folderOpen && folderVisible: Open in center, cards popped out
+  // 4. folderCentered && folderOpen && !folderVisible: Folder disappears, cards center vertically
   const [folderCentered, setFolderCentered] = useState(false)
   const [folderOpen, setFolderOpen] = useState(false)
+  const [folderVisible, setFolderVisible] = useState(true)
 
   // Track scroll position of the entire section to coordinate the multi-stage animation
   const { scrollYProgress } = useScroll({
@@ -119,10 +124,11 @@ export default function Tools() {
   })
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    // If mobile, keep folder centered and open for accessibility
+    // If mobile, keep folder centered and open, but hide the folder icon to save space
     if (isMobile) {
       setFolderCentered(true)
       setFolderOpen(true)
+      setFolderVisible(false)
       return
     }
 
@@ -130,14 +136,22 @@ export default function Tools() {
       // Stage 1: Closed and located on the right panel
       setFolderCentered(false)
       setFolderOpen(false)
-    } else if (latest >= 0.20 && latest < 0.42) {
+      setFolderVisible(true)
+    } else if (latest >= 0.20 && latest < 0.40) {
       // Stage 2: Closed and centered at the top of the cards container
       setFolderCentered(true)
       setFolderOpen(false)
-    } else if (latest >= 0.42) {
-      // Stage 3: Folder opens and cards pop down fanning out horizontally
+      setFolderVisible(true)
+    } else if (latest >= 0.40 && latest < 0.58) {
+      // Stage 3: Folder opens and cards pop down fanning out horizontally. Folder is still visible.
       setFolderCentered(true)
       setFolderOpen(true)
+      setFolderVisible(true)
+    } else if (latest >= 0.58) {
+      // Stage 4: Cards are fully out, folder fades out and collapses
+      setFolderCentered(true)
+      setFolderOpen(true)
+      setFolderVisible(false)
     }
   })
 
@@ -151,6 +165,7 @@ export default function Tools() {
         setOverlap(0)
         setFolderCentered(true)
         setFolderOpen(true)
+        setFolderVisible(false)
       } else if (width < 1024) {
         setOverlap(-150) // High overlap for narrow desktops
       } else if (width < 1280) {
@@ -169,10 +184,14 @@ export default function Tools() {
   const shiftAmount = Math.abs(overlap) * 0.95
 
   // Helper to render the unified folder component
-  const renderFolder = (isOpenState) => {
+  const renderFolder = (isOpenState, isVisibleState) => {
     return (
       <motion.div
         layoutId="tools-folder"
+        animate={{
+          opacity: isVisibleState ? 1 : 0,
+          scale: isVisibleState ? 1 : 0.85,
+        }}
         transition={{ 
           type: 'spring', 
           stiffness: 110, 
@@ -185,6 +204,7 @@ export default function Tools() {
           cursor: 'pointer',
           perspective: '1000px',
           zIndex: 10,
+          pointerEvents: isVisibleState ? 'auto' : 'none',
         }}
         onClick={() => {
           setFolderCentered(true)
@@ -278,7 +298,7 @@ export default function Tools() {
                 <span style={{ color: 'var(--accent)' }}>with these tools.</span>
               </h2>
               <p style={{ fontSize: 15, color: 'var(--text-secondary)', margin: 0, maxWidth: '50ch' }}>
-                Scroll down to see the folder move to the center and open. Drag cards anywhere, or hover over them to focus and reveal their outcomes.
+                Scroll down to see the folder move to the center, open, and disappear as the cards deal out. Drag cards anywhere, or hover over them to focus.
               </p>
             </div>
           </FadeUp>
@@ -292,7 +312,7 @@ export default function Tools() {
             position: 'relative',
             overflow: 'visible',
           }}>
-            {!folderCentered && renderFolder(false)}
+            {!folderCentered && renderFolder(false, true)}
           </div>
         </div>
 
@@ -310,19 +330,30 @@ export default function Tools() {
             width: '100%',
           }}
         >
-          {/* Landing zone for folder in the center */}
-          <div style={{
-            height: '240px',
-            width: '320px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            position: 'relative',
-            overflow: 'visible',
-            zIndex: 10,
-          }}>
-            {folderCentered && renderFolder(folderOpen)}
-          </div>
+          {/* Landing zone for folder in the center - collapses smoothly when folderVisible is false */}
+          <motion.div 
+            animate={{ 
+              height: folderVisible ? 240 : 0,
+              marginBottom: folderVisible ? 24 : 0,
+              opacity: folderVisible ? 1 : 0
+            }}
+            transition={{ 
+              type: 'spring', 
+              stiffness: 110, 
+              damping: 20 
+            }}
+            style={{
+              width: '320px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              position: 'relative',
+              overflow: 'hidden',
+              zIndex: 10,
+            }}
+          >
+            {folderCentered && renderFolder(folderOpen, folderVisible)}
+          </motion.div>
 
           {/* Horizontal overlapping deck fanned out below the folder */}
           <div style={{
@@ -331,7 +362,7 @@ export default function Tools() {
             justifyContent: 'center',
             alignItems: 'center',
             width: '100%',
-            marginTop: 'var(--space-6)',
+            marginTop: 'var(--space-2)',
             position: 'relative',
             overflow: 'visible',
           }}>
