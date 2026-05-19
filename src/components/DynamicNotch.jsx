@@ -276,7 +276,7 @@ const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) 
 
 /* ── Chat replies dictionary ── */
 const KB = {
-  greet: ["Hmm... Hey! I am Luffy, Soup's digital pet. Ask me anything about her work, skills, or experience.", "Hmm... Hello! I'm Luffy — here to help you explore. What would you like to know?", "Hmm... Welcome! I'm Luffy. Feel free to ask me about Soupriti's projects, skills, or how to get in touch."],
+  greet: ["Hmm... Hey! I am Soup, Soupriti's digital pet. Ask me anything about her work, skills, or experience.", "Hmm... Hello! I'm Soup — here to help you explore. What would you like to know?", "Hmm... Welcome! I'm Soup. Feel free to ask me about Soupriti's projects, skills, or how to get in touch."],
   about: "soupriti is a Product Designer based in Bangalore with 3+ years of experience designing HMI and SaaS products. She completed B.Des in Fashion Communication at NIFT Chennai. She simplifies complex systems into warm, human-centered experiences.",
   current: "Soupriti is currently a Product Designer at upliance.ai. She redesigned their device interface, reducing perceived cooking times by 24% and coding their scalable React design system from scratch.",
   skills: "Skills: End-to-end UX/UI, user research, data dashboard mapping, Figma interaction system design, and React/JS prototyping. She works closely with developers to ensure 100% engineering delivery.",
@@ -407,7 +407,7 @@ function getResponse(input, jokeState, setJokeState, activeSection) {
 
   if (q.match(/thank|thanks/)) return pick(FUN.playful.thanks)
   if (q.match(/love|amazing|great|nice|beautiful/)) return pick(FUN.playful.compliment)
-  if (q.match(/hi|hello|hey|luffy/)) return "Hmm... hey I am Luffy, Soup's digital pet. I can help you explore her portfolio."
+  if (q.match(/hi|hello|hey|soup/)) return "Hmm... hey I am Soup, Soupriti's digital pet. I can help you explore her portfolio."
   if (q.match(/who|about|soupriti|herself|person/)) return KB.about
   if (q.match(/current|now|today|upliance/)) return KB.current
   if (q.match(/fuck|bitch/)) return KB.fuck
@@ -676,7 +676,7 @@ export default function DynamicNotch({ activeProject }) {
   }, [])
   
   // Chat States
-  const [messages, setMessages] = useState([{ from: 'bot', text: "Hmm... Hey! I'm Luffy, Soup's digital pet. I can help you sniff around and explore her work. Ask me anything!" }])
+  const [messages, setMessages] = useState([{ from: 'bot', text: "Hmm... Hey! I'm Soup, Soupriti's digital pet. I can help you sniff around and explore her work. Ask me anything!" }])
   const [hovered, setHovered] = useState(false)
   const [chatInput, setChatInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
@@ -830,7 +830,7 @@ export default function DynamicNotch({ activeProject }) {
     // Generate Tailored Summary
     let summaryPoints = []
     if (matches.ai) {
-      summaryPoints.push("Soupriti excels in designing advanced AI user experiences—including agentic UI flows, floating HUD control units, and conversational co-pilots like Luffy.")
+      summaryPoints.push("Soupriti excels in designing advanced AI user experiences—including agentic UI flows, floating HUD control units, and conversational co-pilots like Soup.")
     }
     if (matches.designSystem) {
       summaryPoints.push("She builds scalable, tokenized design systems with clear multi-theme (light/dark) engineering and robust semantic tokens.")
@@ -1251,7 +1251,7 @@ export default function DynamicNotch({ activeProject }) {
                   textTransform: isFullyDocked ? 'none' : 'uppercase',
                   whiteSpace: isFullyDocked ? 'normal' : 'nowrap',
                 }}>
-                  {isFullyDocked ? "Hi, I'm Luffy — Soup's digital pet." : "Luffy — Press Alt + Space to talk"}
+                  {isFullyDocked ? "Hi, I'm Soup — Soupriti's digital pet." : "Soup — Press Ctrl + L to talk"}
                 </span>
 
                 {isFullyDocked && (
@@ -1285,7 +1285,7 @@ export default function DynamicNotch({ activeProject }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: accentColor, boxShadow: `0 0 6px ${accentColor}` }} />
                 <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', fontWeight: 700, color: textColor, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                  {notchState === 'chat' ? "Luffy Chat" : (notchState === 'jdMatch' ? "Match Scanner" : "Voice Mode")}
+                  {notchState === 'chat' ? "Soup Chat" : (notchState === 'jdMatch' ? "Match Scanner" : "Voice Mode")}
                 </span>
               </div>
               
@@ -1403,7 +1403,7 @@ export default function DynamicNotch({ activeProject }) {
                         letterSpacing: '-0.02em',
                         lineHeight: 1.2
                       }}>
-                        Hi, I'm Luffy — Soup's digital pet.
+                        Hi, I'm Soup — Soupriti's digital pet.
                       </h3>
                       <p style={{
                         margin: 0,
@@ -1525,11 +1525,11 @@ export default function DynamicNotch({ activeProject }) {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <div style={{ color: accentColor }}><MicIcon /></div>
                         <span style={{ fontSize: 10.5, fontWeight: 700, color: textColor, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
-                          Voice Mode: Press Alt + Space to talk
+                          Voice Mode: Press Ctrl + L to talk
                         </span>
                       </div>
                       <span style={{ fontSize: 11, color: subtextColor, fontFamily: 'var(--font-body)', lineHeight: 1.4 }}>
-                        Ask Luffy anything about Soupriti’s work, process, or fit.
+                        Ask Soup anything about Soupriti’s work, process, or fit.
                       </span>
                     </div>
                   </div>
