@@ -184,13 +184,13 @@ export default function Expertise() {
         .folder-card-wrapper {
           position: relative;
           width: 320px;
-          height: 360px;
+          height: 380px;
           flex-shrink: 0;
           cursor: pointer;
-          transition: width 0.65s cubic-bezier(0.19, 1, 0.22, 1);
-          will-change: width, transform;
+          will-change: transform;
           perspective: 1200px;
           animation: folderFloat 6s ease-in-out infinite;
+          transition: transform 0.65s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         @keyframes folderFloat {
@@ -198,16 +198,12 @@ export default function Expertise() {
           50% { transform: translateY(-8px); }
         }
 
-        .folder-card-wrapper.is-open {
-          width: 640px; /* 320 folder + 20 gap + 300 paper */
-        }
-
         /* FOLDER BACK */
         .folder-back {
           position: absolute;
           top: 0; right: 0;
           width: 320px;
-          height: 360px;
+          height: 380px;
           z-index: 1;
         }
 
@@ -222,7 +218,7 @@ export default function Expertise() {
 
         .folder-back-main {
           width: 320px;
-          height: calc(360px - 32px);
+          height: calc(380px - 32px);
           background: linear-gradient(135deg, #4A55F7, #1E22A8);
           border-radius: 0 16px 16px 16px;
           position: absolute;
@@ -235,7 +231,7 @@ export default function Expertise() {
           position: absolute;
           top: 32px; right: 0;
           width: 320px;
-          height: calc(360px - 32px);
+          height: calc(380px - 32px);
           background: linear-gradient(135deg, #626CFF, #3238FF);
           border-radius: 0 16px 16px 16px;
           z-index: 3;
@@ -294,7 +290,7 @@ export default function Expertise() {
           top: 40px; 
           right: 10px;
           width: 300px;
-          height: calc(360px - 50px);
+          height: calc(380px - 50px);
           background: #fdfdfd;
           border-radius: 12px;
           z-index: 2;
@@ -305,6 +301,7 @@ export default function Expertise() {
           border: 1px solid rgba(0,0,0,0.05);
           display: flex;
           flex-direction: column;
+          overflow: hidden; /* Fix: prevents bottom-peek spill when folder is closed */
         }
 
         /* Peek on hover */
@@ -315,10 +312,10 @@ export default function Expertise() {
 
         /* Slide out to the LEFT on click */
         .folder-card-wrapper.is-open .folder-paper {
-          transform: translateX(-330px) translateY(-10px);
+          transform: translateX(-310px) translateY(-10px);
           box-shadow: 0 20px 40px rgba(0,0,0,0.08);
           z-index: 4;
-          height: calc(360px - 10px);
+          height: calc(380px - 10px);
         }
 
         /* Paper Content */
@@ -437,14 +434,12 @@ export default function Expertise() {
             justify-content: center;
           }
 
-          /* Let folder slide to right or expand height on mobile */
           .folder-card-wrapper.is-open {
-            width: 320px;
-            height: 640px;
+            height: 700px;
           }
 
           .folder-card-wrapper.is-open .folder-paper {
-            transform: translateY(330px) translateX(0);
+            transform: translateY(350px) translateX(0);
             height: 280px;
           }
         }
@@ -452,3 +447,4 @@ export default function Expertise() {
     </div>
   )
 }
+
