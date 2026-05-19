@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Matter from 'matter-js'
 
-/* ── High-Fidelity Icons copied from About.jsx ── */
+/* ── High-Fidelity Icons ── */
 const BookIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
@@ -33,138 +33,151 @@ const BrainIcon = () => (
 )
 
 const PASSIONS = [
-  { label: 'Learning always', icon: <BookIcon />, text: "Always reading books, studying interaction patterns, and prototyping in code.", width: 145 },
-  { label: 'Coffee & talks', icon: <CoffeeIcon />, text: "Loves chatting about design systems, user behavior, and technology over hot coffee.", width: 135 },
-  { label: 'Exploring places', icon: <CameraIcon />, text: "Draws fresh visual inspiration from travel, local architecture, and fashion communication.", width: 148 },
-  { label: 'Sketching ideas', icon: <PencilIcon />, text: "Always carries a sketchbook to map visual hierarchies and screen flows by hand.", width: 140 },
-  { label: 'Design challenges', icon: <BrainIcon />, text: "Thrives on tricky layout problems, complex data densities, and accessibility targets.", width: 165 }
+  { label: 'Learning always', icon: <BookIcon />, text: "Always reading books, studying interaction patterns, and prototyping in code." },
+  { label: 'Coffee & talks', icon: <CoffeeIcon />, text: "Loves chatting about design systems, user behavior, and technology over hot coffee." },
+  { label: 'Exploring places', icon: <CameraIcon />, text: "Draws fresh visual inspiration from travel, local architecture, and fashion communication." },
+  { label: 'Sketching ideas', icon: <PencilIcon />, text: "Always carries a sketchbook to map visual hierarchies and screen flows by hand." },
+  { label: 'Design challenges', icon: <BrainIcon />, text: "Thrives on tricky layout problems, complex data densities, and accessibility targets." }
 ]
 
 export default function PassionsPlayground({ triggerCatSpeak }) {
   const containerRef = useRef(null)
   const pillRefs = useRef([])
-  const engineRef = useRef(null)
+  const [isInitialized, setIsInitialized] = useState(false)
   
   useEffect(() => {
     if (!containerRef.current) return
     
-    const width = containerRef.current.clientWidth || 380
-    const height = containerRef.current.clientHeight || 280
-    
-    const { Engine, World, Bodies, Runner, Mouse, MouseConstraint, Events, Body, Composite } = Matter
-    
-    // 1. Setup physics engine with soft gravity
-    const engine = Engine.create({
-      gravity: { y: 0.55 } // Soft falling speed
-    })
-    engineRef.current = engine
-    
-    // 2. Thick bounds to contain high-velocity throws
-    const thickness = 200
-    const ground = Bodies.rectangle(width / 2, height + thickness / 2, width * 3, thickness, { 
-      isStatic: true,
-      restitution: 0.35, // Soft bouncy floors
-      friction: 0.12 
-    })
-    const leftWall = Bodies.rectangle(-thickness / 2, height / 2, thickness, height * 3, { 
-      isStatic: true,
-      restitution: 0.35,
-      friction: 0.12 
-    })
-    const rightWall = Bodies.rectangle(width + thickness / 2, height / 2, thickness, height * 3, { 
-      isStatic: true,
-      restitution: 0.35,
-      friction: 0.12 
-    })
-    const ceiling = Bodies.rectangle(width / 2, -thickness / 2, width * 3, thickness, { 
-      isStatic: true,
-      restitution: 0.35,
-      friction: 0.12 
-    })
-    
-    Composite.add(engine.world, [ground, leftWall, rightWall, ceiling])
-    
-    // 3. Create pill bodies
-    const pillBodies = PASSIONS.map((p, idx) => {
-      // Staggered drop coordinate starting positions above container
-      const startX = width / 2 + (idx - 2) * 45
-      const startY = -40 - (idx * 60)
+    // We defer physics engine startup slightly so that the browser has fully calculated the auto-hugging widths of the absolute DOM elements.
+    const startTimeout = setTimeout(() => {
+      const width = containerRef.current.clientWidth || 380
+      const height = containerRef.current.clientHeight || 280
       
-      const body = Bodies.rectangle(startX, startY, p.width, 36, {
-        restitution: 0.5, // Soft bounce off other pills
-        friction: 0.08,
-        frictionAir: 0.05, // Slightly high air resistance for a satisfying floating feel
-        chamfer: { radius: 18 }, // Capsule rounded boundaries
-        angle: Math.random() * 0.6 - 0.3 // Random initial tilt
+      const { Engine, World, Bodies, Runner, Mouse, MouseConstraint, Events, Body, Composite } = Matter
+      
+      // 1. Setup physics engine with soft gravity
+      const engine = Engine.create({
+        gravity: { y: 0.5 } // soft natural falling speed
       })
       
-      body.label = `pill-${idx}`
-      return body
-    })
-    
-    Composite.add(engine.world, pillBodies)
-    
-    // 4. Mouse interaction bounds (stiffness: 0.12 for drag latency / springy throw feeling)
-    const mouse = Mouse.create(containerRef.current)
-    const mouseConstraint = MouseConstraint.create(engine, {
-      mouse: mouse,
-      constraint: {
-        stiffness: 0.12,
-        render: { visible: false }
-      }
-    })
-    Composite.add(engine.world, mouseConstraint)
-    
-    // Fix scroll capturing behavior on touch drag
-    mouseConstraint.mouse.element.removeEventListener("mousewheel", mouseConstraint.mouse.mousewheel);
-    mouseConstraint.mouse.element.removeEventListener("DOMMouseScroll", mouseConstraint.mouse.mousewheel);
-    
-    // 5. Update Loop (DOM positioning via inline transforms)
-    Events.on(engine, 'afterUpdate', () => {
-      pillBodies.forEach((body, idx) => {
+      // 2. Setup containment boundaries
+      const thickness = 200
+      const ground = Bodies.rectangle(width / 2, height + thickness / 2, width * 3, thickness, { 
+        isStatic: true,
+        restitution: 0.4,
+        friction: 0.1 
+      })
+      const leftWall = Bodies.rectangle(-thickness / 2, height / 2, thickness, height * 3, { 
+        isStatic: true,
+        restitution: 0.4,
+        friction: 0.1 
+      })
+      const rightWall = Bodies.rectangle(width + thickness / 2, height / 2, thickness, height * 3, { 
+        isStatic: true,
+        restitution: 0.4,
+        friction: 0.1 
+      })
+      
+      // Setup ceiling slightly higher than bounds to allow cards to go up a bit but block escape
+      const ceiling = Bodies.rectangle(width / 2, -thickness, width * 3, thickness, { 
+        isStatic: true,
+        restitution: 0.4,
+        friction: 0.1 
+      })
+      
+      Composite.add(engine.world, [ground, leftWall, rightWall, ceiling])
+      
+      // 3. Create bodies based on actual measured elements
+      const pillBodies = PASSIONS.map((p, idx) => {
         const dom = pillRefs.current[idx]
-        if (!dom) return
+        const measuredWidth = dom ? dom.offsetWidth : 140
+        const measuredHeight = dom ? dom.offsetHeight : 36
         
-        // Translate center-aligned body coordinates to absolute coordinates
-        const x = body.position.x - PASSIONS[idx].width / 2
-        const y = body.position.y - 18
+        // Spawn them cascading from the top center/left within safe bounds (avoiding ceiling overlap)
+        const startX = width / 2 + (idx - 2) * 35
+        const startY = 30 + (idx * 40) // safe interior range, staggered fall
         
-        // Set transform (GPU accelerated translate3d)
-        dom.style.transform = `translate3d(${x}px, ${y}px, 0px) rotate(${body.angle}rad)`
+        const body = Bodies.rectangle(startX, startY, measuredWidth, measuredHeight, {
+          restitution: 0.5, 
+          friction: 0.05,
+          frictionAir: 0.04, 
+          chamfer: { radius: measuredHeight / 2 }, // Perfect capsule boundaries
+          angle: Math.random() * 0.4 - 0.2
+        })
         
-        // Subtle resting/floating motion when completely still
-        if (body.speed < 0.03) {
-          const time = Date.now() * 0.001
-          const floatY = Math.sin(time + idx) * 0.12
-          const floatX = Math.cos(time + idx) * 0.12
-          Body.translate(body, { x: floatX, y: floatY })
+        body.label = `pill-${idx}`
+        return body
+      })
+      
+      Composite.add(engine.world, pillBodies)
+      
+      // 4. Mouse constraint for dragging/throwing
+      const mouse = Mouse.create(containerRef.current)
+      const mouseConstraint = MouseConstraint.create(engine, {
+        mouse: mouse,
+        constraint: {
+          stiffness: 0.15,
+          render: { visible: false }
         }
       })
-    })
-    
-    // 6. Handle resizing boundaries
-    const handleResize = () => {
-      if (!containerRef.current) return
-      const w = containerRef.current.clientWidth
-      const h = containerRef.current.clientHeight
+      Composite.add(engine.world, mouseConstraint)
       
-      Body.setPosition(ground, { x: w / 2, y: h + thickness / 2 })
-      Body.setPosition(leftWall, { x: -thickness / 2, y: h / 2 })
-      Body.setPosition(rightWall, { x: w + thickness / 2, y: h / 2 })
-      Body.setPosition(ceiling, { x: w / 2, y: -thickness / 2 })
-    }
+      mouseConstraint.mouse.element.removeEventListener("mousewheel", mouseConstraint.mouse.mousewheel);
+      mouseConstraint.mouse.element.removeEventListener("DOMMouseScroll", mouseConstraint.mouse.mousewheel);
+      
+      // 5. Update Loop
+      Events.on(engine, 'afterUpdate', () => {
+        pillBodies.forEach((body, idx) => {
+          const dom = pillRefs.current[idx]
+          if (!dom) return
+          
+          const measuredWidth = dom.offsetWidth
+          const measuredHeight = dom.offsetHeight
+          
+          // Center the DOM element on the physics body coordinates
+          const x = body.position.x - measuredWidth / 2
+          const y = body.position.y - measuredHeight / 2
+          
+          dom.style.transform = `translate3d(${x}px, ${y}px, 0px) rotate(${body.angle}rad)`
+          
+          // Floating idle motion
+          if (body.speed < 0.04) {
+            const time = Date.now() * 0.001
+            const floatY = Math.sin(time + idx) * 0.1
+            const floatX = Math.cos(time + idx) * 0.1
+            Body.translate(body, { x: floatX, y: floatY })
+          }
+        })
+      })
+      
+      // 6. Handle Resizing
+      const handleResize = () => {
+        if (!containerRef.current) return
+        const w = containerRef.current.clientWidth
+        const h = containerRef.current.clientHeight
+        
+        Body.setPosition(ground, { x: w / 2, y: h + thickness / 2 })
+        Body.setPosition(leftWall, { x: -thickness / 2, y: h / 2 })
+        Body.setPosition(rightWall, { x: w + thickness / 2, y: h / 2 })
+        Body.setPosition(ceiling, { x: w / 2, y: -thickness })
+      }
+      
+      window.addEventListener('resize', handleResize)
+      
+      // 7. Start runner
+      const runner = Runner.create()
+      Runner.run(runner, engine)
+      
+      setIsInitialized(true)
+      
+      return () => {
+        window.removeEventListener('resize', handleResize)
+        Runner.stop(runner)
+        Engine.clear(engine)
+      }
+    }, 150) // Defer 150ms to allow layout paint to complete
     
-    window.addEventListener('resize', handleResize)
-    
-    // 7. Run Physics runner
-    const runner = Runner.create()
-    Runner.run(runner, engine)
-    
-    return () => {
-      window.removeEventListener('resize', handleResize)
-      Runner.stop(runner)
-      Engine.clear(engine)
-    }
+    return () => clearTimeout(startTimeout)
   }, [])
   
   return (
@@ -184,7 +197,6 @@ export default function PassionsPlayground({ triggerCatSpeak }) {
         marginTop: 20
       }}
     >
-      {/* Subtle stage spotlight effect */}
       <div style={{
         position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
         background: 'radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 80%)',
@@ -198,22 +210,23 @@ export default function PassionsPlayground({ triggerCatSpeak }) {
           onClick={() => triggerCatSpeak(item.text)}
           style={{
             position: 'absolute',
-            left: 0,
-            top: 0,
-            width: item.width,
-            height: 36,
+            left: 10 + idx * 25, // Initial spread before engine updates it
+            top: 20, 
             display: 'inline-flex',
             alignItems: 'center',
-            gap: 10,
+            gap: 8,
             cursor: 'grab',
-            padding: '0 16px',
-            borderRadius: 18,
+            padding: '8px 16px',
+            borderRadius: 20,
             border: '1.2px solid var(--border)',
             background: 'var(--bg-card)',
             boxShadow: '0 2px 8px -3px rgba(15, 23, 42, 0.04)',
             transition: 'box-shadow 0.2s ease, border-color 0.2s ease',
             userSelect: 'none',
-            zIndex: 5
+            whiteSpace: 'nowrap', // Force single line text
+            width: 'max-content', // Hug the content width
+            zIndex: 5,
+            opacity: isInitialized ? 1 : 0 // Hide briefly until engine initializes to prevent jitter
           }}
           onMouseDown={e => {
             e.currentTarget.style.cursor = 'grabbing'
@@ -230,7 +243,7 @@ export default function PassionsPlayground({ triggerCatSpeak }) {
             e.currentTarget.style.borderColor = 'var(--border)'
           }}
         >
-          <span style={{ color: 'var(--accent)', display: 'flex' }}>{item.icon}</span>
+          <span style={{ color: 'var(--accent)', display: 'flex', alignItems: 'center' }}>{item.icon}</span>
           <span style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em', fontFamily: 'var(--font-mono)' }}>
             {item.label}
           </span>
