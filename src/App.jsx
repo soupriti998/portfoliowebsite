@@ -53,7 +53,7 @@ export default function App() {
       
       {!loading && (
         <>
-          <Nav />
+          {!activeProject && <Nav />}
           <DynamicNotch activeProject={activeProject} />
           <main>
             <Hero />
