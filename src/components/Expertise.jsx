@@ -1,98 +1,38 @@
-import { useState, useRef } from 'react'
-import { motion } from 'framer-motion'
-import * as Icons from 'lucide-react'
+import { useState } from 'react'
 import { FadeUp, Label } from './utils'
 
 const expertise = [
-  { 
-    iconName: 'Layers', 
-    title: 'Product Design', 
-    body: 'End-to-end product thinking from concept to shipped feature — balancing user needs, business goals, and technical constraints.',
-    color: '#E0F2FE', // Coinbase pale blue
-    textColor: '#0369A1',
-    defaultRotate: -4,
-    top: '40px',
-    left: '45px',
-    number: '01'
-  },
-  { 
-    iconName: 'Compass', 
-    title: 'UX Strategy', 
-    body: 'Shaping product direction through research synthesis, opportunity mapping, and outcome-driven design roadmaps.',
-    color: '#DCFCE7', // Pale green
-    textColor: '#15803D',
-    defaultRotate: 6,
-    top: '25px',
-    left: '185px',
-    number: '02'
-  },
-  { 
-    iconName: 'Search', 
-    title: 'User Research', 
-    body: 'Qualitative and quantitative methods — interviews, usability tests, behavioral analytics — to ground decisions in real evidence.',
-    color: '#FEF9C3', // Pale yellow
-    textColor: '#A16207',
-    defaultRotate: -5,
-    top: '150px',
-    left: '198px',
-    number: '03'
-  },
-  { 
-    iconName: 'Zap', 
-    title: 'Interaction Design', 
-    body: 'Crafting micro-interactions, spring animations, and state transitions that make digital products feel alive and responsive.',
-    color: '#FEE2E2', // Pale red
-    textColor: '#B91C1C',
-    defaultRotate: 7,
-    top: '200px',
-    left: '35px',
-    number: '04'
-  },
-  { 
-    iconName: 'Grid', 
-    title: 'Design Systems', 
-    body: 'Building scalable, token-driven systems in Figma that empower teams to ship consistently and iterate rapidly at scale.',
-    color: '#F3E8FF', // Pale purple
-    textColor: '#6B21A8',
-    defaultRotate: 4,
-    top: '265px',
-    left: '200px',
-    number: '05'
-  },
-  { 
-    iconName: 'Cpu', 
-    title: 'AI Experiences', 
-    body: 'Designing human-centered AI interfaces — translating complex machine learning models into intuitive, transparent interactions.',
-    color: '#FFEDD5', // Pale orange
-    textColor: '#C2410C',
-    defaultRotate: -3,
-    top: '310px',
-    left: '105px',
-    number: '06'
-  },
+  { icon: '⬡', title: 'Product Design', body: 'End-to-end product thinking from concept to shipped feature — balancing user needs, business goals, and technical constraints.' },
+  { icon: '◑', title: 'UX Strategy', body: 'Shaping product direction through research synthesis, opportunity mapping, and outcome-driven design roadmaps.' },
+  { icon: '◎', title: 'User Research', body: 'Qualitative and quantitative methods — interviews, usability tests, behavioral analytics — to ground decisions in real evidence.' },
+  { icon: '⬟', title: 'Interaction Design', body: 'Crafting micro-interactions, spring animations, and state transitions that make digital products feel alive and responsive.' },
+  { icon: '⬤', title: 'Design Systems', body: 'Building scalable, token-driven systems in Figma that empower teams to ship consistently and iterate rapidly at scale.' },
+  { icon: '✦', title: 'AI Experiences', body: 'Designing human-centered AI interfaces — translating complex machine learning models into intuitive, transparent interactions.' },
 ]
 
 export default function Expertise() {
+  const [isOpen, setIsOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(null)
-  const [isDragging, setIsDragging] = useState(null)
-  const boardRef = useRef(null)
 
   // Use the active index if selected, otherwise fallback to the general section introduction
   const activeItem = activeIndex !== null ? expertise[activeIndex] : {
     title: "What I do really well.",
-    body: "Six craft areas honed across complex consumer IoT, SaaS dashboard architecture, and conversational interfaces. Drag magnets around the blue board or click to explore each craft."
+    body: "Six craft areas honed across complex consumer IoT, SaaS dashboard architecture, and conversational interfaces. Hover and click the folder to explore each file."
   }
+
+  const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }).replace(/,/g, '')
+  const timeStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
 
   return (
     <div 
       id="expertise" 
       style={{ 
         position: 'relative',
-        minHeight: '60vh', // Minimized height
+        minHeight: '85vh',
         background: 'var(--bg-warm)',
         display: 'flex',
         alignItems: 'center',
-        padding: 'var(--space-8) 0', // Minimized padding
+        padding: 'var(--space-10) 0',
         overflow: 'hidden'
       }}
       className="expertise-wrapper-container"
@@ -114,200 +54,73 @@ export default function Expertise() {
               </div>
             </div>
 
-            {/* ── RIGHT PANEL: THE INTERACTIVE BLUE BOARD ── */}
+            {/* ── RIGHT PANEL: THE 3D INTERACTIVE FOLDER ── */}
             <div className="expertise-right-panel">
               <div 
-                className="board-wrapper"
-                style={{
-                  position: 'relative',
-                  width: '320px',
-                  height: '420px',
-                  flexShrink: 0
+                className={`folder-card-wrapper ${isOpen ? 'is-open' : ''}`}
+                onClick={() => setIsOpen(!isOpen)}
+                onMouseLeave={() => {
+                  setIsOpen(false)
+                  setActiveIndex(null)
                 }}
               >
-                {/* ── BLUE BOARD SURFACE WITH SILVER FRAME ── */}
-                <div 
-                  ref={boardRef}
-                  className="blue-board"
-                  style={{
-                    position: 'relative',
-                    width: '100%',
-                    height: '100%',
-                    background: 'radial-gradient(circle at 30% 20%, #2563eb 0%, #1e3a8a 100%)',
-                    borderRadius: '12px',
-                    boxShadow: 'inset 0 4px 10px rgba(0, 0, 0, 0.3), 0 10px 25px rgba(0, 0, 0, 0.15)',
-                    overflow: 'hidden',
-                    border: '10px solid #94a3b8', // Silver aluminum frame
-                    outline: '1.5px solid #64748b',
-                    boxSizing: 'border-box'
-                  }}
-                >
-                  {/* Subtle Grid Overlay representing a planning layout */}
-                  <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',
-                    backgroundSize: '24px 24px',
-                    pointerEvents: 'none'
-                  }} />
-
-                  {/* Gloss reflection shine overlay */}
-                  <div style={{
-                    position: 'absolute',
-                    top: 0, left: 0, right: 0, height: '50%',
-                    background: 'linear-gradient(to bottom, rgba(255,255,255,0.04), transparent)',
-                    pointerEvents: 'none'
-                  }} />
-
-                  {/* Frame plastic corner brackets */}
-                  <div style={{ position: 'absolute', top: 0, left: 0, width: '12px', height: '12px', background: '#475569', borderRadius: '2px 0 2px 0', borderRight: '0.5px solid #1e293b', borderBottom: '0.5px solid #1e293b' }} />
-                  <div style={{ position: 'absolute', top: 0, right: 0, width: '12px', height: '12px', background: '#475569', borderRadius: '0 2px 0 2px', borderLeft: '0.5px solid #1e293b', borderBottom: '0.5px solid #1e293b' }} />
-                  <div style={{ position: 'absolute', bottom: 0, left: 0, width: '12px', height: '12px', background: '#475569', borderRadius: '0 2px 0 2px', borderRight: '0.5px solid #1e293b', borderTop: '0.5px solid #1e293b' }} />
-                  <div style={{ position: 'absolute', bottom: 0, right: 0, width: '12px', height: '12px', background: '#475569', borderRadius: '2px 0 2px 0', borderLeft: '0.5px solid #1e293b', borderTop: '0.5px solid #1e293b' }} />
-
-
-                  {/* ── DRAGGABLE MAGNETS ── */}
-                  {expertise.map((item, idx) => {
-                    const isHovered = activeIndex === idx
-                    const IconComponent = Icons[item.iconName] || Icons.Sparkles
-                    return (
-                      <motion.div
-                        key={item.title}
-                        className="fridge-magnet"
-                        drag
-                        dragConstraints={boardRef}
-                        dragElastic={0.02}
-                        dragMomentum={false}
-                        onDragStart={() => setIsDragging(idx)}
-                        onDragEnd={() => setTimeout(() => setIsDragging(null), 85)}
-                        onMouseEnter={() => {
-                          if (isDragging === null) setActiveIndex(idx)
-                        }}
-                        onMouseLeave={() => {
-                          if (isDragging === null) setActiveIndex(null)
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          if (isDragging !== null) return
-                          setActiveIndex(idx)
-                          const speakEvent = new CustomEvent('cat-speak', {
-                            detail: { text: `My ${item.title} expertise: ${item.body}` }
-                          })
-                          window.dispatchEvent(speakEvent)
-                        }}
-                        style={{
-                          position: 'absolute',
-                          left: item.left,
-                          top: item.top,
-                          width: '85px',
-                          height: '108px',
-                          background: item.color,
-                          borderRadius: '8px',
-                          border: '4px solid #ffffff',
-                          boxShadow: '0 4px 8px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.06), 1px 1px 0px rgba(0,0,0,0.08)',
-                          outline: '1px solid rgba(0, 0, 0, 0.08)',
-                          cursor: 'grab',
-                          zIndex: isHovered ? 12 : 7,
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          padding: '6px',
-                          boxSizing: 'border-box',
-                          userSelect: 'none',
-                          touchAction: 'none'
-                        }}
-                        animate={{
-                          rotate: isHovered ? 0 : item.defaultRotate,
-                          scale: isHovered ? 1.08 : 1,
-                          boxShadow: isHovered 
-                            ? '0 12px 24px rgba(0,0,0,0.22), 0 4px 8px rgba(0,0,0,0.12)' 
-                            : '0 4px 8px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.06), 1px 1px 0px rgba(0,0,0,0.08)'
-                        }}
-                        whileDrag={{ cursor: 'grabbing', scale: 1.12, zIndex: 50 }}
-                        transition={{
-                          type: 'spring',
-                          stiffness: 150,
-                          damping: 15
-                        }}
-                      >
-                        {/* Magnet Icon Graphic */}
-                        <div style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <IconComponent size={24} color={item.textColor} strokeWidth={2.2} style={{ filter: 'drop-shadow(0 1.5px 2px rgba(0,0,0,0.1))' }} />
-                        </div>
-                        
-                        {/* Title text */}
-                        <div style={{
-                          fontFamily: 'var(--font-display)',
-                          fontSize: '8px',
-                          fontWeight: 800,
-                          color: item.textColor,
-                          letterSpacing: '0.04em',
-                          lineHeight: 1.1,
-                          textAlign: 'center',
-                          wordWrap: 'break-word',
-                          maxWidth: '100%'
-                        }}>
-                          {item.title.toUpperCase()}
-                        </div>
-
-                        {/* Miniature catalog ID */}
-                        <span style={{
-                          fontFamily: 'var(--font-mono)',
-                          fontSize: '6.5px',
-                          color: item.textColor,
-                          opacity: 0.55,
-                          marginTop: '4px'
-                        }}>
-                          M-{item.number}
-                        </span>
-                      </motion.div>
-                    )
-                  })}
-
+                {/* BACK FLAP */}
+                <div className="folder-back">
+                  <div className="folder-tab" />
+                  <div className="folder-back-main" />
                 </div>
 
-                {/* ── ALUMINUM ACCESSORY TRAY AT BOTTOM ── */}
-                <div style={{
-                  position: 'absolute',
-                  bottom: '-12px',
-                  left: '20px',
-                  right: '20px',
-                  height: '10px',
-                  background: 'linear-gradient(to bottom, #cbd5e1, #94a3b8)',
-                  borderRadius: '2px',
-                  boxShadow: '0 4px 6px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.5)',
-                  zIndex: 10,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '24px'
-                }}>
-                  {/* Black Board Marker */}
-                  <div style={{
-                    width: '45px',
-                    height: '4px',
-                    background: '#0f172a',
-                    borderRadius: '2px',
-                    position: 'relative',
-                    transform: 'translateY(-3px) rotate(1deg)',
-                    boxShadow: '0 2px 2px rgba(0,0,0,0.2)'
-                  }}>
-                    {/* Red Cap */}
-                    <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '8px', background: '#dc2626', borderRadius: '0 2px 2px 0' }} />
+                {/* SLIDING PAPER CHECKLIST */}
+                <div className="folder-paper">
+                  <div className="paper-header">
+                    <div className="paper-date-wrap">
+                      <span>{dateStr}</span>
+                      <span className="paper-time">{timeStr}</span>
+                    </div>
+                    <span>...</span>
                   </div>
-                  
-                  {/* Board Eraser */}
-                  <div style={{
-                    width: '32px',
-                    height: '8px',
-                    background: '#475569',
-                    borderRadius: '2px',
-                    borderTop: '3px solid #1e293b', // wooden/plastic grip back
-                    position: 'relative',
-                    transform: 'translateY(-4px) rotate(-1deg)',
-                    boxShadow: '0 2.5px 3px rgba(0,0,0,0.25)'
-                  }} />
+                  <div className="paper-content">
+                    <div className="paper-subtitle">CRAFT INDEX</div>
+                    
+                    <div className="paper-checklist-flow">
+                      {expertise.map((item, idx) => (
+                        <div 
+                          key={item.title}
+                          className={`paper-checkbox-item ${activeIndex === idx ? 'active' : ''}`}
+                          onMouseEnter={() => setActiveIndex(idx)}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setActiveIndex(idx)
+                          }}
+                        >
+                          <div className="checkbox-box">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                              <path d="M20 6L9 17l-5-5"/>
+                            </svg>
+                          </div>
+                          <span className="paper-item-title">{item.title}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* FRONT FLAP */}
+                <div className="folder-front">
+                  <div className="folder-front-header">
+                     <div className="folder-title-wrap">
+                       <h3>Expertise</h3>
+                       <span className="folder-subtitle">6 notes</span>
+                     </div>
+                     <div className="folder-icons">
+                       <div className="folder-icon-btn">
+                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                       </div>
+                       <div className="folder-icon-btn">
+                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                       </div>
+                     </div>
+                  </div>
                 </div>
 
               </div>
@@ -321,8 +134,8 @@ export default function Expertise() {
         /* ── SPLIT LAYOUT ── */
         .expertise-split-layout {
           display: grid;
-          grid-template-columns: 1fr 1.1fr;
-          grid-template-areas: "details folder";
+          grid-template-columns: 1fr 1.2fr;
+          grid-template-areas: "folder details";
           gap: var(--space-8);
           align-items: center;
         }
@@ -332,23 +145,23 @@ export default function Expertise() {
           display: flex;
           flex-direction: column;
           gap: var(--space-3);
-          min-height: 200px;
+          min-height: 280px;
           justify-content: center;
-          padding-left: var(--space-4);
+          padding-left: var(--space-6);
         }
 
         .active-details-wrapper {
-          animation: detailFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation: detailFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         @keyframes detailFadeIn {
-          from { opacity: 0; transform: translateY(8px); filter: blur(3px); }
+          from { opacity: 0; transform: translateY(12px); filter: blur(4px); }
           to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
         .expertise-active-title {
           font-family: var(--font-display);
-          font-size: clamp(28px, 3.2vw, 40px);
+          font-size: clamp(28px, 3.2vw, 42px);
           font-weight: 400;
           letter-spacing: -0.025em;
           line-height: 1.15;
@@ -357,24 +170,263 @@ export default function Expertise() {
         }
 
         .expertise-active-body {
-          font-size: 15.5px;
-          line-height: 1.65;
+          font-size: 16px;
+          line-height: 1.7;
           color: var(--text-secondary);
-          max-width: 46ch;
+          max-width: 48ch;
           margin: 0;
         }
 
         .expertise-right-panel {
           grid-area: folder;
           display: flex;
-          justify-content: center;
+          justify-content: flex-start;
           align-items: center;
+        }
+
+        /* ── FOLDER CARD CSS (RIGHT-ALIGNED) ── */
+        .folder-card-wrapper {
+          position: relative;
+          width: 320px;
+          height: 380px;
+          flex-shrink: 0;
+          cursor: pointer;
+          will-change: transform, width;
+          perspective: 1200px;
+          animation: folderFloat 6s ease-in-out infinite;
+          transition: transform 0.65s cubic-bezier(0.19, 1, 0.22, 1), width 0.65s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        @keyframes folderFloat {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-8px); }
+        }
+
+        /* FOLDER BACK */
+        .folder-back {
+          position: absolute;
+          top: 0; left: 0;
+          width: 320px;
+          height: 380px;
+          z-index: 1;
+        }
+
+        .folder-tab {
+          width: 140px;
+          height: 32px;
+          background: linear-gradient(135deg, #4F59F7, #262BDE);
+          border-radius: 16px 16px 0 0;
+          position: absolute;
+          top: 0; left: 0;
+        }
+
+        .folder-back-main {
+          width: 320px;
+          height: calc(380px - 32px);
+          background: linear-gradient(135deg, #4A55F7, #1E22A8);
+          border-radius: 0 16px 16px 16px;
+          position: absolute;
+          top: 32px; left: 0;
+          box-shadow: inset 0 2px 20px rgba(0,0,0,0.15);
+        }
+
+        /* FOLDER FRONT */
+        .folder-front {
+          position: absolute;
+          top: 32px; left: 0;
+          width: 320px;
+          height: calc(380px - 32px);
+          background: linear-gradient(135deg, #626CFF, #3238FF);
+          border-radius: 0 16px 16px 16px;
+          z-index: 3;
+          padding: 24px;
+          box-sizing: border-box;
+          color: #fff;
+          box-shadow: 0 -4px 15px rgba(0,0,0,0.1), inset 0 1px 1px rgba(255,255,255,0.25);
+          transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+          transform-origin: bottom center;
+        }
+
+        .folder-card-wrapper:hover .folder-front,
+        .folder-card-wrapper.is-open .folder-front {
+          transform: rotateX(-8deg) translateY(4px);
+          box-shadow: 0 10px 25px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.3);
+        }
+
+        .folder-title-wrap h3 {
+          margin: 0 0 6px 0;
+          font-family: var(--font-display);
+          font-size: 22px;
+          font-weight: 500;
+          letter-spacing: -0.01em;
+        }
+
+        .folder-subtitle {
+          font-size: 13px;
+          opacity: 0.8;
+          font-family: var(--font-body);
+        }
+
+        .folder-front-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+        }
+
+        .folder-icons {
+          display: flex;
+          gap: 12px;
+          opacity: 0.9;
+          font-size: 18px;
+        }
+        
+        .folder-icon-btn {
+          width: 24px; height: 24px;
+          display: flex; align-items: center; justify-content: center;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.15);
+          backdrop-filter: blur(4px);
+        }
+
+        /* THE PAPER (Slides to the right) */
+        .folder-paper {
+          position: absolute;
+          top: 40px; 
+          left: 10px;
+          width: 300px;
+          height: calc(380px - 50px);
+          background: #fdfdfd;
+          border-radius: 12px;
+          z-index: 2;
+          box-sizing: border-box;
+          padding: 20px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+          transition: all 0.65s cubic-bezier(0.19, 1, 0.22, 1);
+          border: 1px solid rgba(0,0,0,0.05);
+          display: flex;
+          flex-direction: column;
+          overflow: hidden; /* Fix: prevents bottom-peek spill when folder is closed */
+        }
+
+        /* Peek on hover */
+        .folder-card-wrapper:hover:not(.is-open) .folder-paper {
+          transform: translateY(-46px);
+          box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        }
+
+        /* Slide out to the RIGHT on click */
+        .folder-card-wrapper.is-open {
+          width: 630px;
+        }
+
+        .folder-card-wrapper.is-open .folder-paper {
+          transform: translateX(310px) translateY(-10px);
+          box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+          z-index: 4;
+          height: calc(380px - 10px);
+        }
+
+        /* Paper Content */
+        .paper-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+          font-family: var(--font-mono);
+          font-size: 11px;
+          color: #888;
+        }
+
+        .paper-date-wrap {
+          display: flex;
+          gap: 8px;
+          align-items: center;
+        }
+
+        .paper-time {
+          background: #f0f0f0;
+          padding: 3px 6px;
+          border-radius: 6px;
+          color: #555;
+          font-weight: 600;
+        }
+
+        .paper-subtitle {
+          font-family: var(--font-mono);
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          color: #111;
+          margin-bottom: 12px;
+        }
+
+        .paper-checklist-flow {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .paper-checkbox-item {
+          display: flex;
+          gap: 12px;
+          align-items: center;
+          padding: 6px 8px;
+          border-radius: 8px;
+          transition: all 0.2s ease;
+          cursor: pointer;
+        }
+
+        .paper-checkbox-item:hover,
+        .paper-checkbox-item.active {
+          background: rgba(0, 82, 255, 0.05);
+        }
+
+        .paper-checkbox-item.active .paper-item-title {
+          color: var(--accent);
+          font-weight: 600;
+        }
+
+        .checkbox-box {
+          width: 16px;
+          height: 16px;
+          border-radius: 4px;
+          border: 1px solid rgba(0, 82, 255, 0.15);
+          background: rgba(0, 82, 255, 0.03);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: rgba(0, 82, 255, 0.3);
+          transition: all 0.2s ease;
+          flex-shrink: 0;
+        }
+
+        .checkbox-box svg {
+          width: 10px;
+          height: 10px;
+          opacity: 0.7;
+        }
+
+        .paper-checkbox-item.active .checkbox-box {
+          border-color: var(--accent);
+          background: var(--accent);
+          color: white;
+          box-shadow: 0 0 8px rgba(0, 82, 255, 0.3);
+        }
+        
+        .paper-checkbox-item.active .checkbox-box svg {
+          opacity: 1;
+        }
+
+        .paper-item-title {
+          font-size: 13.5px;
+          color: #444;
+          transition: color 0.2s;
         }
 
         /* ── RESPONSIVE MOBILE ADJUSTMENTS ── */
         @media (max-width: 900px) {
           .expertise-wrapper-container {
-            padding: var(--space-6) 0 !important;
+            padding: var(--space-8) 0 !important;
           }
 
           .expertise-split-layout {
@@ -382,7 +434,7 @@ export default function Expertise() {
             grid-template-areas: 
               "details"
               "folder";
-            gap: var(--space-6);
+            gap: var(--space-8);
           }
 
           .expertise-left-panel {
@@ -392,10 +444,20 @@ export default function Expertise() {
 
           .expertise-right-panel {
             justify-content: center;
-            margin-top: var(--space-4);
+          }
+
+          .folder-card-wrapper.is-open {
+            height: 700px;
+            width: 320px;
+          }
+
+          .folder-card-wrapper.is-open .folder-paper {
+            transform: translateY(350px) translateX(0);
+            height: 280px;
           }
         }
       `}</style>
     </div>
   )
 }
+
