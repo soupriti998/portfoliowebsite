@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { FadeUp, Label } from './utils'
 
 // Frequencies for open strings of a guitar: E2, A2, D3, G3, B3, E4
@@ -141,16 +141,6 @@ function playGuitarPluck(freq) {
 export default function About() {
   const [activeIndex, setActiveIndex] = useState(0)
   const [pluckedStrings, setPluckedStrings] = useState([false, false, false, false, false, false])
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    const checkViewport = () => {
-      setIsMobile(window.innerWidth < 1024)
-    }
-    checkViewport()
-    window.addEventListener('resize', checkViewport)
-    return () => window.removeEventListener('resize', checkViewport)
-  }, [])
 
   const triggerPluck = (idx) => {
     setActiveIndex(idx)
@@ -171,6 +161,8 @@ export default function About() {
     }, 850)
   }
 
+  const activeCard = STRINGS_DATA[activeIndex]
+
   return (
     <section 
       id="about" 
@@ -185,7 +177,7 @@ export default function About() {
       <div className="container" style={{ position: 'relative', zIndex: 2, width: '100%' }}>
         
         {/* Title Block */}
-        <div style={{ marginBottom: 'var(--space-8)', maxWidth: '800px' }}>
+        <div style={{ marginBottom: 'var(--space-7)', maxWidth: '800px' }}>
           <FadeUp>
             <Label>About Me</Label>
           </FadeUp>
@@ -211,77 +203,76 @@ export default function About() {
           </FadeUp>
         </div>
 
-        {/* Responsive Grid Container */}
+        {/* Dynamic Display Area & Fretboard Grid */}
         <div 
           style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : '1.2fr 0.8fr',
-            gap: '32px',
-            alignItems: 'start',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '36px',
             width: '100%',
             marginTop: '20px'
           }}
         >
-          {/* LEFT SIDE: Expandable Notebook Biography Cards */}
+          {/* TOP AREA: One Active Card Display */}
           <div 
             style={{
+              width: '100%',
+              maxWidth: '560px',
+              minHeight: '190px',
               display: 'flex',
-              flexDirection: 'column',
-              gap: '14px',
-              width: '100%'
+              justifyContent: 'center',
+              alignItems: 'center',
+              position: 'relative'
             }}
           >
-            {STRINGS_DATA.map((item, idx) => {
-              const isActive = activeIndex === idx
-              return (
-                <div
-                  key={item.note}
-                  onClick={() => triggerPluck(idx)}
+            <AnimatePresence mode="wait">
+              {activeCard && (
+                <motion.div
+                  key={activeCard.note}
+                  initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -15 }}
+                  transition={{ type: 'spring', stiffness: 260, damping: 24 }}
                   style={{
-                    background: isActive ? '#FCFAF5' : 'rgba(252, 250, 245, 0.45)',
-                    border: isActive ? '1px solid var(--accent)' : '1px solid rgba(0, 0, 0, 0.05)',
-                    borderRadius: '16px',
-                    padding: '18px 24px',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                    background: '#FCFAF5',
+                    border: '1px solid var(--accent)',
+                    borderRadius: '20px',
+                    padding: '24px 30px',
+                    width: '100%',
                     position: 'relative',
-                    overflow: 'hidden',
-                    boxShadow: isActive 
-                      ? '0 12px 30px rgba(0, 82, 255, 0.07), 0 3px 6px rgba(0,0,0,0.02)'
-                      : 'none',
-                    transform: isActive ? 'translateX(4px)' : 'none',
+                    boxShadow: '0 16px 40px rgba(0, 82, 255, 0.08), 0 4px 10px rgba(0,0,0,0.03)',
+                    overflow: 'hidden'
                   }}
-                  className="about-note-card"
+                  className="about-active-card"
                 >
-                  {/* Binder coils for active card */}
-                  {isActive && (
-                    <div style={{
-                      position: 'absolute',
-                      left: '24px',
-                      top: '0',
-                      right: '24px',
-                      display: 'flex',
-                      justifyContent: 'space-around',
-                      marginTop: '-4px',
-                      zIndex: 10
-                    }}>
-                      {[...Array(6)].map((_, rIdx) => (
-                        <div key={rIdx} style={{
-                          width: '4px',
-                          height: '10px',
-                          background: 'linear-gradient(90deg, #e5e5ea, #c7c7cc, #e5e5ea)',
-                          borderRadius: '2px',
-                          boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                          border: '0.5px solid rgba(0,0,0,0.05)'
-                        }} />
-                      ))}
-                    </div>
-                  )}
+                  {/* Binder coils */}
+                  <div style={{
+                    position: 'absolute',
+                    left: '32px',
+                    top: '0',
+                    right: '32px',
+                    display: 'flex',
+                    justifyContent: 'space-around',
+                    marginTop: '-4px',
+                    zIndex: 10
+                  }}>
+                    {[...Array(8)].map((_, rIdx) => (
+                      <div key={rIdx} style={{
+                        width: '4px',
+                        height: '10px',
+                        background: 'linear-gradient(90deg, #e5e5ea, #c7c7cc, #e5e5ea)',
+                        borderRadius: '2px',
+                        boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                        border: '0.5px solid rgba(0,0,0,0.05)'
+                      }} />
+                    ))}
+                  </div>
 
                   {/* Red Margin Line */}
                   <div style={{
                     position: 'absolute',
-                    left: '28px',
+                    left: '36px',
                     top: 0,
                     bottom: 0,
                     width: '1px',
@@ -290,62 +281,55 @@ export default function About() {
                     zIndex: 2
                   }} />
 
-                  <div style={{ paddingLeft: '18px', zIndex: 3, position: 'relative' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                  {/* Card Content */}
+                  <div style={{ paddingLeft: '24px', zIndex: 3, position: 'relative' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                       <span style={{ 
-                        fontSize: '9px', 
+                        fontSize: '9.5px', 
                         fontFamily: 'var(--font-mono)', 
                         fontWeight: 700, 
-                        color: isActive ? 'var(--accent)' : 'var(--text-muted)',
-                        background: isActive ? 'rgba(0, 82, 255, 0.06)' : 'rgba(0,0,0,0.03)',
+                        color: 'var(--accent)',
+                        background: 'rgba(0, 82, 255, 0.06)',
                         padding: '2px 8px',
                         borderRadius: '4px',
                         letterSpacing: '0.05em',
                         textTransform: 'uppercase'
                       }}>
-                        {item.stringName} ({item.note})
+                        {activeCard.stringName} ({activeCard.note})
                       </span>
-                      <span style={{ fontSize: '14px' }}>
-                        {item.icon}
+                      <span style={{ fontSize: '18px' }}>
+                        {activeCard.icon}
                       </span>
                     </div>
 
                     <h3 style={{
                       margin: 0,
                       fontFamily: 'var(--font-display)',
-                      fontSize: '16px',
-                      fontWeight: isActive ? 600 : 500,
-                      color: isActive ? 'var(--text-primary)' : 'rgba(0,0,0,0.5)',
-                      letterSpacing: '-0.015em'
+                      fontSize: '19px',
+                      fontWeight: 600,
+                      color: 'var(--text-primary)',
+                      letterSpacing: '-0.02em',
+                      marginBottom: '10px'
                     }}>
-                      {item.title}
+                      {activeCard.title}
                     </h3>
 
-                    {/* Expandable description body */}
-                    <div style={{
-                      height: isActive ? 'auto' : 0,
-                      opacity: isActive ? 1 : 0,
-                      overflow: 'hidden',
-                      transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-                      marginTop: isActive ? '8px' : 0
+                    <p style={{
+                      fontSize: '13.5px',
+                      lineHeight: '1.65',
+                      color: 'var(--text-secondary)',
+                      margin: 0,
+                      fontFamily: 'var(--font-body)'
                     }}>
-                      <p style={{
-                        fontSize: '12.5px',
-                        lineHeight: '1.6',
-                        color: 'var(--text-secondary)',
-                        margin: 0,
-                        fontFamily: 'var(--font-body)'
-                      }}>
-                        {item.desc}
-                      </p>
-                    </div>
+                      {activeCard.desc}
+                    </p>
                   </div>
-                </div>
-              )
-            })}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          {/* RIGHT SIDE: Zoomed-in Fretboard with Guitar Strings */}
+          {/* BOTTOM AREA: Horizontal space black guitar fretboard */}
           <div 
             style={{
               width: '100%',
@@ -353,146 +337,155 @@ export default function About() {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              position: 'sticky',
-              top: '120px'
+              marginTop: '10px'
             }}
           >
             <div 
               style={{
                 width: '100%',
-                maxWidth: isMobile ? '100%' : '360px',
-                height: isMobile ? '200px' : '450px',
-                background: 'linear-gradient(to right, #1d0f0a 0%, #2f1b12 25%, #3c2217 50%, #2f1b12 75%, #1d0f0a 100%)',
-                boxShadow: 'inset 0 0 35px rgba(0,0,0,0.85), 0 16px 36px rgba(0,0,0,0.22)',
-                borderRadius: '20px',
-                border: '2px solid #140b08',
+                height: '180px',
+                background: 'linear-gradient(to bottom, #09090b 0%, #151518 50%, #09090b 100%)',
+                boxShadow: 'inset 0 0 30px rgba(0,0,0,0.95), 0 16px 36px rgba(0,0,0,0.25)',
+                borderRadius: '24px',
+                border: '2px solid #000000',
                 position: 'relative',
-                overflow: 'hidden',
-                cursor: 'pointer'
+                overflow: 'hidden'
               }}
             >
-              {/* Subtle vertical wood grain overlay */}
+              {/* Vertical wood grain stripes for space black texture */}
               <div style={{
                 position: 'absolute',
                 top: 0, left: 0, right: 0, bottom: 0,
-                backgroundImage: isMobile 
-                  ? 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.12) 3px, rgba(0,0,0,0.12) 6px)'
-                  : 'repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(0,0,0,0.12) 3px, rgba(0,0,0,0.12) 6px)',
+                backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(255,255,255,0.015) 4px, rgba(255,255,255,0.015) 8px)',
                 pointerEvents: 'none',
-                opacity: 0.85,
+                opacity: 0.9,
                 zIndex: 1
               }} />
 
-              {/* Fretboard Markers (Pearl Dots) */}
-              {isMobile ? (
-                // Horizontal frets for mobile
-                <>
-                  <div style={{ position: 'absolute', top: 0, bottom: 0, left: '30%', width: '3px', background: 'linear-gradient(to right, #d1d5db, #9ca3af, #4b5563)', zIndex: 2 }} />
-                  <div style={{ position: 'absolute', top: 0, bottom: 0, left: '60%', width: '3px', background: 'linear-gradient(to right, #d1d5db, #9ca3af, #4b5563)', zIndex: 2 }} />
-                  <div style={{ position: 'absolute', top: 0, bottom: 0, left: '90%', width: '3px', background: 'linear-gradient(to right, #d1d5db, #9ca3af, #4b5563)', zIndex: 2 }} />
-                  {/* Pearl Dot */}
-                  <div style={{
-                    position: 'absolute', left: '45%', top: '50%', width: '10px', height: '10px', borderRadius: '50%',
-                    background: 'radial-gradient(circle, #ffffff, #dcdcdc)', boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.3)',
-                    transform: 'translate(-50%, -50%)', opacity: 0.75, zIndex: 2
-                  }} />
-                </>
-              ) : (
-                // Vertical frets for desktop
-                <>
-                  <div style={{ position: 'absolute', left: 0, right: 0, top: '22%', height: '3px', background: 'linear-gradient(to bottom, #d1d5db, #9ca3af, #4b5563)', zIndex: 2 }} />
-                  <div style={{ position: 'absolute', left: 0, right: 0, top: '48%', height: '3px', background: 'linear-gradient(to bottom, #d1d5db, #9ca3af, #4b5563)', zIndex: 2 }} />
-                  <div style={{ position: 'absolute', left: 0, right: 0, top: '74%', height: '3px', background: 'linear-gradient(to bottom, #d1d5db, #9ca3af, #4b5563)', zIndex: 2 }} />
-                  {/* Pearl Dots */}
-                  <div style={{
-                    position: 'absolute', top: '35%', left: '50%', width: '12px', height: '12px', borderRadius: '50%',
-                    background: 'radial-gradient(circle, #ffffff, #dcdcdc)', boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.3)',
-                    transform: 'translate(-50%, -50%)', opacity: 0.75, zIndex: 2
-                  }} />
-                  <div style={{
-                    position: 'absolute', top: '61%', left: '50%', width: '12px', height: '12px', borderRadius: '50%',
-                    background: 'radial-gradient(circle, #ffffff, #dcdcdc)', boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.3)',
-                    transform: 'translate(-50%, -50%)', opacity: 0.75, zIndex: 2
-                  }} />
-                </>
-              )}
+              {/* Vertical silver fret wires */}
+              {[10, 25, 40, 55, 70, 85].map((pos) => (
+                <div 
+                  key={pos}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    bottom: 0,
+                    left: `${pos}%`,
+                    width: '3px',
+                    background: 'linear-gradient(to right, #9ca3af 0%, #f3f4f6 50%, #4b5563 100%)',
+                    boxShadow: '1px 0 2px rgba(0,0,0,0.4)',
+                    zIndex: 2
+                  }}
+                />
+              ))}
 
-              {/* Guitar Strings Loop */}
+              {/* Pearl Dot Inlays (centered vertically between strings) */}
+              {[32.5, 62.5].map((pos) => (
+                <div 
+                  key={pos}
+                  style={{
+                    position: 'absolute',
+                    left: `${pos}%`,
+                    top: '50%',
+                    width: '12px',
+                    height: '12px',
+                    borderRadius: '50%',
+                    background: 'radial-gradient(circle, #ffffff 0%, #d1d5db 100%)',
+                    boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.4), 0 1px 1px rgba(255,255,255,0.2)',
+                    transform: 'translate(-50%, -50%)',
+                    opacity: 0.65,
+                    zIndex: 2
+                  }}
+                />
+              ))}
+
+              {/* 6 Horizontal Strings */}
               {STRINGS_DATA.map((string, idx) => {
                 const isPlucked = pluckedStrings[idx]
-                const positionPct = `${10 + idx * 16}%`
+                const isActive = activeIndex === idx
+                
+                // Vertical position for this string
+                const positionPct = `${12 + idx * 15}%`
 
                 return (
                   <div key={string.note} style={{ pointerEvents: 'auto' }}>
-                    {/* Invisible Wide Hover Bridge for easy tactile plucking */}
-                    {isMobile ? (
-                      <div 
-                        onMouseEnter={() => triggerPluck(idx)}
-                        style={{
-                          position: 'absolute',
-                          left: 0,
-                          right: 0,
-                          top: positionPct,
-                          height: '26px',
-                          transform: 'translateY(-50%)',
-                          zIndex: 10,
-                          cursor: 'pointer'
-                        }}
-                      />
-                    ) : (
-                      <div 
-                        onMouseEnter={() => triggerPluck(idx)}
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          bottom: 0,
-                          left: positionPct,
-                          width: '38px',
-                          transform: 'translateX(-50%)',
-                          zIndex: 10,
-                          cursor: 'pointer'
-                        }}
-                      />
-                    )}
+                    
+                    {/* Invisible pluck helper region */}
+                    <div 
+                      onMouseEnter={() => triggerPluck(idx)}
+                      style={{
+                        position: 'absolute',
+                        left: 0,
+                        right: 0,
+                        top: positionPct,
+                        height: '24px',
+                        transform: 'translateY(-50%)',
+                        zIndex: 10,
+                        cursor: 'pointer'
+                      }}
+                    />
 
-                    {/* Actual Visual String */}
-                    {isMobile ? (
-                      <div 
-                        className={`guitar-string-h ${isPlucked ? 'plucked' : ''}`}
-                        style={{
-                          position: 'absolute',
-                          left: 0,
-                          right: 0,
-                          top: positionPct,
-                          height: `${1.5 + (5 - idx) * 0.7}px`, // Thicker strings on top E2
-                          background: idx < 3 
-                            ? 'linear-gradient(180deg, #d4af37 0%, #fff7d6 50%, #d4af37 100%)' // Bronze E, A, D
-                            : 'linear-gradient(180deg, #8a95a5 0%, #e2e8f0 50%, #8a95a5 100%)', // Steel G, B, e
-                          boxShadow: '0 2px 4px rgba(0,0,0,0.45)',
-                          transform: 'translateY(-50%)',
-                          pointerEvents: 'none',
-                          zIndex: 5
-                        }}
-                      />
-                    ) : (
-                      <div 
-                        className={`guitar-string-v ${isPlucked ? 'plucked' : ''}`}
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          bottom: 0,
-                          left: positionPct,
-                          width: `${1.5 + (5 - idx) * 0.7}px`, // Thicker strings on left E2
-                          background: idx < 3 
-                            ? 'linear-gradient(90deg, #d4af37 0%, #fff7d6 50%, #d4af37 100%)' // Bronze E, A, D
-                            : 'linear-gradient(90deg, #8a95a5 0%, #e2e8f0 50%, #8a95a5 100%)', // Steel G, B, e
-                          boxShadow: '2px 0 4px rgba(0,0,0,0.45)',
-                          transform: 'translateX(-50%)',
-                          pointerEvents: 'none',
-                          zIndex: 5
-                        }}
-                      />
-                    )}
+                    {/* Visual String */}
+                    <div 
+                      className={`guitar-string-h ${isPlucked ? 'plucked' : ''}`}
+                      style={{
+                        position: 'absolute',
+                        left: 0,
+                        right: 0,
+                        top: positionPct,
+                        height: `${1.4 + (5 - idx) * 0.7}px`, // Thicker strings on top E2
+                        background: idx < 3 
+                          ? 'linear-gradient(180deg, #c5a059 0%, #fef3c7 50%, #c5a059 100%)' // Bronze winding
+                          : 'linear-gradient(180deg, #6b7280 0%, #e5e7eb 50%, #6b7280 100%)', // Plain steel
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.5)',
+                        transform: 'translateY(-50%)',
+                        pointerEvents: 'none',
+                        zIndex: 5
+                      }}
+                    />
+
+                    {/* Clicking Circle Node (Pearl dot button to lock active index) */}
+                    <button
+                      onClick={() => triggerPluck(idx)}
+                      style={{
+                        position: 'absolute',
+                        top: positionPct,
+                        left: `${17.5 + idx * 15}%`, // staggered diagonal nodes
+                        width: '26px',
+                        height: '26px',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transform: 'translate(-50%, -50%)',
+                        background: isActive 
+                          ? 'radial-gradient(circle, #3b82f6 0%, #0052ff 100%)' 
+                          : 'radial-gradient(circle, #ffffff 0%, #d1d5db 100%)',
+                        border: isActive ? '2px solid #ffffff' : '2px solid #6b7280',
+                        color: isActive ? '#ffffff' : '#1f2937',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '9.5px',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        zIndex: 20,
+                        boxShadow: isActive 
+                          ? '0 0 15px rgba(0, 82, 255, 0.75), 0 2px 4px rgba(0,0,0,0.4)'
+                          : '0 2px 4px rgba(0,0,0,0.35)',
+                        transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                        outline: 'none'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isActive) {
+                          e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1.15)'
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1)'
+                      }}
+                    >
+                      {string.note}
+                    </button>
+
                   </div>
                 )
               })}
@@ -507,7 +500,7 @@ export default function About() {
               textAlign: 'center',
               display: 'block'
             }}>
-              💡 Sweep mouse/thumb across the strings to play the open arpeggio
+              💡 Click the circular note nodes on the strings to play notes & reveal biography boxes
             </span>
           </div>
 
@@ -516,50 +509,19 @@ export default function About() {
       </div>
 
       <style>{`
-        /* Lined Notepad Paper Card Design */
-        .about-note-card {
-          background: #FCFAF5;
-          user-select: none;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        }
-
-        .about-note-card:hover {
-          border-color: rgba(0, 82, 255, 0.4) !important;
-        }
-
-        /* String wiggle vibration animations */
-        @keyframes string-wiggle-v {
-          0% { transform: translateX(-50%) scaleX(1); }
-          8% { transform: translateX(-50%) translateX(-8px); }
-          16% { transform: translateX(-50%) translateX(7px); }
-          24% { transform: translateX(-50%) translateX(-6px); }
-          32% { transform: translateX(-50%) translateX(5px); }
-          40% { transform: translateX(-50%) translateX(-4px); }
-          50% { transform: translateX(-50%) translateX(3px); }
-          60% { transform: translateX(-50%) translateX(-2px); }
-          70% { transform: translateX(-50%) translateX(1.2px); }
-          80% { transform: translateX(-50%) translateX(-0.6px); }
-          90% { transform: translateX(-50%) translateX(0.3px); }
-          100% { transform: translateX(-50%) translateX(0); }
-        }
-
+        /* String wiggle vibration animations for horizontal strings */
         @keyframes string-wiggle-h {
           0% { transform: translateY(-50%) scaleY(1); }
-          8% { transform: translateY(-50%) translateY(-8px); }
-          16% { transform: translateY(-50%) translateY(7px); }
-          24% { transform: translateY(-50%) translateY(-6px); }
-          32% { transform: translateY(-50%) translateY(5px); }
-          40% { transform: translateY(-50%) translateY(-4px); }
-          50% { transform: translateY(-50%) translateY(3px); }
-          60% { transform: translateY(-50%) translateY(-2px); }
-          70% { transform: translateY(-50%) translateY(1.2px); }
-          80% { transform: translateY(-50%) translateY(-0.6px); }
-          90% { transform: translateY(-50%) translateY(0.3px); }
+          8% { transform: translateY(-50%) translateY(-6px); }
+          16% { transform: translateY(-50%) translateY(5px); }
+          24% { transform: translateY(-50%) translateY(-4px); }
+          32% { transform: translateY(-50%) translateY(3.5px); }
+          40% { transform: translateY(-50%) translateY(-2.5px); }
+          50% { transform: translateY(-50%) translateY(1.8px); }
+          60% { transform: translateY(-50%) translateY(-1.2px); }
+          70% { transform: translateY(-50%) translateY(0.7px); }
+          80% { transform: translateY(-50%) translateY(-0.3px); }
           100% { transform: translateY(-50%) translateY(0); }
-        }
-
-        .guitar-string-v.plucked {
-          animation: string-wiggle-v 0.85s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
         }
 
         .guitar-string-h.plucked {
