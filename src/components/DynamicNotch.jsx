@@ -1217,7 +1217,7 @@ export default function DynamicNotch({ activeProject }) {
                 display: 'flex',
                 flexDirection: isFullyDocked ? 'column' : 'row',
                 alignItems: 'center',
-                justifyContent: 'center',
+                justifyContent: isFullyDocked ? 'center' : 'space-between',
                 gap: isFullyDocked ? 20 : 12,
                 padding: isFullyDocked ? '40px 24px' : (isFloatingPill ? '0 20px 0 10px' : '0 20px'),
                 animation: 'fadeIn 0.25s ease-out',
@@ -1233,38 +1233,39 @@ export default function DynamicNotch({ activeProject }) {
                 setNotchState('chat')
               }}
             >
-              {/* Glowing Breathing Circle */}
-              <div style={{
-                transform: isFullyDocked ? 'scale(2.2)' : 'none',
-                transition: 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
-                marginBottom: isFullyDocked ? 12 : 0,
-              }}>
-                <StatusHUDIcon state={hud.icon} theme={theme} />
-              </div>
-              
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 4,
-                opacity: isFullyDocked ? (1 - pEase) : 1,
-                transition: 'opacity 0.3s',
-              }}>
-                {/* Dynamic Contextual Text */}
-                <span style={{
-                  fontSize: isFullyDocked ? 15 : 12,
-                  fontFamily: isFullyDocked ? 'var(--font-display)' : 'var(--font-body)',
-                  fontWeight: isFullyDocked ? 700 : 600,
-                  color: textColor,
-                  letterSpacing: isFullyDocked ? '-0.02em' : '-0.01em',
-                  textTransform: 'none',
-                  whiteSpace: isFullyDocked ? 'normal' : 'nowrap',
-                  textShadow: '0 1px 3px rgba(0, 0, 0, 0.75)',
-                }}>
-                  {isFullyDocked ? "Hi, this is Soup." : hud.text}
-                </span>
+              {isFullyDocked ? (
+                <>
+                  {/* Glowing Breathing Circle */}
+                  <div style={{
+                    transform: 'scale(2.2)',
+                    transition: 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+                    marginBottom: 12,
+                  }}>
+                    <StatusHUDIcon state={hud.icon} theme={theme} />
+                  </div>
+                  
+                  {/* Text Container */}
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 4,
+                    opacity: 1 - pEase,
+                    transition: 'opacity 0.3s',
+                  }}>
+                    {/* Dynamic Contextual Text */}
+                    <span style={{
+                      fontSize: 15,
+                      fontFamily: 'var(--font-display)',
+                      fontWeight: 700,
+                      color: textColor,
+                      letterSpacing: '-0.02em',
+                      textTransform: 'none',
+                      whiteSpace: 'normal',
+                      textShadow: '0 1px 3px rgba(0, 0, 0, 0.75)',
+                    }}>
+                      Hi, this is Soup.
+                    </span>
 
-                {isFullyDocked && (
-                  <>
                     <span style={{
                       fontSize: 12,
                       fontFamily: 'var(--font-body)',
@@ -1288,31 +1289,61 @@ export default function DynamicNotch({ activeProject }) {
                     }}>
                       Press Ctrl + L to start talking.
                     </span>
-                  </>
-                )}
-              </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Left-aligned Icon + Text Group */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                  }}>
+                    <div>
+                      <StatusHUDIcon state={hud.icon} theme={theme} />
+                    </div>
+                    
+                    <div style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      textAlign: 'left',
+                    }}>
+                      <span style={{
+                        fontSize: 12,
+                        fontFamily: 'var(--font-body)',
+                        fontWeight: 600,
+                        color: textColor,
+                        letterSpacing: '-0.01em',
+                        whiteSpace: 'nowrap',
+                        textShadow: '0 1px 3px rgba(0, 0, 0, 0.75)',
+                      }}>
+                        {hud.text}
+                      </span>
+                    </div>
+                  </div>
 
-              {isFloatingPill && (
-                <div style={{
-                  marginLeft: 20,
-                  padding: '4px 10px',
-                  borderRadius: 8,
-                  background: 'rgba(255, 77, 166, 0.18)',
-                  border: '1.2px solid rgba(255, 77, 166, 0.5)',
-                  color: '#ffffff',
-                  fontSize: 10,
-                  fontWeight: 700,
-                  fontFamily: 'var(--font-mono)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.04em',
-                  whiteSpace: 'nowrap',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  boxShadow: '0 2px 8px rgba(255, 77, 166, 0.25)',
-                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
-                }}>
-                  press ctrl + l
-                </div>
+                  {isFloatingPill && (
+                    <div style={{
+                      padding: '4px 10px',
+                      borderRadius: 8,
+                      background: 'rgba(255, 77, 166, 0.18)',
+                      border: '1.2px solid rgba(255, 77, 166, 0.5)',
+                      color: '#ffffff',
+                      fontSize: 10,
+                      fontWeight: 700,
+                      fontFamily: 'var(--font-mono)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.04em',
+                      whiteSpace: 'nowrap',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      boxShadow: '0 2px 8px rgba(255, 77, 166, 0.25)',
+                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                    }}>
+                      press ctrl + l
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )
