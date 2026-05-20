@@ -159,72 +159,66 @@ const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) 
 
   if (isNearBottom) {
     return {
-      text: "You've reached the end.",
+      text: "Bottom of the page! Want to go back up? 🎈",
       icon: "idle"
     }
   }
 
-  // 2. Active Project Detail View open
-  if (activeProj) {
-    if (velocity > 0.4) {
-      return {
-        text: "Scanning case details...",
-        icon: "scrolling"
-      }
-    }
-    return {
-      text: "Analyzing project patterns...",
-      icon: "thinking"
-    }
-  }
-
-  // 3. Inactive / Sleeping states
+  // 2. Inactive / Sleeping states
   if (inactive) {
-    if (readingSecs > 45) {
-      return {
-        text: "Taking a tiny nap...",
-        icon: "inactive"
-      }
-    }
-    const inactivePool = [
-      "Still here.",
-      "Missed me?",
-      "Whenever you're ready.",
-      "Keeping an eye on things."
-    ]
-    const idx = Math.floor((window.scrollY / 250) % inactivePool.length)
     return {
-      text: inactivePool[idx],
+      text: "Sleeping... Zzz... wake me up once you're done exploring! 🛌💤",
       icon: "inactive"
     }
   }
 
-  // 4. Scroll Aware states
+  // 3. Active Project Detail View open
+  if (activeProj) {
+    if (velocity > 0.4) {
+      return {
+        text: "Scanning case details... *beep boop* 🔍",
+        icon: "scrolling"
+      }
+    }
+    return {
+      text: "Thinking... analyzing Soupriti's genius... 🧠",
+      icon: "thinking"
+    }
+  }
+
+  // 4. Scroll Aware states (Scrolling)
   if (velocity > 0.7) {
     return {
-      text: "Deep-scroll mode on.",
+      text: "Scrolling... speed limit 80mph! 🚀💨",
       icon: "scrolling"
     }
   }
 
   if (velocity > 0.3) {
+    const scrollPool = [
+      "Scrolling... wheee! 🏎️💨",
+      "Scrolling... scanning for easter eggs... 🔍",
+      "Slow down, I'm getting dizzy! 😵",
+      "Gravity check: scrolling is functional. 👍"
+    ]
+    const idx = Math.floor((window.scrollY / 250) % scrollPool.length)
     return {
-      text: "Keep going, I'm here.",
+      text: scrollPool[idx],
       icon: "scrolling"
     }
   }
 
   // 5. Reading deep states (time in current section)
   if (readingSecs > 14) {
-    const readingPool = [
-      "Reading this section",
-      "Analyzing patterns",
-      "Extracting key points",
-      "Gathering insights"
+    const thinkPool = [
+      "Reading... hope this is on the exam! 📖",
+      "Thinking... compiling terrible dad jokes. 🤖",
+      "Thinking... processing coffee into pixels. ☕",
+      "Reading... absorbing human design patterns. 🧠"
     ]
-    const idx = Math.floor((window.scrollY / 200) % readingPool.length)
+    const idx = Math.floor((window.scrollY / 200) % thinkPool.length)
     return {
-      text: readingPool[idx],
+      text: thinkPool[idx],
       icon: "thinking"
     }
   }
@@ -232,32 +226,32 @@ const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) 
   // 6. Section aware defaults
   const sectionPool = {
     hero: {
-      text: "Exploring quietly",
+      text: "Just chilling in the Hero section... 😎",
       icon: "idle"
     },
     expertise: {
-      text: "Let's talk ideas",
+      text: "Reading about skills... 10/10 React knowledge. 💅",
       icon: "idle"
     },
     projects: {
-      text: "Exploring deep-scroll",
+      text: "Exploring projects... prepare to be wowed! ✨",
       icon: "idle"
     },
     about: {
-      text: "Checking the details",
+      text: "Investigating the About section... 🕵️‍♀️",
       icon: "idle"
     },
     journey: {
-      text: "This part is important",
+      text: "Reading the timeline... history in the making. 📜",
       icon: "idle"
     },
     contact: {
-      text: "Ready when you are",
+      text: "Ready to chat? Say hi! 👋",
       icon: "idle"
     }
   }
 
-  return sectionPool[section] || { text: "I'm here if you need me", icon: "idle" }
+  return sectionPool[section] || { text: "Just vibing here... 🍹", icon: "idle" }
 }
 
 /* ── Chat replies dictionary ── */
@@ -1108,6 +1102,12 @@ export default function DynamicNotch({ activeProject }) {
     ? `translateX(-50%) scaleX(${(1 + scrollVelocity * 0.04) * (hovered ? 1.03 : 1)}) scaleY(${(1 - scrollVelocity * 0.02) * (hovered ? 1.03 : 1)})`
     : `translateX(-50%) scale(1)`
 
+  const isFloatingPill = notchState === 'compact' && !isFullyDocked && !isDocked
+
+  const floatingTransform = isFloatingPill
+    ? `scaleX(${(1 + scrollVelocity * 0.04) * (hovered ? 1.03 : 1)}) scaleY(${(1 - scrollVelocity * 0.02) * (hovered ? 1.03 : 1)})`
+    : finalTransformScale
+
   return (
     <>
       <style>{`
@@ -1121,9 +1121,10 @@ export default function DynamicNotch({ activeProject }) {
         style={{
           position: 'fixed',
           top: finalTop,
-          left: finalLeft,
-          transform: `${finalTransformScale} translateY(${translateY}px)`,
-          width: finalWidth,
+          left: isFloatingPill ? 'auto' : finalLeft,
+          right: isFloatingPill ? `${rightSpacing}px` : 'auto',
+          transform: `${isFloatingPill ? floatingTransform : finalTransformScale} translateY(${translateY}px)`,
+          width: isFloatingPill ? 'max-content' : finalWidth,
           height: finalHeight,
           borderBottomLeftRadius: finalRadiusBottom,
           borderBottomRightRadius: finalRadiusBottom,
@@ -1136,7 +1137,7 @@ export default function DynamicNotch({ activeProject }) {
           boxShadow: (hovered && notchState === 'compact') ? hoverShadow : glowShadow,
           zIndex: 999999,
           overflow: 'hidden',
-          transition: isDocked ? 'none' : 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.1s ease-out',
+          transition: isDocked ? 'none' : 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.1s ease-out, left 0.5s cubic-bezier(0.16, 1, 0.3, 1), right 0.5s cubic-bezier(0.16, 1, 0.3, 1), width 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
           animation: isFullyDocked ? 'floatDock 4s ease-in-out infinite' : 'none',
           display: 'flex',
           flexDirection: 'column',
@@ -1195,7 +1196,7 @@ export default function DynamicNotch({ activeProject }) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: isFullyDocked ? 20 : 12,
-                padding: isFullyDocked ? '40px 24px' : '0 20px',
+                padding: isFullyDocked ? '40px 24px' : (isFloatingPill ? '0 80px 0 40px' : '0 20px'),
                 animation: 'fadeIn 0.25s ease-out',
                 cursor: 'pointer',
                 textAlign: 'center',
@@ -1233,7 +1234,7 @@ export default function DynamicNotch({ activeProject }) {
                   textTransform: 'none',
                   whiteSpace: isFullyDocked ? 'normal' : 'nowrap',
                 }}>
-                  {isFullyDocked ? "Hi, this is Soup." : "soup — press ctrl+l to talk"}
+                  {isFullyDocked ? "Hi, this is Soup." : hud.text}
                 </span>
 
                 {isFullyDocked && (
@@ -1246,7 +1247,7 @@ export default function DynamicNotch({ activeProject }) {
                       lineHeight: 1.5,
                       opacity: 0.85,
                     }}>
-                      I can help you sniff around and see if Soupriti’s the kind of designer your team has been looking for. Peek into projects, systems, interactions, and late-night creative experiments.
+                      I can help you sniff around and see if Soupriti’s the kind of designer your team has been looking for.
                     </span>
                     <span style={{
                       fontSize: 11,
@@ -1262,6 +1263,28 @@ export default function DynamicNotch({ activeProject }) {
                   </>
                 )}
               </div>
+
+              {isFloatingPill && (
+                <div style={{
+                  marginLeft: 20,
+                  padding: '4px 10px',
+                  borderRadius: 8,
+                  background: 'rgba(255, 77, 166, 0.12)',
+                  border: '1px solid rgba(255, 77, 166, 0.3)',
+                  color: accentColor,
+                  fontSize: 10,
+                  fontWeight: 600,
+                  fontFamily: 'var(--font-mono)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  whiteSpace: 'nowrap',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  boxShadow: '0 0 8px rgba(255, 77, 166, 0.1)',
+                }}>
+                  press ctrl + l
+                </div>
+              )}
             </div>
           )
         })()}
@@ -1411,7 +1434,7 @@ export default function DynamicNotch({ activeProject }) {
                         color: subtextColor,
                         fontFamily: 'var(--font-body)'
                       }}>
-                        I can help you sniff around and see if Soupriti’s the kind of designer your team has been looking for. Peek into projects, systems, interactions, and late-night creative experiments.
+                        Peek into projects, systems, interactions, and late-night creative experiments.
                       </p>
                     </div>
 
