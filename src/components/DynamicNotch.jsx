@@ -571,6 +571,47 @@ const playSound = (type) => {
       gain.connect(ctx.destination)
       osc.start(now)
       osc.stop(now + 0.08)
+    } else if (type === 'chord') {
+      const notes = [261.63, 329.63, 392.00, 493.88] // Sa, Ga, Pa, Ni (Cmaj7 arpeggiated chord)
+      notes.forEach((freq, idx) => {
+        const timeDelay = idx * 0.07 // Rolled arpeggio delay
+        const startTime = now + timeDelay
+        
+        const osc1 = ctx.createOscillator()
+        const gain1 = ctx.createGain()
+        osc1.type = 'sine'
+        osc1.frequency.setValueAtTime(freq, startTime)
+        
+        const osc2 = ctx.createOscillator()
+        const gain2 = ctx.createGain()
+        osc2.type = 'triangle'
+        osc2.frequency.setValueAtTime(freq * 2, startTime)
+        
+        const voiceGain = ctx.createGain()
+        
+        osc1.connect(gain1)
+        gain1.connect(voiceGain)
+        
+        osc2.connect(gain2)
+        gain2.connect(voiceGain)
+        
+        voiceGain.connect(ctx.destination)
+        
+        gain1.gain.setValueAtTime(0.18, startTime)
+        gain1.gain.exponentialRampToValueAtTime(0.005, startTime + 1.2)
+        
+        gain2.gain.setValueAtTime(0.05, startTime)
+        gain2.gain.exponentialRampToValueAtTime(0.001, startTime + 0.8)
+        
+        voiceGain.gain.setValueAtTime(0.8, startTime)
+        voiceGain.gain.exponentialRampToValueAtTime(0.01, startTime + 1.4)
+        
+        osc1.start(startTime)
+        osc1.stop(startTime + 1.4)
+        
+        osc2.start(startTime)
+        osc2.stop(startTime + 1.4)
+      })
     }
   } catch (e) {
     console.warn(e)
@@ -1352,7 +1393,12 @@ export default function DynamicNotch({ activeProject }) {
           justifyContent: 'flex-start',
           cursor: notchState === 'compact' ? 'pointer' : 'default',
         }}
-        onMouseEnter={() => setHovered(true)}
+        onMouseEnter={() => {
+          if (!hovered && notchState === 'compact') {
+            playSound('chord')
+          }
+          setHovered(true)
+        }}
         onMouseLeave={() => setHovered(false)}
         onClick={notchState === 'compact' ? () => {
           playSound('pop')
