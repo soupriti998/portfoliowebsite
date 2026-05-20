@@ -1258,7 +1258,7 @@ export default function DynamicNotch({ activeProject }) {
                     <span style={{
                       fontSize: 11,
                       fontFamily: 'var(--font-mono)',
-                      color: pinkGlow,
+                      color: accentColor,
                       marginTop: 8,
                       opacity: 0.9,
                       letterSpacing: '0.02em',
