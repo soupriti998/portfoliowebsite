@@ -338,18 +338,6 @@ function CaseStudyPage({ project, onClose, onNextProject }) {
   const nextProjectIndex = (PROJECTS.findIndex(p => p.id === project.id) + 1) % PROJECTS.length
   const nextProj = PROJECTS[nextProjectIndex]
 
-  // Light/Dark Local theme state inside case study detail
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('theme') || 'light'
-  })
-
-  const toggleTheme = (nextTheme) => {
-    const targetTheme = nextTheme || (theme === 'light' ? 'dark' : 'light')
-    setTheme(targetTheme)
-    document.documentElement.setAttribute('data-theme', targetTheme)
-    localStorage.setItem('theme', targetTheme)
-  }
-
   return (
     <div
       data-lenis-prevent
@@ -358,10 +346,10 @@ function CaseStudyPage({ project, onClose, onNextProject }) {
       style={{
         position: 'fixed',
         inset: 0,
-        background: theme === 'dark' ? '#0d0f12' : '#ffffff',
+        background: 'var(--bg)',
         zIndex: 9999,
         overflowY: 'auto',
-        color: theme === 'dark' ? '#f3f4f6' : '#1f2937',
+        color: 'var(--text-primary)',
         scrollBehavior: 'smooth',
       }}
     >
@@ -380,141 +368,123 @@ function CaseStudyPage({ project, onClose, onNextProject }) {
         }}
       />
 
-      {/* ── Nav Bar Pill with Back Action inside ── */}
-      <div 
+      {/* ── Nav Bar mimicking the Homepage header ── */}
+      <header
         style={{
           position: 'fixed',
-          top: 20,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: 'auto',
-          maxWidth: 'calc(100vw - 32px)',
+          top: 0,
+          left: 0,
+          width: '100%',
           zIndex: 10000,
-          transition: 'transform 0.4s var(--ease-out-expo), box-shadow 0.3s ease',
+          paddingTop: scrolled ? '16px' : '32px',
+          paddingBottom: scrolled ? '16px' : '32px',
+          background: scrolled ? 'var(--bg-overlay)' : 'transparent',
+          borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent',
+          backdropFilter: scrolled ? 'blur(20px)' : 'none',
+          WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'none',
+          transition: 'padding 0.3s var(--ease-out-expo), background 0.3s, border-bottom 0.3s, backdrop-filter 0.3s',
         }}
       >
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          padding: '6px 8px 6px 8px',
-          background: theme === 'dark' 
-            ? (scrolled ? 'rgba(24, 26, 31, 0.96)' : 'rgba(24, 26, 31, 0.85)')
-            : (scrolled ? 'rgba(255, 255, 255, 0.96)' : 'rgba(255, 255, 255, 0.85)'),
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderRadius: 'var(--radius-pill)',
-          border: '1px solid var(--border)',
-          boxShadow: scrolled ? 'var(--shadow-md)' : 'var(--shadow-sm)',
-        }}>
-          
-          {/* Back Action button inside nav pill */}
-          <button
-            onClick={onClose}
-            aria-label="Back to portfolio shelf"
-            className="case-nav-back-btn-pill"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '6px 14px',
-              borderRadius: 'var(--radius-pill)',
-              background: 'var(--accent)',
-              color: 'white',
-              fontFamily: 'var(--font-mono)',
-              fontWeight: 700,
-              fontSize: 10.5,
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'background 0.2s, transform 0.2s',
-              outline: 'none',
-              textTransform: 'uppercase',
-              letterSpacing: '0.04em',
-            }}
-          >
-            ← BACK TO SHELF
-          </button>
-
-          {/* Active project tag details */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0 8px' }}>
-            <span style={{ fontSize: 13 }}>{project.emoji}</span>
-            <span style={{ fontSize: 11, fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              {project.category}
-            </span>
+        <div 
+          className="container" 
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            maxWidth: 1440,
+            paddingInline: 'clamp(24px, 5vw, 72px)',
+          }}
+        >
+          {/* Left: Back Button + Emoji + Project Category */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <button
+              onClick={onClose}
+              aria-label="Back to portfolio shelf"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '10px 18px',
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-pill)',
+                boxShadow: 'var(--shadow-sm)',
+                cursor: 'pointer',
+                color: 'var(--text-primary)',
+                fontSize: 13,
+                fontWeight: 600,
+                fontFamily: 'var(--font-body)',
+                letterSpacing: '-0.015em',
+                outline: 'none',
+                transition: 'all 0.25s var(--ease-out-expo)',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = 'translateY(-1px)'
+                e.currentTarget.style.boxShadow = 'var(--shadow-md)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'var(--shadow-sm)'
+              }}
+            >
+              ← Back to Shelf
+            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 16 }}>{project.emoji}</span>
+              <span style={{ 
+                fontSize: 12, 
+                fontWeight: 700, 
+                fontFamily: 'var(--font-mono)', 
+                color: 'var(--text-secondary)', 
+                textTransform: 'uppercase', 
+                letterSpacing: '0.04em' 
+              }}>
+                {project.category}
+              </span>
+            </div>
           </div>
 
-          {/* Next Project Nav inside pill */}
-          <button 
-            onClick={() => {
-              if (contentRef.current) contentRef.current.scrollTop = 0
-              onNextProject(nextProj)
-            }}
-            className="case-nav-btn-next"
-          >
-            Next Project ↗
-          </button>
-
-          <div style={{ width: 1, height: 20, background: 'var(--border)', margin: '0 4px', opacity: 0.6 }} />
-
-          {/* Local theme switch toggle */}
-          <div
-            className="theme-toggle-pill-embedded"
-            style={{
-              height: 32,
-              width: 105,
-              borderRadius: 16,
-              display: 'flex',
-              alignItems: 'center',
-              background: theme === 'dark' 
-                ? 'rgba(255, 255, 255, 0.08)'
-                : 'rgba(0, 0, 0, 0.04)',
-              border: '1px solid var(--border)',
-              padding: 2,
-              position: 'relative',
-              userSelect: 'none',
-            }}
-          >
-            <div
-              style={{
-                position: 'absolute',
-                top: 2,
-                bottom: 2,
-                left: theme === 'light' ? 2 : 'calc(50% + 1px)',
-                width: 'calc(50% - 3px)',
-                borderRadius: 13,
-                background: theme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : '#ffffff',
-                boxShadow: theme === 'dark' 
-                  ? '0 1px 3px rgba(0, 0, 0, 0.3)' 
-                  : '0 1px 3px rgba(0, 0, 0, 0.08)',
-                transition: 'left 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s',
-                zIndex: 1,
+          {/* Right: Next Project Button */}
+          <div>
+            <button 
+              onClick={() => {
+                if (contentRef.current) contentRef.current.scrollTop = 0
+                onNextProject(nextProj)
               }}
-            />
-
-            <button
-              onClick={() => toggleTheme('light')}
-              className="case-nav-btn-action"
               style={{
-                flex: 1, height: '100%', border: 'none', background: 'none',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: theme === 'light' ? 'var(--text-primary)' : 'var(--text-secondary)',
-                fontSize: 9, fontWeight: 700, cursor: 'pointer', zIndex: 2, outline: 'none', padding: 0
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '10px 18px',
+                background: 'var(--accent)',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: 'var(--radius-pill)',
+                boxShadow: '0 4px 12px rgba(0, 82, 255, 0.2)',
+                cursor: 'pointer',
+                fontSize: 13,
+                fontWeight: 600,
+                fontFamily: 'var(--font-body)',
+                letterSpacing: '-0.015em',
+                outline: 'none',
+                transition: 'all 0.25s var(--ease-out-expo)',
               }}
-            >☀️ Light</button>
-
-            <button
-              onClick={() => toggleTheme('dark')}
-              className="case-nav-btn-action"
-              style={{
-                flex: 1, height: '100%', border: 'none', background: 'none',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: theme === 'dark' ? 'var(--text-primary)' : 'var(--text-secondary)',
-                fontSize: 9, fontWeight: 700, cursor: 'pointer', zIndex: 2, outline: 'none', padding: 0
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = 'translateY(-1px)'
+                e.currentTarget.style.background = 'var(--accent-light)'
+                e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 82, 255, 0.3)'
               }}
-            >🌙 Dark</button>
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.background = 'var(--accent)'
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 82, 255, 0.2)'
+              }}
+            >
+              Next Project ↗
+            </button>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* Case Study Scrollable Content */}
       <div 
@@ -546,7 +516,7 @@ function CaseStudyPage({ project, onClose, onNextProject }) {
           fontWeight: 400,
           letterSpacing: '-0.025em',
           lineHeight: 1.15,
-          color: theme === 'dark' ? '#ffffff' : 'var(--text-primary)',
+          color: 'var(--text-primary)',
           margin: '0 0 var(--space-4) 0',
         }}>
           {project.title}
@@ -558,14 +528,14 @@ function CaseStudyPage({ project, onClose, onNextProject }) {
           gap: 'var(--space-4)',
           alignItems: 'center',
           fontSize: '14px',
-          color: theme === 'dark' ? '#9ca3af' : 'var(--text-secondary)',
+          color: 'var(--text-secondary)',
           borderBottom: '1px solid var(--border)',
           paddingBottom: 'var(--space-6)',
           marginBottom: 'var(--space-8)',
         }}>
-          <span>Role: <strong style={{ color: theme === 'dark' ? '#e5e7eb' : 'var(--text-primary)' }}>{project.role}</strong></span>
+          <span>Role: <strong style={{ color: 'var(--text-primary)' }}>{project.role}</strong></span>
           <span>•</span>
-          <span>Duration: <strong style={{ color: theme === 'dark' ? '#e5e7eb' : 'var(--text-primary)' }}>{project.duration}</strong></span>
+          <span>Duration: <strong style={{ color: 'var(--text-primary)' }}>{project.duration}</strong></span>
           <span>•</span>
           <span>Impact: <strong style={{ color: 'var(--accent)' }}>{project.impact}</strong></span>
         </div>
@@ -607,7 +577,7 @@ function CaseStudyPage({ project, onClose, onNextProject }) {
                 fontFamily: 'var(--font-display)',
                 fontSize: '22px',
                 fontWeight: 500,
-                color: theme === 'dark' ? '#ffffff' : 'var(--text-primary)',
+                color: 'var(--text-primary)',
                 marginBottom: 'var(--space-4)',
                 letterSpacing: '-0.015em',
               }}>
@@ -616,7 +586,7 @@ function CaseStudyPage({ project, onClose, onNextProject }) {
               <p style={{
                 fontSize: '16px',
                 lineHeight: 1.75,
-                color: theme === 'dark' ? '#d1d5db' : 'var(--text-secondary)',
+                color: 'var(--text-secondary)',
                 whiteSpace: 'pre-line',
                 margin: 0,
               }}>

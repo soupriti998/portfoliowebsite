@@ -311,7 +311,7 @@ const FUN = {
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)]
 const matchesAny = (q, list) => list.some(s => q.includes(s))
 
-function getResponse(input, jokeState, setJokeState, activeSection) {
+function getResponse(input, jokeState, setJokeState, activeSection, activeProject) {
   const q = input.toLowerCase().trim()
 
   if (jokeState) {
@@ -329,6 +329,123 @@ function getResponse(input, jokeState, setJokeState, activeSection) {
       }
       setJokeState(null)
       return isRight ? pick(joke.correctResponse) : (joke.wrongResponse.length ? pick(joke.wrongResponse) : pick(joke.correctResponse))
+    }
+  }
+
+  // Case Study Contextual replies
+  if (activeProject) {
+    const pid = activeProject.id
+    if (pid === 'ai-cooking' || pid === 'cooking') {
+      if (q.includes('main challenge') || q.includes('biggest challenge')) {
+        return "The primary challenge was designing an interface that operates seamlessly in messy, high-moisture kitchen environments with steam, food residue, and noisy ambient sounds. The system had to be extremely forgiving, highly predictable, and reduce the cook's cognitive load during active cooking steps."
+      }
+      if (q.includes('messy') || q.includes('dirty') || q.includes('physical')) {
+        return "Soupriti designed with a physical-first perspective: using oversized touch targets to accommodate wet/dirty hands, simple voice-confirmation loops to enable hands-free interaction, and clear, high-contrast visual cues visible from across the room."
+      }
+      if (q.includes('metric') || q.includes('outcome')) {
+        return "Redesigning the cooking experience yielded a 24% increase in cooking task completion speed, reduced support tickets related to cooking errors, and improved overall D7 active user retention."
+      }
+      if (q.includes('layout') || q.includes('physical interface') || q.includes('collaborat')) {
+        return "She collaborated closely with hardware designers and developers to unify the touchscreen HMI with physical controls, ensuring that state transitions on the screen matched mechanical feedback (e.g. lid locks, motor speeds) seamlessly."
+      }
+    }
+    if (pid === 'onboarding') {
+      if (q.includes('reduce returns') || q.includes('how did onboarding')) {
+        return "By creating a 7-day progressive learning experience, users were guided through features step-by-step. Instead of overwhelming users on day one, Milestones and personalized setup prompts built early habits, directly reducing early product returns."
+      }
+      if (q.includes('milestone')) {
+        return "Progressive milestones means unlocking tutorials and feature settings over time based on the user's actual usage history. This prevents choice paralysis and ensures users master basic tasks before facing complex customizations."
+      }
+      if (q.includes('metric') || q.includes('track')) {
+        return "Key metrics included the onboarding step drop-off rate, active device pairing speed, first-cook completion rates within the first 72 hours, and early customer satisfaction (CSAT) scores."
+      }
+      if (q.includes('funnel') || q.includes('retention')) {
+        return "The onboarding funnel was optimized by removing redundant verification steps, introducing visual progress indicators, and aligning push notifications with actual user milestones rather than rigid timers, leading to a 7% drop-off reduction."
+      }
+    }
+    if (pid === 'airfryer') {
+      if (q.includes('texture') || q.includes('why texture')) {
+        return "In IoT consumer cooking, users don't think in degrees Celsius; they think in culinary outcomes. Designing the UI around desired textures (Crispy, Golden, Juicy) removes cooking anxiety and guesswork, resulting in more consistent and satisfying meals."
+      }
+      if (q.includes('test') || q.includes('validate')) {
+        return "We conducted in-house testing and validation sessions, tracking users as they prepared meals using standard recipes. The data proved that texture naming significantly reduced parameter adjustment errors and cognitive load."
+      }
+      if (q.includes('progress') || q.includes('loop')) {
+        return "Adaptive progress loops dynamically adjust cooking speed and temperature based on raw sensor readings (like humidity and heating elements), providing a hands-off, stress-free cooking cycle that adapts to food density."
+      }
+      if (q.includes('override') || q.includes('manual')) {
+        return "To avoid locking advanced users out, Soupriti built a subtle 'swipe-up for manual override' sheet, giving instant, granular control over time and temp without cluttering the primary outcome-based interface."
+      }
+    }
+    if (pid === 'medpod') {
+      if (q.includes('cognitive') || q.includes('limit') || q.includes('elderly')) {
+        return "Medpod utilizes oversized, high-tactile touch targets, a simplified color-coded medication tray mapping, and calm audio-guided steps to minimize inputs and prevent dosage errors caused by poor eyesight or trembling hands."
+      }
+      if (q.includes('error') || q.includes('prevent')) {
+        return "We implemented visual glow warning arcs, double-confirmation popups for dosage alterations, and automated warning notifications to primary caregivers if a dose is skipped, closing the loop on safety."
+      }
+      if (q.includes('dashboard') || q.includes('caregiver')) {
+        return "The dashboard displays real-time tracking, medication compliance analytics, battery status, and direct communication widgets, reassuring family members without requiring constant, invasive phone check-ins."
+      }
+      if (q.includes('tactile') || q.includes('visual')) {
+        return "User research confirmed that elderly users experience high frustration with small screens. Physical tactile confirmation combined with a voice interface reduced input errors by 40% compared to typical visual-only menus."
+      }
+    }
+    if (pid === 'battle-pass') {
+      if (q.includes('engagement') || q.includes('loop')) {
+        return "The loop is built on transparency and anticipation: clear visual maps of upcoming rewards, milestone trackers that update immediately after matches, and chest-opening micro-interactions that trigger satisfying visual feedback."
+      }
+      if (q.includes('reward') || q.includes('monetiz')) {
+        return "By creating premium tiers that offer purely cosmetic, prestige value without locking core gameplay mechanics, we ensured that free players still feel rewarded while paying players receive high status signaling."
+      }
+      if (q.includes('milestone') || q.includes('visual')) {
+        return "The progression trail is designed as a continuous horizontal track, using clean milestones and glowing status badges to highlight the path forward and build excitement for the next tier."
+      }
+      if (q.includes('dark pattern') || q.includes('decept') || q.includes('avoid')) {
+        return "We maintained strict visual honesty: no countdown timers causing false urgency, clear purchase cancellation options, and explicit effort-to-level conversion specs so players know exactly what they are getting."
+      }
+    }
+    if (pid === 'mcb-school') {
+      if (q.includes('imagination') || q.includes('led')) {
+        return "By utilizing playful typography, organic hand-drawn divider shapes, child-friendly color palettes, and interactive showcases of student artwork, we made the portal feel like an extension of the school's creative physical campus."
+      }
+      if (q.includes('parent') || q.includes('student') || q.includes('collaborat')) {
+        return "We created a shared 'Parent-Student Project Showcase' board where children can upload projects, parents can leave reactions, and teachers can post encouraging feedback, boosting family engagement."
+      }
+      if (q.includes('admission') || q.includes('inquir') || q.includes('brand')) {
+        return "The modernization project resulted in a double-digit increase in online admissions inquiries and positive feedback from parent focus groups who found the new portal clean, helpful, and creative."
+      }
+      if (q.includes('test') || q.includes('insight')) {
+        return "We learned that parents prioritize fast access to schedules and grades, while children respond to interactive elements. The solution was a dual-dashboard view that caters to both needs without compromising speed."
+      }
+    }
+    if (pid === 'doctorite') {
+      if (q.includes('hospital') || q.includes('speed') || q.includes('operation')) {
+        return "We optimized information architecture to put critical metrics, occupancy levels, and patient transfer pipelines front-and-center, using a color-coded triage system that allows administrators to assess status in under 3 seconds."
+      }
+      if (q.includes('accuracy') || q.includes('tracking')) {
+        return "By introducing single-click status updates, automating patient flow indicators using check-in triggers, and simplifying transfer logs, we eliminated manual entry errors and improved clinician tracking accuracy to 94%."
+      }
+      if (q.includes('unify') || q.includes('four') || q.includes('legacy')) {
+        return "We conducted workflow mappings to group overlapping features, replacing disconnected legacy applications with a centralized, modular widget system that lets staff keep their most-used panels open side-by-side."
+      }
+      if (q.includes('visual') || q.includes('real-time')) {
+        return "We used real-time stacked bar charts for bed occupancy, radial progress gauges for dispatch response times, and an interactive kanban-style map to visualize patient transfer stages clearly."
+      }
+    }
+
+    // Fallbacks for general project questions
+    if (q.includes('role')) {
+      return `For the "${activeProject.title}" project, Soupriti's role was Lead Product Designer, driving the end-to-end user research, UX flow definition, interactive prototyping, and developer handoff.`
+    }
+    if (q.includes('hurdle') || q.includes('challenge')) {
+      return `The biggest challenge in "${activeProject.title}" was balancing technical and physical system constraints with a friction-free user flow, ensuring high task completion rate.`
+    }
+    if (q.includes('success') || q.includes('measur')) {
+      return `Success for "${activeProject.title}" was measured through actionable metrics like user task speed improvements, reduction in support requests, and high engagement scores during testing.`
+    }
+    if (q.includes('takeaway') || q.includes('learn')) {
+      return `The key takeaway from "${activeProject.title}" was that simplifying interfaces and removing unnecessary choices yields the highest gains in both user delight and business performance.`
     }
   }
 
@@ -671,6 +788,89 @@ export default function DynamicNotch({ activeProject }) {
   // JD Matcher States
   const [jdText, setJdText] = useState('')
   const [jdFileName, setJdFileName] = useState('')
+  const [jdMatching, setJdMatching] = useState(false)
+  const [matchScore, setMatchScore] = useState(null)
+  const [matchDetails, setMatchDetails] = useState('')
+
+  const getContextualPrompts = () => {
+    if (!activeProject) {
+      return [
+        { label: 'Is she a good fit for SaaS?', query: 'Is Soupriti a good fit for SaaS product roles?' },
+        { label: 'Summarize her experience', query: "Summarize Soupriti's experience" },
+        { label: 'Explore AI projects', query: "Tell me about Soupriti's AI projects" },
+        { label: 'Evaluate UX thinking', query: "Evaluate Soupriti's UX thinking and process" },
+        { label: 'Review product strategy', query: "Review Soupriti's product design strategy" },
+        { label: 'Hear her design philosophy', query: "What is Soupriti's design philosophy?" },
+        { label: 'Ask about B2B/B2C experience', query: "Tell me about Soupriti's B2B and B2C experience" }
+      ]
+    }
+
+    const pid = activeProject.id
+    if (pid === 'ai-cooking' || pid === 'cooking') {
+      return [
+        { label: 'Main Challenge in AI Cooking?', query: 'What was the main challenge in the AI Cooking project?' },
+        { label: 'Designing for Messy Cooking?', query: 'How did you design for messy physical cooking environments?' },
+        { label: 'UX Metrics & Outcomes?', query: 'What were the key UX metrics and outcomes for the AI Cooking screen?' },
+        { label: 'Physical Interface Layout?', query: 'Can you tell me about the physical interface layout and collaboration?' }
+      ]
+    }
+    if (pid === 'onboarding') {
+      return [
+        { label: 'Reduce Returns by 7%?', query: 'How did behavior-driven onboarding reduce returns by 7%?' },
+        { label: 'Progressive Milestones?', query: 'What does "progressive milestones" mean in this onboarding UX?' },
+        { label: 'Metrics Tracked?', query: 'What metrics were tracked during the onboarding week?' },
+        { label: 'Mobile Retention Funnel?', query: 'Explain the user retention funnel improvements on mobile UX' }
+      ]
+    }
+    if (pid === 'airfryer') {
+      return [
+        { label: 'Texture vs Temp?', query: 'Why did you choose texture-driven selections instead of temperature parameters?' },
+        { label: 'Testing Texture Categories?', query: 'How did you test and validate texture categories with real users?' },
+        { label: 'Adaptive Progress Loops?', query: 'What was the outcome of the smart adaptive progress loops?' },
+        { label: 'Manual Override System?', query: 'How did you design the manual override system for IoT control?' }
+      ]
+    }
+    if (pid === 'medpod') {
+      return [
+        { label: 'Elderly Limitations?', query: 'How does Medpod handle elderly cognitive and motor limitations?' },
+        { label: 'Error Prevention Loops?', query: 'What error prevention loops did you design for medication scheduling?' },
+        { label: 'Caregiver Dashboard?', query: 'Tell me about the remote status dashboard for caregiver peace of mind' },
+        { label: 'Tactile vs Visual?', query: 'Why did you choose tactile touch targets over small visual feedback?' }
+      ]
+    }
+    if (pid === 'battle-pass') {
+      return [
+        { label: 'Engagement Loops?', query: 'What are the core engagement loops in this battle pass system?' },
+        { label: 'Rewards vs Monetization?', query: 'How did you balance player progression rewards with gameplay monetization?' },
+        { label: 'Milestone Progression Trails?', query: 'Tell me about the visual layout of milestone progression trails' },
+        { label: 'Avoiding Dark Patterns?', query: 'How did you avoid deceptive dark patterns in game UX design?' }
+      ]
+    }
+    if (pid === 'mcb-school') {
+      return [
+        { label: 'Imagination-Led Portal?', query: 'How did you make the school portal imagination-led?' },
+        { label: 'Parent-Student Collab?', query: 'What student-parent collaboration modules did you design?' },
+        { label: 'Online Inquiries Impact?', query: 'How did the brand transformation affect digital admissions and inquiries?' },
+        { label: 'User Testing Insights?', query: 'What did you learn from user testing with parents and children?' }
+      ]
+    }
+    if (pid === 'doctorite') {
+      return [
+        { label: 'Hospital Speed?', query: 'How did you design the SaaS dashboard for operational hospital speed?' },
+        { label: 'Clinician Accuracy (+94%)?', query: 'What design decisions helped achieve +94% clinician tracking accuracy?' },
+        { label: 'Unifying 4 Legacy Apps?', query: 'How did you unify 4 distinct operational apps into 1 control deck?' },
+        { label: 'Real-time Tracking Viz?', query: 'What data visualization paradigms did you use for real-time tracking?' }
+      ]
+    }
+
+    // fallback
+    return [
+      { label: `Her role in ${activeProject.title}`, query: `What was Soupriti's role in the ${activeProject.title} project?` },
+      { label: 'Biggest project hurdle', query: `What was the biggest hurdle in the ${activeProject.title} project?` },
+      { label: 'How success was measured', query: `How was success measured for the ${activeProject.title} project?` },
+      { label: 'Key takeaways', query: `What are the key takeaways from the ${activeProject.title} project?` }
+    ]
+  }
   const [isScanning, setIsScanning] = useState(false)
   const [matchResult, setMatchResult] = useState(null)
 
@@ -916,6 +1116,12 @@ export default function DynamicNotch({ activeProject }) {
     return () => clearInterval(interval)
   }, [activeSection])
 
+  // 2.3 CASE STUDY RESET EFFECT
+  useEffect(() => {
+    setNotchState('compact')
+    stopVoiceRecognition()
+  }, [activeProject])
+
   // 3. KEYBOARD CTRL + L DETECTOR (Voice Toggle)
   useEffect(() => {
     const handleKey = (e) => {
@@ -973,7 +1179,7 @@ export default function DynamicNotch({ activeProject }) {
       await new Promise(r => setTimeout(r, 800)) // Cognitive delay
       
       setJokeState(currentJoke => {
-        const reply = getResponse(transcript, currentJoke, setJokeState, activeSection)
+        const reply = getResponse(transcript, currentJoke, setJokeState, activeSection, activeProject)
         setVoiceStatus('replying')
         setVoiceSpeechText('Speaking...')
         
@@ -1013,7 +1219,7 @@ export default function DynamicNotch({ activeProject }) {
     await new Promise(r => setTimeout(r, 600 + Math.random() * 300))
     setIsTyping(false)
 
-    const reply = getResponse(trimmed, jokeState, setJokeState, activeSection)
+    const reply = getResponse(trimmed, jokeState, setJokeState, activeSection, activeProject)
     setMessages(prev => [...prev, { from: 'bot', text: reply }])
     playSound('pop')
   }
@@ -1049,7 +1255,7 @@ export default function DynamicNotch({ activeProject }) {
   const glowShadow = '0 16px 40px rgba(0, 0, 0, 0.6), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.25), inset 0 -1.5px 1.5px rgba(0, 0, 0, 0.7), 0 0 16px rgba(255, 77, 166, 0.12)'
 
   // -- INTERPOLATION LOGIC --
-  const isDocked = dockRect && scrollProgress < 1
+  const isDocked = dockRect && scrollProgress < 1 && !activeProject
   const p = isDocked ? scrollProgress : 1
   const pEase = p === 1 ? 1 : 1 - Math.pow(2, -10 * p) // easeOutExpo
 
@@ -1094,7 +1300,7 @@ export default function DynamicNotch({ activeProject }) {
     : `translateX(-50%) scale(1)`
 
   // Add floating animation if fully docked
-  const isFullyDocked = p === 0
+  const isFullyDocked = p === 0 && !activeProject
 
   const hoverShadow = '0 20px 48px rgba(0, 0, 0, 0.65), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.35), inset 0 -1.5px 1.5px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 77, 166, 0.18)'
 
@@ -1546,15 +1752,7 @@ export default function DynamicNotch({ activeProject }) {
                         gridTemplateColumns: '1fr 1fr',
                         gap: 8
                       }}>
-                        {[
-                          { label: 'Is she a good fit for SaaS?', query: 'Is Soupriti a good fit for SaaS product roles?' },
-                          { label: 'Summarize her experience', query: "Summarize Soupriti's experience" },
-                          { label: 'Explore AI projects', query: "Tell me about Soupriti's AI projects" },
-                          { label: 'Evaluate UX thinking', query: "Evaluate Soupriti's UX thinking and process" },
-                          { label: 'Review product strategy', query: "Review Soupriti's product design strategy" },
-                          { label: 'Hear her design philosophy', query: "What is Soupriti's design philosophy?" },
-                          { label: 'Ask about B2B/B2C experience', query: "Tell me about Soupriti's B2B and B2C experience" }
-                        ].map(act => (
+                      {getContextualPrompts().map(act => (
                           <button
                             key={act.label}
                             onClick={() => handleSendChat(act.query)}
