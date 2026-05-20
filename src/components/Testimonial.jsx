@@ -2,9 +2,104 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FadeUp, Label } from './utils'
 
+// ── Custom Line-Art Animal SVG Icon Components ──
+const animalIcons = {
+  cat: (size = 28) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 21c-4.4 0-8-3.6-8-8c0-1.8.6-3.5 1.7-4.9L4 3.5c-.3-.4 0-1 .5-1h2.3c1.3.8 2.8 1.3 4.2 1.3s2.9-.5 4.2-1.3h2.3c.5 0 .8.6.5 1l-1.7 4.6C19.4 9.5 20 11.2 20 13c0 4.4-3.6 8-8 8z" />
+      <path d="M9.5 11a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
+      <path d="M14.5 11a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
+      <path d="M12 12.5v1.5" />
+    </svg>
+  ),
+  rabbit: (size = 28) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 14a3 3 0 1 0 6 0a3 3 0 1 0-6 0z" />
+      <path d="M9 11c0-3.5-1.5-7-2-7s-2 3.5-2 7a2 2 0 0 0 4 0z" />
+      <path d="M15 11c0-3.5 1.5-7 2-7s-2 3.5-2 7a2 2 0 0 0 4 0z" />
+      <circle cx="12" cy="14.5" r="0.8" fill="currentColor" />
+    </svg>
+  ),
+  fox: (size = 28) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 21l-9-9c-1-1 0-4 1.5-5L8 9.5l4-7.5l4 7.5l3.5-2.5c1.5 1 2.5 4 1.5 5l-9 9z" />
+      <circle cx="9.5" cy="12.5" r="0.6" fill="currentColor" />
+      <circle cx="14.5" cy="12.5" r="0.6" fill="currentColor" />
+      <path d="M11.5 16.5h1" />
+    </svg>
+  ),
+  bear: (size = 28) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 20c-4.4 0-8-3.6-8-8a8 8 0 0 1 16 0c0 4.4-3.6 8-8 8z" />
+      <path d="M5.5 6.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" />
+      <path d="M18.5 6.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z" />
+      <circle cx="9.5" cy="11.5" r="0.6" fill="currentColor" />
+      <circle cx="14.5" cy="11.5" r="0.6" fill="currentColor" />
+      <circle cx="12" cy="14.5" r="1" fill="currentColor" />
+    </svg>
+  ),
+  koala: (size = 28) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="14" r="6.5" />
+      <circle cx="5.5" cy="9.5" r="2.8" />
+      <circle cx="18.5" cy="9.5" r="2.8" />
+      <rect x="10.8" y="12" width="2.4" height="4" rx="1.2" fill="currentColor" />
+      <circle cx="9" cy="11" r="0.6" fill="currentColor" />
+      <circle cx="15" cy="11" r="0.6" fill="currentColor" />
+    </svg>
+  ),
+  panda: (size = 28) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="13" r="7" />
+      <circle cx="4.5" cy="6.5" r="2.2" fill="currentColor" />
+      <circle cx="19.5" cy="6.5" r="2.2" fill="currentColor" />
+      <circle cx="9.2" cy="11.5" r="1.1" fill="currentColor" />
+      <circle cx="14.8" cy="11.5" r="1.1" fill="currentColor" />
+      <circle cx="12" cy="14.8" r="0.8" fill="currentColor" />
+    </svg>
+  ),
+  owl: (size = 28) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="13" r="7.5" />
+      <path d="M8 8.5c1-1.5 2-2 4-2s3 .5 4 2" />
+      <circle cx="9.5" cy="12" r="1.6" />
+      <circle cx="14.5" cy="12" r="1.6" />
+      <path d="M12 13.5l-1-1.5h2l-1 1.5z" />
+    </svg>
+  ),
+  dog: (size = 28) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="13" r="6.5" />
+      <path d="M5.5 12C4.2 10 3 6.5 4 5s3.5-.5 5 1.5" />
+      <path d="M18.5 12c1.3-2 2.5-5.5 1.5-7s-3.5-.5-5 1.5" />
+      <circle cx="9.5" cy="11.5" r="0.6" fill="currentColor" />
+      <circle cx="14.5" cy="11.5" r="0.6" fill="currentColor" />
+      <path d="M11.2 14.5a0.8 0.8 0 1 0 1.6 0" />
+    </svg>
+  ),
+  squirrel: (size = 28) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 21c-4 0-7-3-7-7c0-2 1.5-3.5 3-4c-1-2.5 0-5.5 2-6c1.5-.4 3 .6 3 2c1.5-1.4 3-2.4 4.5-2c2 .5 3 3.5 2 6c1.5.5 3 2 3 4c0 4-3 7-7 7z" />
+      <circle cx="9.5" cy="11" r="0.6" fill="currentColor" />
+      <circle cx="14.5" cy="11" r="0.6" fill="currentColor" />
+      <circle cx="12" cy="14" r="0.8" fill="currentColor" />
+    </svg>
+  ),
+  deer: (size = 28) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="13" r="6" />
+      <path d="M9 8.5L7 4m6 4.5L15 4" />
+      <circle cx="9.5" cy="12.2" r="0.6" fill="currentColor" />
+      <circle cx="14.5" cy="12.2" r="0.6" fill="currentColor" />
+      <circle cx="12" cy="14.5" r="0.8" fill="currentColor" />
+    </svg>
+  )
+}
+
 const testimonials = [
   {
     initials: 'CH',
+    animal: 'cat',
     name: 'Chaitanya Hegde',
     role: 'Head of Product · upliance.ai',
     comment: "Soupriti's work on the upliance app was revolutionary. Her interaction design saved us hours of manual work.",
@@ -13,6 +108,7 @@ const testimonials = [
   },
   {
     initials: 'VR',
+    animal: 'rabbit',
     name: 'Vivek Ram',
     role: 'Senior UX Designer · Divami',
     comment: "A design engineer in the truest sense. Her React prototypes are extremely polished and pixel-perfect.",
@@ -21,6 +117,7 @@ const testimonials = [
   },
   {
     initials: 'SI',
+    animal: 'fox',
     name: 'Sneha Iyer',
     role: 'Product Manager · HDFC Client',
     comment: "Incredible user ethnography work! Her customer insights redefined our banking onboarding flow.",
@@ -29,6 +126,7 @@ const testimonials = [
   },
   {
     initials: 'RK',
+    animal: 'bear',
     name: 'Rajesh Kumar',
     role: 'Lead Frontend Engineer · Incture',
     comment: "She bridges the gap between design and code perfectly. It is a absolute pleasure to implement her layouts.",
@@ -37,6 +135,7 @@ const testimonials = [
   },
   {
     initials: 'AS',
+    animal: 'koala',
     name: 'Ananya Sen',
     role: 'Founder · Brandshape',
     comment: "Very proactive and detailed. Her risk-taking ability in UX strategy was crucial for our product launch.",
@@ -45,6 +144,7 @@ const testimonials = [
   },
   {
     initials: 'RS',
+    animal: 'panda',
     name: 'Rohan Shah',
     role: 'Design Partner · Freelance',
     comment: "A master of micro-interactions and layout rhythm. She brings static interfaces to life.",
@@ -53,6 +153,7 @@ const testimonials = [
   },
   {
     initials: 'MN',
+    animal: 'owl',
     name: 'Meera Nair',
     role: 'Director of Design · TechCorp',
     comment: "Exceptional systems thinking. She builds design systems that developer teams actually love to use.",
@@ -61,6 +162,7 @@ const testimonials = [
   },
   {
     initials: 'DP',
+    animal: 'dog',
     name: 'Devendra Patel',
     role: 'CTO · FinTech',
     comment: "Her high-fidelity React prototypes saved us months of development. She defines interactions with code.",
@@ -69,6 +171,7 @@ const testimonials = [
   },
   {
     initials: 'PS',
+    animal: 'squirrel',
     name: 'Priya Sharma',
     role: 'UX Researcher · ResearchLab',
     comment: "Her detail-oriented user research uncovered critical bottlenecks in our SaaS dashboard.",
@@ -77,6 +180,7 @@ const testimonials = [
   },
   {
     initials: 'AM',
+    animal: 'deer',
     name: 'Arjun Mehta',
     role: 'VP of Product · SaaSify',
     comment: "Highly empathetic design process. She designs for real-world user behaviors and solves pain points.",
@@ -179,11 +283,10 @@ export default function Testimonial() {
                     width: 38, height: 38, borderRadius: '50%',
                     background: activeTestimonial.gradient,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: 'white', fontWeight: 700, fontSize: 13,
-                    fontFamily: 'var(--font-mono)',
+                    color: 'white',
                     boxShadow: '0 4px 10px rgba(0, 0, 0, 0.05)'
                   }}>
-                    {activeTestimonial.initials}
+                    {animalIcons[activeTestimonial.animal](18)}
                   </div>
                   <div>
                     <div style={{ fontWeight: 600, fontSize: 14.5, color: 'var(--text-primary)', letterSpacing: '-0.015em' }}>
@@ -256,9 +359,6 @@ export default function Testimonial() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: '#ffffff',
-                    fontFamily: 'var(--font-mono)',
-                    fontWeight: 700,
-                    fontSize: 15,
                     border: isActive ? '3.5px solid var(--accent)' : '3.5px solid var(--bg-card)',
                     boxShadow: isActive ? '0 8px 24px rgba(0, 82, 255, 0.25)' : '0 4px 12px rgba(0, 0, 0, 0.04)',
                     cursor: 'pointer',
@@ -269,7 +369,7 @@ export default function Testimonial() {
                     transition: 'transform 0.25s, border-color 0.25s, box-shadow 0.25s'
                   }}
                 >
-                  {item.initials}
+                  {animalIcons[item.animal](26)}
                 </div>
               )
             })}
@@ -294,9 +394,6 @@ export default function Testimonial() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: '#ffffff',
-                    fontFamily: 'var(--font-mono)',
-                    fontWeight: 700,
-                    fontSize: 15,
                     border: isActive ? '3.5px solid var(--accent)' : '3.5px solid var(--bg-card)',
                     boxShadow: isActive ? '0 8px 24px rgba(0, 82, 255, 0.25)' : '0 4px 12px rgba(0, 0, 0, 0.04)',
                     cursor: 'pointer',
@@ -307,7 +404,7 @@ export default function Testimonial() {
                     transition: 'transform 0.25s, border-color 0.25s, box-shadow 0.25s'
                   }}
                 >
-                  {item.initials}
+                  {animalIcons[item.animal](26)}
                 </div>
               )
             })}
@@ -337,9 +434,6 @@ export default function Testimonial() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       color: '#ffffff',
-                      fontFamily: 'var(--font-mono)',
-                      fontWeight: 700,
-                      fontSize: 15,
                       border: isActive ? '3.5px solid var(--accent)' : '3.5px solid var(--bg-card)',
                       boxShadow: isActive ? '0 8px 24px rgba(0, 82, 255, 0.25)' : '0 4px 12px rgba(0, 0, 0, 0.04)',
                       cursor: 'pointer',
@@ -350,7 +444,7 @@ export default function Testimonial() {
                       transition: 'transform 0.25s, border-color 0.25s, box-shadow 0.25s'
                     }}
                   >
-                    {item.initials}
+                    {animalIcons[item.animal](26)}
                   </div>
                 )
               })}

@@ -9,7 +9,7 @@ const roles = [
     period: 'Sep 2024 – Present',
     location: 'Bangalore',
     tag: 'AI Product',
-    logo: '/upliance.ai-logo.png',
+    logo: 'upliance.ai-logo.png',
     number: '01',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -31,7 +31,7 @@ const roles = [
     period: 'Sep 2023 – Aug 2024',
     location: 'Hyderabad',
     tag: 'SaaS & Enterprise',
-    logo: '/divami-Logo.png',
+    logo: 'divami-Logo.png',
     number: '02',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -51,7 +51,7 @@ const roles = [
     period: 'Jul 2022 – Aug 2023',
     location: 'Bangalore',
     tag: 'SaaS Products',
-    logo: '/Incture - Logo.png',
+    logo: 'Incture - Logo.png',
     number: '03',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -71,7 +71,7 @@ const roles = [
     period: 'Jan 2022 – Apr 2022',
     location: 'Mumbai',
     tag: 'Client: HDFC Bank',
-    logo: '/Branshape-logo.jpeg',
+    logo: 'Branshape-logo.jpeg',
     number: '04',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -92,6 +92,7 @@ export default function Journey() {
   const sectionRef = useRef(null)
   const [isMobile, setIsMobile] = useState(false)
   const [activeStep, setActiveStep] = useState(1) // Ranges 1 to 4 based on scroll progress
+  const [progressPercent, setProgressPercent] = useState(0)
 
   // Track scroll position exactly within the pinning window of the sticky container
   const { scrollYProgress } = useScroll({
@@ -103,6 +104,7 @@ export default function Journey() {
   const travelerX = useTransform(scrollYProgress, [0, 1], ['0%', '100%'])
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    setProgressPercent(latest * 100)
     if (isMobile) return
 
     // Segment horizontal progress into 4 ranges
@@ -347,7 +349,7 @@ export default function Journey() {
                   {/* Node Checkpoints & Labels */}
                   {roles.map((r, i) => {
                     const nodeNum = i + 1
-                    const isNodeActive = activeStep >= nodeNum
+                    const isNodePassed = progressPercent >= r.nodePercent
 
                     return (
                       <div
@@ -356,21 +358,22 @@ export default function Journey() {
                           position: 'absolute',
                           left: `${r.nodePercent}%`,
                           top: '8px',
-                          transform: 'translate(-50%, -50%)',
+                          transform: 'translateX(-50%)',
                           zIndex: 4,
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center'
                         }}
                       >
-                        {/* Dot node */}
+                        {/* Dot node centered on the line */}
                         <div style={{
                           width: 10,
                           height: 10,
                           borderRadius: '50%',
-                          background: isNodeActive ? 'var(--accent)' : 'var(--border)',
-                          border: '2px solid var(--bg)',
-                          transition: 'background 0.3s'
+                          background: isNodePassed ? 'var(--accent)' : 'var(--bg)',
+                          border: isNodePassed ? '2px solid var(--accent)' : '2px solid var(--border)',
+                          transform: 'translateY(-50%)',
+                          transition: 'background 0.3s, border-color 0.3s'
                         }} />
 
                         {/* Label below dot */}
@@ -379,7 +382,7 @@ export default function Journey() {
                           fontSize: 10.5,
                           fontWeight: 700,
                           color: activeStep === nodeNum ? 'var(--text-primary)' : 'var(--text-muted)',
-                          marginTop: 14,
+                          marginTop: 8,
                           whiteSpace: 'nowrap',
                           transition: 'color 0.3s'
                         }}>
@@ -439,7 +442,7 @@ export default function Journey() {
           zIndex: 2,
           background: 'var(--bg)', 
           borderBottom: '1px solid var(--border)',
-          paddingBottom: isMobile ? 'var(--space-8)' : 'var(--space-12)',
+          paddingBottom: isMobile ? 'var(--space-12)' : '140px',
           paddingTop: isMobile ? 'var(--space-2)' : 'var(--space-8)'
         }}
       >

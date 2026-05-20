@@ -107,7 +107,7 @@ export default function Nav() {
                 letterSpacing: '-0.02em',
                 lineHeight: 1.2,
               }}>
-                soupriti
+                Soupriti
               </span>
               <span style={{
                 fontFamily: 'var(--font-body)',

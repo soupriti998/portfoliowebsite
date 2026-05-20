@@ -1,111 +1,213 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FadeUp, Label } from './utils'
 import PassionsPlayground from './PassionsPlayground'
 
-/* ── High-Fidelity Custom SVG Icons ── */
-const SearchIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-  </svg>
-)
-
-const BulbIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1 .4 2.5 1.5 3.5.7.8 1.3 1.5 1.5 2.5M9 18h6M10 22h4"/>
-  </svg>
-)
-
-const NibIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z"/>
-  </svg>
-)
-
-const RefreshIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16M3 21v-5h5"/>
-  </svg>
-)
-
-const BoxIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-    <polyline points="3.29 7 12 12 20.71 7"/>
-    <line x1="12" y1="22" x2="12" y2="12"/>
-  </svg>
-)
-
-const MouseIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="5" y="2" width="14" height="20" rx="7"/>
-    <line x1="12" y1="6" x2="12" y2="12"/>
-  </svg>
-)
-
-const PaintIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19C5.0371 19.1785 5.09703 19.4444 5.01168 19.6841C4.79603 20.2898 4.68 20.9317 4.68 21.6C4.68 21.8209 4.85909 22 5.08 22H12Z"/>
-    <circle cx="7.5" cy="10.5" r="1.5" fill="currentColor"/><circle cx="11.5" cy="7.5" r="1.5" fill="currentColor"/><circle cx="16.5" cy="9.5" r="1.5" fill="currentColor"/>
-  </svg>
-)
-
-const BriefcaseIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-  </svg>
-)
-
-const MapPinIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
-  </svg>
-)
-
-const ClockIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-  </svg>
-)
-
-const RocketIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4.5 16.5c-1.5 1.25-2.5 3.5-2.5 3.5s2.25-1 3.5-2.5M12 2C6 2 2 6 2 12c0 2.5 1.5 4.5 3.5 5.5l11-11C15.5 4.5 13.5 3 12 2Z"/><path d="M20 4c.5-1 .5-1 .5-1s0 0-1 .5l-2.5 2.5 3 3L20 4Z"/><path d="M19 9c-1-1.5-2.5-3-3.5-3.5l-11 11c1 2 3 3.5 5.5 3.5 6 0 10-4 10-10Z"/>
-  </svg>
-)
-
 export default function About() {
-  const [activeExplain, setActiveExplain] = useState("Click on any highlight inside the Bento grid to activate the Soup AI thought stream!")
-  
-  // Design Toolkit Auto-scroll index
-  const [toolkitIndex, setToolkitIndex] = useState(0)
-  const [hoveredToolkit, setHoveredToolkit] = useState(false)
+  const [activeExplain, setActiveExplain] = useState("Hover, drag, or align the notepad papers on the desk mat to explore my designer profile!")
+  const [isAligned, setIsAligned] = useState(false)
+  const deskRef = useRef(null)
 
+  // Checklist items in Note 4
+  const [checkedTasks, setCheckedTasks] = useState({
+    '01': true,
+    '02': true,
+    '03': true,
+    '04': true
+  })
+
+  // Detect mobile viewports to force vertical list stack for mobile usability
+  const [isMobile, setIsMobile] = useState(false)
   useEffect(() => {
-    if (hoveredToolkit) return
-    const timer = setInterval(() => {
-      setToolkitIndex((prev) => (prev + 1) % 4)
-    }, 3200)
-    return () => clearInterval(timer)
-  }, [hoveredToolkit])
-
-  // Strategic Process Checklist States
-  const [processStep, setProcessStep] = useState(1)
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setProcessStep((prev) => (prev === 4 ? 1 : prev + 1))
-    }, 3500)
-    return () => clearInterval(timer)
+    const checkViewport = () => {
+      setIsMobile(window.innerWidth < 1024)
+    }
+    checkViewport()
+    window.addEventListener('resize', checkViewport)
+    return () => window.removeEventListener('resize', checkViewport)
   }, [])
 
   const triggerCatSpeak = (text) => {
     setActiveExplain(text)
     const speakEvent = new CustomEvent('cat-speak', {
       detail: { text }
-    });
-    window.dispatchEvent(speakEvent);
+    })
+    window.dispatchEvent(speakEvent)
   }
+
+  // 5 Notepad Cards Data Setup
+  const notes = [
+    {
+      id: 'bio',
+      title: 'Telemetry & Bio',
+      icon: '📈',
+      defaultRotate: -4,
+      scatteredLeft: '2%',
+      scatteredTop: '20px',
+      color: '#E0F2FE', // Coinbase pale blue header
+      desc: "My design telemetry showing NIFT Chennai visual background, shipped products, and Figma precision.",
+      render: () => (
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '10px' }}>
+            <div style={{ background: 'rgba(0,82,255,0.05)', border: '1px solid rgba(0,82,255,0.08)', padding: '6px 4px', borderRadius: '10px', textAlign: 'center', flex: 1 }}>
+              <span style={{ fontSize: '16px', fontWeight: 700, color: 'var(--accent)', fontFamily: 'var(--font-display)', display: 'block' }}>4.0</span>
+              <span style={{ fontSize: '8px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>UX YEARS</span>
+            </div>
+            <div style={{ background: 'rgba(0,82,255,0.05)', border: '1px solid rgba(0,82,255,0.08)', padding: '6px 4px', borderRadius: '10px', textAlign: 'center', flex: 1 }}>
+              <span style={{ fontSize: '16px', fontWeight: 700, color: 'var(--accent)', fontFamily: 'var(--font-display)', display: 'block' }}>12+</span>
+              <span style={{ fontSize: '8px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>PROJECTS</span>
+            </div>
+            <div style={{ background: 'rgba(0,82,255,0.05)', border: '1px solid rgba(0,82,255,0.08)', padding: '6px 4px', borderRadius: '10px', textAlign: 'center', flex: 1.2 }}>
+              <span style={{ fontSize: '16px', fontWeight: 700, color: 'var(--accent)', fontFamily: 'var(--font-display)', display: 'block' }}>100%</span>
+              <span style={{ fontSize: '8px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>SPEC MATCH</span>
+            </div>
+          </div>
+          <p style={{ fontSize: '12px', lineHeight: '1.6', color: 'var(--text-secondary)', marginTop: '14px', fontFamily: 'var(--font-body)', margin: '14px 0 0 0' }}>
+            Visual design graduate from <strong>NIFT Chennai</strong>. I connect user observation logs with exact Figma developer specs.
+          </p>
+        </div>
+      )
+    },
+    {
+      id: 'focus',
+      title: 'Role Spectrum',
+      icon: '🧭',
+      defaultRotate: 5,
+      scatteredLeft: '22%',
+      scatteredTop: '160px',
+      color: '#DCFCE7', // Pale green header
+      desc: "My design spectrum: 50% Interaction, 30% User Research, 20% Visual Systems.",
+      render: () => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' }}>
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '3px', fontWeight: 600, color: 'var(--text-primary)' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent)' }} />
+                Interaction Craft
+              </span>
+              <span style={{ fontFamily: 'var(--font-mono)' }}>50%</span>
+            </div>
+            <div style={{ height: '5px', background: 'rgba(0,0,0,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
+              <div style={{ width: '50%', height: '100%', background: 'var(--accent)' }} />
+            </div>
+          </div>
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '3px', fontWeight: 600, color: 'var(--text-primary)' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--text-primary)' }} />
+                User Research
+              </span>
+              <span style={{ fontFamily: 'var(--font-mono)' }}>30%</span>
+            </div>
+            <div style={{ height: '5px', background: 'rgba(0,0,0,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
+              <div style={{ width: '30%', height: '100%', background: 'var(--text-primary)' }} />
+            </div>
+          </div>
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '3px', fontWeight: 600, color: 'var(--text-primary)' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--text-muted)' }} />
+                Visual Systems
+              </span>
+              <span style={{ fontFamily: 'var(--font-mono)' }}>20%</span>
+            </div>
+            <div style={{ height: '5px', background: 'rgba(0,0,0,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
+              <div style={{ width: '20%', height: '100%', background: 'var(--text-muted)' }} />
+            </div>
+          </div>
+          <p style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: '4px', lineHeight: '1.3' }}>
+            Balance of layout aesthetics, motion physics, and strategic metrics.
+          </p>
+        </div>
+      )
+    },
+    {
+      id: 'toolkit',
+      title: 'Design Toolkit',
+      icon: '🎨',
+      defaultRotate: -3,
+      scatteredLeft: '42%',
+      scatteredTop: '20px',
+      color: '#FEF9C3', // Pale yellow header
+      desc: "Key toolsets: Figma spec systems, React development, Framer Motion, and Usability testing.",
+      render: () => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px' }}>
+          {[
+            { label: 'Product Design', tool: 'Figma to React' },
+            { label: 'User Research', tool: 'Usability testing' },
+            { label: 'Interaction Design', tool: 'Micro-interactions' },
+            { label: 'UI Design & Systems', tool: 'Figma Spec Systems' }
+          ].map((item) => (
+            <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0,82,255,0.03)', border: '1px solid rgba(0,0,0,0.04)', borderRadius: '6px', padding: '5px 10px' }}>
+              <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-primary)' }}>{item.label}</span>
+              <span style={{ fontSize: '8px', fontFamily: 'var(--font-mono)', color: 'var(--accent)', marginLeft: 'auto', background: 'rgba(0,82,255,0.06)', padding: '1px 4px', borderRadius: '3px', fontWeight: 600 }}>{item.tool}</span>
+            </div>
+          ))}
+        </div>
+      )
+    },
+    {
+      id: 'process',
+      title: 'Strategic Process',
+      icon: '⚡',
+      defaultRotate: 3,
+      scatteredLeft: '60%',
+      scatteredTop: '160px',
+      color: '#FEE2E2', // Pale red header
+      desc: "Four steps process: Research deeply, Think strategically, Design intentionally, Iterate constantly.",
+      render: () => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }} onPointerDown={(e) => e.stopPropagation()}>
+          {[
+            { label: 'Research deeply', id: '01', desc: 'Cook journals mapping' },
+            { label: 'Think strategically', id: '02', desc: 'Product metric link' },
+            { label: 'Design intentionally', id: '03', desc: 'Manage cognitive load' },
+            { label: 'Iterate constantly', id: '04', desc: 'Figma to React loop' }
+          ].map((task) => {
+            const isChecked = checkedTasks[task.id]
+            return (
+              <div 
+                key={task.id} 
+                onClick={() => setCheckedTasks(prev => ({ ...prev, [task.id]: !prev[task.id] }))}
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', opacity: isChecked ? 1 : 0.55, transition: 'opacity 0.2s' }}
+              >
+                <div style={{
+                  width: '13px', height: '13px', borderRadius: '3px',
+                  border: isChecked ? '1.5px solid var(--accent)' : '1.5px solid rgba(0,0,0,0.2)',
+                  background: isChecked ? 'var(--accent)' : 'transparent',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#fff', fontSize: '8px', fontWeight: 900
+                }}>
+                  {isChecked && '✓'}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
+                  <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-primary)', textDecoration: isChecked ? 'line-through' : 'none' }}>{task.label}</span>
+                  <span style={{ fontSize: '8.5px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{task.desc}</span>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )
+    },
+    {
+      id: 'passions',
+      title: 'Passions Playground',
+      icon: '🕹️',
+      defaultRotate: 5,
+      scatteredLeft: '76%',
+      scatteredTop: '20px',
+      color: '#F3E8FF', // Pale purple header
+      desc: "Drag the circular stickers around to discover my personal hobbies and chimes!",
+      render: () => (
+        <div 
+          style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '170px', marginTop: '2px', position: 'relative' }}
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <PassionsPlayground triggerCatSpeak={triggerCatSpeak} />
+        </div>
+      )
+    }
+  ]
 
   return (
     <section 
@@ -121,7 +223,7 @@ export default function About() {
       <div className="container" style={{ position: 'relative', zIndex: 2, width: '100%' }}>
         
         {/* Title Block */}
-        <div style={{ marginBottom: 'var(--space-8)', maxWidth: '800px' }}>
+        <div style={{ marginBottom: 'var(--space-7)', maxWidth: '800px' }}>
           <FadeUp>
             <Label>About Me</Label>
           </FadeUp>
@@ -142,542 +244,265 @@ export default function About() {
           </FadeUp>
           <FadeUp delay={120}>
             <p style={{ fontSize: 16.5, lineHeight: 1.75, color: 'var(--text-secondary)', fontFamily: 'var(--font-body)', margin: 0, maxWidth: '720px' }}>
-              I'm <strong style={{ color: 'var(--text-primary)', fontWeight: 600 }}>soupriti</strong>, a Product Designer based in Bangalore. With a visual design foundation from <strong style={{ color: 'var(--text-primary)', fontWeight: 600 }}>NIFT Chennai</strong>, I specialize in combining rigorous user ethnography with high-end, functional React prototypes.
+              I'm <strong style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Soupriti</strong>, a Product Designer based in Bangalore. With a visual design foundation from <strong style={{ color: 'var(--text-primary)', fontWeight: 600 }}>NIFT Chennai</strong>, I specialize in combining rigorous user ethnography with high-end, functional React prototypes.
             </p>
           </FadeUp>
         </div>
 
-        {/* ── BENTO GRID LAYOUT (Mimicking Ref Image 1) ── */}
-        <div className="about-bento-grid" style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(12, 1fr)',
-          gap: 24,
-          marginTop: 'var(--space-7)'
-        }}>
-
-          {/* CARD A (Top Left): "Total Sales" style Telemetry box */}
-          <div 
-            className="bento-box shadow-card bento-card-a"
-            onClick={() => triggerCatSpeak("My professional telemetry shows high figma-to-code accuracy and extensive kitchen-observational UX hours.")}
-            style={{
-              gridColumn: 'span 6',
-              background: 'var(--bg-card)',
-              border: '1.5px solid var(--border)',
-              borderRadius: 24,
-              padding: '28px 32px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              height: 280,
-              cursor: 'pointer',
-              userSelect: 'none'
-            }}
-          >
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
-                  TELEMETRY / METRIC
-                </span>
-                <span style={{ fontSize: 14, color: 'var(--text-muted)' }}>•••</span>
-              </div>
-              
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginTop: 16 }}>
-                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(44px, 4.5vw, 56px)', fontWeight: 600, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em', lineHeight: 1 }}>
-                  100%
-                </h3>
-                <span style={{ 
-                  fontSize: 11.5, 
-                  fontWeight: 700, 
-                  color: 'var(--accent)', 
-                  background: 'rgba(0, 82, 255, 0.08)',
-                  padding: '4px 10px', 
-                  borderRadius: 12,
-                  fontFamily: 'var(--font-mono)'
-                }}>
-                  ↗ SPEC MATCH
-                </span>
-              </div>
-              <span style={{ fontSize: 12, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: 6, display: 'block' }}>
-                FIGMA TO PROTOTYPE
-              </span>
-            </div>
-
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: '1fr 1fr', 
-              borderTop: '1px solid var(--border)', 
-              paddingTop: 20,
-              marginTop: 16,
-              gap: 16 
-            }}>
-              <div>
-                <h4 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 500, color: 'var(--text-primary)', margin: 0 }}>
-                  4.0
-                </h4>
-                <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'var(--font-body)' }}>
-                  Years in UX Design
-                </span>
-              </div>
-              <div>
-                <h4 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 500, color: 'var(--text-primary)', margin: 0 }}>
-                  12+
-                </h4>
-                <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'var(--font-body)' }}>
-                  Shipped Projects
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* CARD B (Top Right): Circle/Pie chart style Quality Distribution */}
-          <div 
-            className="bento-box shadow-card bento-card-b"
-            onClick={() => triggerCatSpeak("This is my designer profile split: 50% Interaction Craft, 30% Ethnographic User Research, and 20% Visual Systems.")}
-            style={{
-              gridColumn: 'span 6',
-              background: 'var(--bg-card)',
-              border: '1.5px solid var(--border)',
-              borderRadius: 24,
-              padding: '28px 32px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              height: 280,
-              cursor: 'pointer',
-              userSelect: 'none'
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
-                ROLE FOCUS / SPECTRUM
-              </span>
-              <span style={{ fontSize: 14, color: 'var(--text-muted)' }}>•••</span>
-            </div>
-
-            {/* Circular visualization resembling Ref Image 1 top right */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 32, margin: '20px 0' }}>
-              <div style={{ position: 'relative', width: 90, height: 90, flexShrink: 0 }}>
-                {/* Big blue circle */}
-                <div style={{ position: 'absolute', top: 0, left: 0, width: 90, height: 90, borderRadius: '50%', background: 'var(--accent)', opacity: 0.85 }} />
-                {/* Overlapping darker circle */}
-                <div style={{ position: 'absolute', top: 15, left: 45, width: 55, height: 55, borderRadius: '50%', background: 'var(--text-primary)', opacity: 0.9 }} />
-                {/* Overlapping grey circle */}
-                <div style={{ position: 'absolute', top: 40, left: 80, width: 35, height: 35, borderRadius: '50%', background: 'var(--text-muted)', opacity: 0.6 }} />
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flexGrow: 1 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12.5 }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)' }}>
-                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent)' }} /> Interaction Craft
-                  </span>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-primary)' }}>50%</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12.5 }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)' }}>
-                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--text-primary)' }} /> User Research
-                  </span>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-primary)' }}>30%</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12.5 }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)' }}>
-                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--text-muted)' }} /> Visual Systems
-                  </span>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-primary)' }}>20%</span>
-                </div>
-              </div>
-            </div>
-
-            <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'var(--font-body)', textAlign: 'left' }}>
-              Hover to examine core capabilities in the toolkit below
-            </span>
-          </div>
-
-          {/* CARD C (Middle): "Cancellations" wide layout style card - DESIGN TOOLKIT */}
-          <div 
-            className="bento-box shadow-card bento-card-c"
-            onMouseEnter={() => setHoveredToolkit(true)}
-            onMouseLeave={() => setHoveredToolkit(false)}
-            style={{
-              gridColumn: 'span 12',
-              background: 'var(--bg-card)',
-              border: '1.5px solid var(--border)',
-              borderRadius: 24,
-              padding: '28px 32px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              position: 'relative',
-              overflow: 'hidden'
-            }}
-          >
+        {/* Header Controls for Notepad desk */}
+        {!isMobile && (
+          <FadeUp delay={160}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
-                01 // DESIGN TOOLKIT slider
+              <span style={{ fontSize: 12.5, color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', fontWeight: 500 }}>
+                {isAligned ? "📍 ALIGNED IN A ROW" : "🍃 SCATTERED MAT (DRAG OR HOVER CARDS)"}
               </span>
-              <span style={{ 
-                fontSize: 8.5, 
-                fontFamily: 'var(--font-mono)', 
-                fontWeight: 700, 
-                color: hoveredToolkit ? '#8e8e93' : 'var(--accent)', 
-                background: hoveredToolkit ? 'rgba(0,0,0,0.04)' : 'rgba(0, 82, 255, 0.06)',
-                padding: '3px 8px',
-                borderRadius: 4,
-                letterSpacing: '0.04em',
-                transition: 'all 0.2s'
-              }}>
-                {hoveredToolkit ? 'PAUSED' : 'AUTO_SCROLL'}
-              </span>
-            </div>
-
-            {/* Horizontal sliding viewport */}
-            <div style={{ width: '100%', overflow: 'hidden', position: 'relative', height: 112 }}>
-              <div style={{
-                display: 'flex',
-                width: '400%',
-                height: '100%',
-                transform: `translateX(-${toolkitIndex * 25}%)`,
-                transition: 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)'
-              }}>
-                {[
-                  { title: 'Product Design', sub: 'Figma to React', icon: <BoxIcon />, text: "Holistic end-to-end design from user research mapping to React/JS front-end logic." },
-                  { title: 'User Research', sub: 'Contextual Inquiry', icon: <SearchIcon />, text: "Ethnographic logs, user interviews, telemetry mapping, and usability testing." },
-                  { title: 'Interaction Design', sub: 'Micro-interactions', icon: <MouseIcon />, text: "Fluid animations, micro-interactions, state transitions, and responsive structures." },
-                  { title: 'UI Design & Systems', sub: 'Figma Spec Systems', icon: <PaintIcon />, text: "High-contrast visual design, custom icon vectors, typography rhythms, and design systems." }
-                ].map((item) => (
-                  <div 
-                    key={item.title}
-                    className="bento-toolkit-slider-item"
-                    onClick={() => triggerCatSpeak(item.text)}
-                    style={{
-                      width: '25%',
-                      height: '100%',
-                      padding: '0 8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      flexShrink: 0
-                    }}
-                  >
-                    <div style={{
-                      width: '100%',
-                      height: '100%',
-                      padding: '20px 24px',
-                      borderRadius: 16,
-                      border: '1.2px solid var(--border)',
-                      background: 'var(--bg-warm)',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 20,
-                      transition: 'all 0.25s',
-                      userSelect: 'none'
-                    }}>
-                      <div className="toolkit-icon-capsule" style={{
-                        width: 44, height: 44, borderRadius: '50%',
-                        background: 'var(--bg-card)',
-                        border: '1.2px solid var(--border)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: 'var(--accent)', flexShrink: 0,
-                        transition: 'all 0.25s'
-                      }}>{item.icon}</div>
-                      
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
-                          {item.title}
-                        </span>
-                        <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: 2, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                          {item.sub}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Bottom selection slider dots */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 12 }}>
-              {[0, 1, 2, 3].map(idx => (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                  (or click the empty mat below)
+                </span>
                 <button
-                  key={idx}
-                  onClick={() => setToolkitIndex(idx)}
+                  onClick={() => setIsAligned(!isAligned)}
                   style={{
-                    width: toolkitIndex === idx ? 16 : 6,
-                    height: 6,
-                    borderRadius: 3,
-                    background: toolkitIndex === idx ? 'var(--accent)' : 'rgba(var(--accent-rgb), 0.15)',
+                    fontSize: 10.5,
+                    fontWeight: 700,
+                    fontFamily: 'var(--font-mono)',
+                    textTransform: 'uppercase',
+                    color: '#ffffff',
+                    background: 'var(--accent)',
                     border: 'none',
+                    borderRadius: 12,
+                    padding: '6px 14px',
                     cursor: 'pointer',
-                    padding: 0,
-                    transition: 'all 0.25s cubic-bezier(0.23, 1, 0.32, 1)',
+                    transition: 'all 0.2s ease',
+                    boxShadow: 'var(--shadow-sm)',
                     outline: 'none'
                   }}
-                />
-              ))}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.03)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)'
+                  }}
+                >
+                  {isAligned ? "Scatter Notes" : "Arrange Horizontally"}
+                </button>
+              </div>
             </div>
-          </div>
+          </FadeUp>
+        )}
 
-          {/* CARD D (Bottom Left): Tall card containing PASSIONS & PLAYGROUND */}
-          <div 
-            className="bento-box shadow-card bento-card-d"
-            style={{
-              gridColumn: 'span 6',
-              height: 480,
-              background: 'var(--bg-card)',
-              border: '1.5px solid var(--border)',
-              borderRadius: 24,
-              padding: '28px 32px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              overflow: 'hidden'
-            }}
-          >
-            <div>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
-                05 // PASSIONS & DRIVE
-              </span>
-              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 500, color: 'var(--text-primary)', margin: '8px 0 0 0', letterSpacing: '-0.015em' }}>
-                Interactive Playground
-              </h3>
-              <p style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'var(--font-body)', marginTop: 4, marginBottom: 12 }}>
-                Figma-to-code components and hobbies. Drag them around!
-              </p>
-            </div>
-
-            {/* Central dragging playground */}
-            <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <PassionsPlayground triggerCatSpeak={triggerCatSpeak} />
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, borderTop: '1px solid var(--border)', paddingTop: 16 }}>
-              <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                FORCE FEEDBACK: ON
-              </span>
-              <button 
-                onClick={() => triggerCatSpeak("I enjoy learning new hobbies, experimenting with WebGL, and building interactive micro-interactions!")}
-                style={{
-                  fontSize: 11,
-                  fontWeight: 600,
-                  color: '#ffffff',
-                  background: 'var(--accent)',
-                  border: 'none',
-                  borderRadius: 8,
-                  padding: '6px 12px',
-                  cursor: 'pointer',
-                  fontFamily: 'var(--font-body)'
-                }}
-              >
-                Learn more
-              </button>
-            </div>
-          </div>
-
-          {/* RIGHT COLUMN container wrapping Card E and F & G */}
-          <div className="bento-card-right-col" style={{
-            gridColumn: 'span 6',
+        {/* ── DRAGGABLE NOTEPAD DESK MAT ── */}
+        <div 
+          ref={deskRef}
+          onClick={(e) => {
+            // Toggles alignment only if user clicks the mat background itself
+            if (e.target === e.currentTarget && !isMobile) {
+              setIsAligned(!isAligned)
+            }
+          }}
+          className="about-desk-mat"
+          style={{
+            position: 'relative',
+            width: '100%',
+            height: (isAligned || isMobile) ? 'auto' : '570px',
+            background: 'var(--bg-card)',
+            backgroundImage: 'radial-gradient(circle, rgba(0, 0, 0, 0.02) 1.2px, transparent 1.2px)',
+            backgroundSize: '20px 20px',
+            border: '1.5px dashed var(--border)',
+            borderRadius: 28,
+            padding: isMobile ? '24px' : '32px',
+            boxSizing: 'border-box',
+            overflow: (isAligned || isMobile) ? 'visible' : 'hidden',
             display: 'flex',
-            flexDirection: 'column',
-            gap: 24,
-            height: 480
-          }}>
+            flexDirection: (isAligned || isMobile) ? 'row' : 'row',
+            flexWrap: (isAligned || isMobile) ? 'wrap' : 'nowrap',
+            justifyContent: 'center',
+            gap: '24px',
+            cursor: (isAligned || isMobile) ? 'default' : 'pointer',
+            userSelect: 'none',
+            transition: 'height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s'
+          }}
+        >
+          {notes.map((item, idx) => {
+            const defaultRotate = item.defaultRotate
+            const targetRotate = (isAligned || isMobile) ? 0 : defaultRotate
             
-            {/* CARD E (Bottom Right Top): "Setup: 4 Tasks" style Blue checklist - STRATEGIC PROCESS */}
-            <div 
-              className="bento-box bento-card-e"
-              style={{
-                background: 'var(--accent)',
-                borderRadius: 24,
-                padding: '24px 28px',
-                display: 'flex',
-                flexDirection: 'column',
-                flexGrow: 1,
-                position: 'relative',
-                color: '#ffffff',
-                boxShadow: '0 12px 30px rgba(0, 82, 255, 0.15)',
-                overflow: 'hidden'
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 700, color: 'rgba(255, 255, 255, 0.7)', letterSpacing: '0.05em' }}>
-                  03 // STRATEGIC PROCESS
-                </span>
-                <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: 'rgba(255, 255, 255, 0.7)' }}>
-                  0{processStep} / 04 TASKS
-                </span>
-              </div>
+            // Layout offsets based on mode
+            const styleStacked = {
+              position: 'absolute',
+              left: item.scatteredLeft,
+              top: item.scatteredTop,
+              width: '290px',
+              height: '380px',
+              rotate: targetRotate,
+              zIndex: 10 + idx,
+              transformOrigin: 'center center'
+            }
 
-              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 500, margin: '0 0 16px 0', letterSpacing: '-0.02em' }}>
-                4 Design Tasks
-              </h3>
+            const styleAligned = {
+              position: 'relative',
+              width: '290px',
+              height: '380px',
+              rotate: 0,
+              zIndex: 1
+            }
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {[
-                  { label: 'Research deeply', num: '01', text: "She maps ethnographic cooking journals before designing a single high-fidelity screen." },
-                  { label: 'Think strategically', num: '02', text: "Every layout connects directly to key product metrics: retention, rating, and adoption." },
-                  { label: 'Design intentionally', num: '03', text: "No generic presets. She uses clear visual indicators to manage cognitive load." },
-                  { label: 'Iterate constantly', num: '04', text: "From early grey paper prototypes to fully working React models, she builds to learn." }
-                ].map((item, index) => {
-                  const isChecked = index + 1 <= processStep;
-                  const isLatest = index + 1 === processStep;
-
-                  return (
-                    <div 
-                      key={item.label}
-                      onClick={() => triggerCatSpeak(item.text)}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '10px 14px',
-                        background: isLatest ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.05)',
-                        border: isLatest ? '1px solid rgba(255, 255, 255, 0.3)' : '1px solid transparent',
-                        borderRadius: 12,
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        opacity: isChecked ? 1 : 0.55
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        {/* Checkmark circle */}
-                        <div style={{
-                          width: 18, height: 18, borderRadius: '50%',
-                          background: isChecked ? '#ffffff' : 'transparent',
-                          border: isChecked ? '1.5px solid #ffffff' : '1.5px solid rgba(255, 255, 255, 0.4)',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          color: 'var(--accent)', fontSize: 10, fontWeight: 800, flexShrink: 0
-                        }}>
-                          {isChecked && '✓'}
-                        </div>
-                        <span style={{ fontSize: 13, fontWeight: 500 }}>{item.label}</span>
-                      </div>
-                      <span style={{ fontSize: 12, opacity: 0.6 }}>→</span>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-
-            {/* CARD F & G: Two small square cards side by side */}
-            <div className="bento-card-fg-row" style={{
-              display: 'flex',
-              gap: 24,
-              height: 140
-            }}>
-              
-              {/* CARD F (Peer Rating) */}
-              <div 
-                className="bento-box shadow-card bento-card-f"
-                onClick={() => triggerCatSpeak("Peers rate me 4.9 out of 5 for collaboration, technical alignment, and visual craft quality.")}
-                style={{
-                  flex: 1,
-                  background: 'var(--bg-card)',
-                  border: '1.5px solid var(--border)',
-                  borderRadius: 24,
-                  padding: '20px 24px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  cursor: 'pointer',
-                  userSelect: 'none'
+            return (
+              <motion.div
+                key={item.id}
+                layout
+                drag={!(isAligned || isMobile)}
+                dragConstraints={deskRef}
+                dragElastic={0.08}
+                dragMomentum={false}
+                style={(isAligned || isMobile) ? styleAligned : styleStacked}
+                onClick={(e) => {
+                  e.stopPropagation() // Don't trigger desk-mat align toggle
+                  triggerCatSpeak(item.desc)
                 }}
-              >
-                <div>
-                  <h4 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 600, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em', lineHeight: 1 }}>
-                    4.9
-                  </h4>
-                  <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', display: 'block', marginTop: 4 }}>
-                    ↗ PEER RATING
-                  </span>
-                </div>
-                <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'var(--font-body)', lineHeight: 1.2 }}>
-                  Collaboration & Craft
-                </span>
-              </div>
-
-              {/* CARD G (Engagement Boost) */}
-              <div 
-                className="bento-box shadow-card bento-card-g"
-                onClick={() => triggerCatSpeak("By designing intuitive and simplified SaaS controls, I help reduce onboarding friction and boost user adoption.")}
-                style={{
-                  flex: 1,
-                  background: 'var(--bg-card)',
-                  border: '1.5px solid var(--border)',
-                  borderRadius: 24,
-                  padding: '20px 24px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  cursor: 'pointer',
-                  userSelect: 'none'
+                whileHover={{
+                  y: -14,
+                  rotate: (isAligned || isMobile) ? 2 : defaultRotate + (idx % 2 === 0 ? 3 : -3),
+                  scale: 1.025,
+                  boxShadow: '0 25px 40px rgba(0, 82, 255, 0.08), 0 10px 20px rgba(0, 0, 0, 0.03)',
+                  zIndex: 100
                 }}
+                whileDrag={{ 
+                  scale: 1.05, 
+                  rotate: 0, 
+                  zIndex: 200, 
+                  boxShadow: '0 30px 60px rgba(0,0,0,0.12)' 
+                }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 220,
+                  damping: 20
+                }}
+                className="about-notepad-card"
               >
-                <div>
-                  <h4 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 600, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em', lineHeight: 1 }}>
-                    80%
-                  </h4>
-                  <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', display: 'block', marginTop: 4 }}>
-                    ↗ USER RETENTION
-                  </span>
+                {/* Custom Colored Binder Stripe with silver coil loop binders */}
+                <div style={{ 
+                  height: '14px', 
+                  background: item.color,
+                  borderBottom: '1.2px solid rgba(0,0,0,0.06)',
+                  borderRadius: '10px 10px 0 0', 
+                  margin: '-20px -20px 20px -20px',
+                  position: 'relative',
+                  zIndex: 10
+                }}>
+                  {/* Binder coils rings */}
+                  <div style={{ display: 'flex', justifyContent: 'space-around', padding: '0 16px', marginTop: '-7px' }}>
+                    {[...Array(6)].map((_, rIdx) => (
+                      <div key={rIdx} style={{
+                        width: '6px',
+                        height: '14px',
+                        background: 'linear-gradient(90deg, #e5e5ea, #c7c7cc, #e5e5ea)',
+                        borderRadius: '3px',
+                        boxShadow: '0 1.5px 3px rgba(0,0,0,0.12)',
+                        border: '0.8px solid rgba(0,0,0,0.06)'
+                      }} />
+                    ))}
+                  </div>
                 </div>
-                <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'var(--font-body)', lineHeight: 1.2 }}>
-                  Reduced friction
-                </span>
-              </div>
 
-            </div>
+                {/* Classic red notebook margin line */}
+                <div className="about-paper-margin" />
 
-          </div>
+                {/* Faint blue notepad lines */}
+                <div className="about-paper-lines">
+                  {/* Header metadata */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', position: 'relative', zIndex: 5 }}>
+                    <span style={{ fontSize: '9px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'rgba(0, 82, 255, 0.5)', background: 'rgba(0,82,255,0.05)', padding: '2px 5px', borderRadius: '4px' }}>
+                      NOTE 0{idx + 1}
+                    </span>
+                    <span style={{ fontSize: '9px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
+                      Bangalore, IN
+                    </span>
+                  </div>
 
+                  {/* Title and Icon */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', position: 'relative', zIndex: 5 }}>
+                    <span style={{ fontSize: '20px' }}>{item.icon}</span>
+                    <h3 style={{
+                      margin: 0,
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '15.5px',
+                      fontWeight: 600,
+                      color: 'var(--text-primary)',
+                      letterSpacing: '-0.015em'
+                    }}>
+                      {item.title}
+                    </h3>
+                  </div>
+
+                  {/* Card specific custom render */}
+                  <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, position: 'relative', zIndex: 5 }}>
+                    {item.render()}
+                  </div>
+                </div>
+              </motion.div>
+            )
+          })}
         </div>
 
       </div>
 
-      {/* Bento Grid styling stylesheets */}
       <style>{`
-        .shadow-card {
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03);
-          transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-        
-        .shadow-card:hover {
-          border-color: rgba(0, 82, 255, 0.2) !important;
-          box-shadow: 0 8px 30px rgba(0, 82, 255, 0.04);
-          transform: translateY(-2px);
-        }
-
-        .bento-toolkit-slider-item > div:hover {
-          border-color: var(--accent) !important;
-          background: var(--bg-card) !important;
-          transform: translateY(-3px);
-          box-shadow: 0 6px 20px rgba(0, 82, 255, 0.06);
-        }
-        .bento-toolkit-slider-item > div:hover .toolkit-icon-capsule {
-          background: var(--accent) !important;
-          color: #ffffff !important;
-          border-color: var(--accent) !important;
+        /* Lined Notepad Paper Card Design */
+        .about-notepad-card {
+          background: #FCFAF5; /* Premium cream lined notebook paper */
+          border: 1px solid rgba(0, 0, 0, 0.06);
+          border-radius: 12px;
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
+          box-sizing: border-box;
+          overflow: hidden;
+          padding: 20px;
+          cursor: grab;
+          display: flex;
+          flex-direction: column;
+          user-select: none;
+          transition: border-color 0.25s, box-shadow 0.25s;
         }
 
-        /* Responsive Bento Grid overrides */
-        @media (max-width: 1023px) {
-          .about-bento-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .bento-card-a, .bento-card-b, .bento-card-c, .bento-card-d, .bento-card-right-col {
-            grid-column: span 12 !important;
-          }
-          .bento-card-right-col {
-            height: auto !important;
-          }
-          .bento-card-d {
-            height: 400px !important;
-          }
-          .bento-card-fg-row {
-            flex-direction: column !important;
-            height: auto !important;
-          }
-          .bento-card-f, .bento-card-g {
-            height: 120px !important;
-          }
+        .about-notepad-card:active {
+          cursor: grabbing;
+        }
+
+        .about-notepad-card:hover {
+          border-color: var(--accent);
+        }
+
+        /* Red margin line */
+        .about-paper-margin {
+          position: absolute;
+          left: 28px;
+          top: 0;
+          bottom: 0;
+          width: 1px;
+          background: rgba(239, 68, 68, 0.35); /* Classic red writing margin */
+          z-index: 2;
+          pointer-events: none;
+        }
+
+        /* Blueprint style faint blue writing lines */
+        .about-paper-lines {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          background-image: linear-gradient(rgba(0, 82, 255, 0.03) 1px, transparent 1px);
+          background-size: 100% 22px;
+          background-position: 0 6px;
+          padding-left: 18px; /* Offset text past the red margin line */
+          box-sizing: border-box;
+          z-index: 3;
+        }
+
+        /* Custom mat hover borders */
+        .about-desk-mat:hover {
+          border-color: rgba(0, 82, 255, 0.25);
+          background-color: rgba(0, 82, 255, 0.005);
         }
       `}</style>
     </section>
