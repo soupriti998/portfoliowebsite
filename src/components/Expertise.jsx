@@ -1,27 +1,102 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { FadeUp, Label } from './utils'
 
 const expertise = [
-  { icon: '⬡', title: 'Product Design', body: 'End-to-end product thinking from concept to shipped feature — balancing user needs, business goals, and technical constraints.' },
-  { icon: '◑', title: 'UX Strategy', body: 'Shaping product direction through research synthesis, opportunity mapping, and outcome-driven design roadmaps.' },
-  { icon: '◎', title: 'User Research', body: 'Qualitative and quantitative methods — interviews, usability tests, behavioral analytics — to ground decisions in real evidence.' },
-  { icon: '⬟', title: 'Interaction Design', body: 'Crafting micro-interactions, spring animations, and state transitions that make digital products feel alive and responsive.' },
-  { icon: '⬤', title: 'Design Systems', body: 'Building scalable, token-driven systems in Figma that empower teams to ship consistently and iterate rapidly at scale.' },
-  { icon: '✦', title: 'AI Experiences', body: 'Designing human-centered AI interfaces — translating complex machine learning models into intuitive, transparent interactions.' },
+  { note: 'Sa', freq: 261.63, title: 'Product Design', body: 'End-to-end product thinking from concept to shipped feature — balancing user needs, business goals, and technical constraints.' },
+  { note: 'Re', freq: 293.66, title: 'UX Strategy', body: 'Shaping product direction through research synthesis, opportunity mapping, and outcome-driven design roadmaps.' },
+  { note: 'Ga', freq: 329.63, title: 'User Research', body: 'Qualitative and quantitative methods — interviews, usability tests, behavioral analytics — to ground decisions in real evidence.' },
+  { note: 'Ma', freq: 349.23, title: 'Interaction Design', body: 'Crafting micro-interactions, spring animations, and state transitions that make digital products feel alive and responsive.' },
+  { note: 'Pa', freq: 392.00, title: 'Design Systems', body: 'Building scalable, token-driven systems in Figma that empower teams to ship consistently and iterate rapidly at scale.' },
+  { note: 'Dha', freq: 440.00, title: 'AI Experiences', body: 'Designing human-centered AI interfaces — translating complex machine learning models into intuitive, transparent interactions.' },
+  { note: 'Ni', freq: 493.88, title: 'Quirky Personality', body: 'I have a quirky, warm personality and easily make friends, bringing positive energy, collaborative laughter, and high-vibe empathy to every product team.' },
 ]
 
-export default function Expertise() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [activeIndex, setActiveIndex] = useState(null)
+let audioCtx = null
 
-  // Use the active index if selected, otherwise fallback to the general section introduction
+function playPianoNote(freq) {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext
+    if (!AudioContext) return
+    if (!audioCtx) {
+      audioCtx = new AudioContext()
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume()
+    }
+
+    const now = audioCtx.currentTime
+
+    // Combine fundamental sine wave with warm triangle harmonic
+    const osc1 = audioCtx.createOscillator()
+    const gain1 = audioCtx.createGain()
+    osc1.type = 'sine'
+    osc1.frequency.setValueAtTime(freq, now)
+    
+    const osc2 = audioCtx.createOscillator()
+    const gain2 = audioCtx.createGain()
+    osc2.type = 'triangle'
+    osc2.frequency.setValueAtTime(freq * 2, now)
+    
+    const masterGain = audioCtx.createGain()
+
+    osc1.connect(gain1)
+    gain1.connect(masterGain)
+    
+    osc2.connect(gain2)
+    gain2.connect(masterGain)
+    
+    masterGain.connect(audioCtx.destination)
+    
+    // Rhodes-like warm electric piano envelope
+    gain1.gain.setValueAtTime(0.28, now)
+    gain1.gain.exponentialRampToValueAtTime(0.008, now + 1.2)
+    
+    gain2.gain.setValueAtTime(0.08, now)
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.8)
+    
+    masterGain.gain.setValueAtTime(1.0, now)
+    masterGain.gain.exponentialRampToValueAtTime(0.01, now + 1.4)
+    
+    osc1.start(now)
+    osc1.stop(now + 1.4)
+    
+    osc2.start(now)
+    osc2.stop(now + 1.4)
+  } catch (e) {
+    console.error("Audio playback failed:", e)
+  }
+}
+
+export default function Expertise() {
+  const [activeIndex, setActiveIndex] = useState(null)
+  const [floatingNotes, setFloatingNotes] = useState([])
+
   const activeItem = activeIndex !== null ? expertise[activeIndex] : {
     title: "What I do really well.",
-    body: "Six craft areas honed across complex consumer IoT, SaaS dashboard architecture, and conversational interfaces. Hover and click the folder to explore each file."
+    body: "Seven craft areas honed across complex consumer IoT, SaaS dashboards, AI interfaces, and personality. Press the piano keys below to play a note and explore each skill!"
   }
 
-  const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }).replace(/,/g, '')
-  const timeStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
+  const triggerNote = (idx) => {
+    setActiveIndex(idx)
+    const item = expertise[idx]
+    
+    // Play warm rhodes synth sound
+    playPianoNote(item.freq)
+
+    // Spawn floating particle
+    const id = Date.now() + Math.random()
+    const newNote = {
+      id,
+      text: item.note,
+      left: `${(idx / 7) * 100 + 7.14}%`, // center on the active key
+    }
+    setFloatingNotes(prev => [...prev, newNote])
+
+    // Cleanup floating note after animation completes
+    setTimeout(() => {
+      setFloatingNotes(prev => prev.filter(n => n.id !== id))
+    }, 1200)
+  }
 
   return (
     <div 
@@ -29,127 +104,288 @@ export default function Expertise() {
       style={{ 
         position: 'relative',
         minHeight: '85vh',
-        background: 'var(--bg-warm)',
+        background: 'var(--bg)',
         display: 'flex',
         alignItems: 'center',
         padding: 'var(--space-10) 0',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        boxSizing: 'border-box'
       }}
       className="expertise-wrapper-container"
     >
-      <div className="container" style={{ position: 'relative', zIndex: 10 }}>
+      {/* Dynamic Floating Particles Container */}
+      <div 
+        className="floating-notes-container"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          zIndex: 99,
+          overflow: 'visible'
+        }}
+      >
+        {floatingNotes.map(n => (
+          <span 
+            key={n.id} 
+            className="floating-note-particle"
+            style={{ 
+              position: 'absolute',
+              left: n.left,
+              bottom: '180px', // starts right above the piano keys
+            }}
+          >
+            🎵 {n.text}
+          </span>
+        ))}
+      </div>
+
+      <div 
+        className="container" 
+        style={{ 
+          position: 'relative', 
+          zIndex: 10,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: 'var(--space-6)',
+          width: '100%',
+          maxWidth: '1200px',
+        }}
+      >
         <FadeUp>
-          <div className="expertise-split-layout">
-            
-            {/* ── LEFT PANEL: DYNAMIC DETAILS ── */}
-            <div className="expertise-left-panel">
-              <Label>Expertise</Label>
-              <div className="active-details-wrapper" key={activeIndex ?? 'default'}>
-                <h2 className="expertise-active-title">
-                  {activeItem.title}
-                </h2>
-                <p className="expertise-active-body">
-                  {activeItem.body}
-                </p>
-              </div>
-            </div>
-
-            {/* ── RIGHT PANEL: THE 3D INTERACTIVE FOLDER ── */}
-            <div className="expertise-right-panel">
-              <div 
-                className={`folder-card-wrapper ${isOpen ? 'is-open' : ''}`}
-                onClick={() => setIsOpen(!isOpen)}
-                onMouseLeave={() => {
-                  setIsOpen(false)
-                  setActiveIndex(null)
-                }}
-              >
-                {/* BACK FLAP */}
-                <div className="folder-back">
-                  <div className="folder-tab" />
-                  <div className="folder-back-main" />
-                </div>
-
-                {/* SLIDING PAPER CHECKLIST */}
-                <div className="folder-paper">
-                  <div className="paper-header">
-                    <div className="paper-date-wrap">
-                      <span>{dateStr}</span>
-                      <span className="paper-time">{timeStr}</span>
-                    </div>
-                    <span>...</span>
-                  </div>
-                  <div className="paper-content">
-                    <div className="paper-subtitle">CRAFT INDEX</div>
-                    
-                    <div className="paper-checklist-flow">
-                      {expertise.map((item, idx) => (
-                        <div 
-                          key={item.title}
-                          className={`paper-checkbox-item ${activeIndex === idx ? 'active' : ''}`}
-                          onMouseEnter={() => setActiveIndex(idx)}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setActiveIndex(idx)
-                          }}
-                        >
-                          <div className="checkbox-box">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                              <path d="M20 6L9 17l-5-5"/>
-                            </svg>
-                          </div>
-                          <span className="paper-item-title">{item.title}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* FRONT FLAP */}
-                <div className="folder-front">
-                  <div className="folder-front-header">
-                     <div className="folder-title-wrap">
-                       <h3>Expertise</h3>
-                       <span className="folder-subtitle">6 notes</span>
-                     </div>
-                     <div className="folder-icons">
-                       <div className="folder-icon-btn">
-                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                       </div>
-                       <div className="folder-icon-btn">
-                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                       </div>
-                     </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-
+          <div style={{ textAlign: 'center', marginBottom: 'var(--space-2)' }}>
+            <Label>Expertise</Label>
+            <h2 style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(28px, 4.5vw, 52px)',
+              fontWeight: 400,
+              letterSpacing: '-0.025em',
+              lineHeight: 1.15,
+              color: 'var(--text-primary)',
+              margin: 'var(--space-2) 0 0 0',
+            }}>
+              What I do really well.
+            </h2>
           </div>
         </FadeUp>
+
+        {/* MIDDLE DISPLAY (Stacked Vertically) */}
+        <div 
+          className="active-note-card-display"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+            maxWidth: '640px',
+            minHeight: '160px',
+            padding: 'var(--space-6)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
+            borderRadius: '24px',
+            boxShadow: 'var(--shadow-sm)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            transition: 'all 0.3s ease',
+            width: '100%',
+            boxSizing: 'border-box',
+            margin: 'var(--space-4) auto'
+          }}
+        >
+          <div 
+            key={activeIndex ?? 'default'} 
+            className="active-details-wrapper"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '12px'
+            }}
+          >
+            {activeIndex !== null && (
+              <div 
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  color: 'var(--accent)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.12em',
+                  background: 'rgba(0, 82, 255, 0.08)',
+                  padding: '4px 12px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(0, 82, 255, 0.15)',
+                  boxShadow: '0 0 12px rgba(0, 82, 255, 0.1)'
+                }}
+              >
+                Note: {expertise[activeIndex].note}
+              </div>
+            )}
+            <h3 
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(20px, 2.8vw, 30px)',
+                fontWeight: 500,
+                color: 'var(--text-primary)',
+                margin: 0,
+                letterSpacing: '-0.015em'
+              }}
+            >
+              {activeItem.title}
+            </h3>
+            <p 
+              style={{
+                fontSize: '15px',
+                lineHeight: 1.6,
+                color: 'var(--text-secondary)',
+                margin: 0,
+                maxWidth: '52ch'
+              }}
+            >
+              {activeItem.body}
+            </p>
+          </div>
+        </div>
+
+        {/* BOTTOM PIANO CONTAINER */}
+        <div 
+          className="piano-container-outer"
+          style={{
+            width: '100%',
+            maxWidth: '680px',
+            margin: '0 auto',
+            background: '#15161a',
+            borderRadius: '16px',
+            padding: '12px 12px 0 12px',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.45), inset 0 2px 4px rgba(255,255,255,0.08), 0 4px 15px rgba(0,0,0,0.3)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            position: 'relative',
+            boxSizing: 'border-box'
+          }}
+        >
+          {/* Wooden Top Frame */}
+          <div 
+            style={{
+              height: '24px',
+              background: 'linear-gradient(to bottom, #2b2d35, #15161a)',
+              borderRadius: '8px 8px 0 0',
+              borderBottom: '2px solid #000000',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'relative'
+            }}
+          >
+            {/* Red Felt Strip */}
+            <div 
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: '4px',
+                background: '#e02424',
+                boxShadow: '0 -1px 3px rgba(0,0,0,0.3)'
+              }}
+            />
+            {/* Branding */}
+            <span 
+              style={{ 
+                fontFamily: 'var(--font-mono)', 
+                fontSize: '9px', 
+                color: 'rgba(255,255,255,0.25)', 
+                letterSpacing: '0.25em',
+                textTransform: 'uppercase' 
+              }}
+            >
+              Saregama-7
+            </span>
+          </div>
+
+          {/* Piano Keys Wrapper */}
+          <div 
+            style={{
+              display: 'flex',
+              background: '#0a0b0d',
+              position: 'relative',
+              borderRadius: '0 0 12px 12px',
+              overflow: 'hidden',
+              paddingBottom: '2px'
+            }}
+          >
+            {expertise.map((item, idx) => {
+              const isActive = activeIndex === idx
+              return (
+                <button
+                  key={item.note}
+                  onClick={() => triggerNote(idx)}
+                  className={`piano-key-btn ${isActive ? 'active' : ''}`}
+                  style={{
+                    flex: 1,
+                    height: '140px',
+                    background: isActive 
+                      ? 'var(--accent)'
+                      : 'linear-gradient(to bottom, #ffffff 0%, #f4f5f7 90%, #e2e5e9 100%)',
+                    border: '1px solid rgba(0,0,0,0.12)',
+                    borderRight: idx === 6 ? '1px solid rgba(0,0,0,0.12)' : 'none',
+                    borderRadius: '0 0 6px 6px',
+                    cursor: 'pointer',
+                    outline: 'none',
+                    position: 'relative',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-end',
+                    alignItems: 'center',
+                    paddingBottom: '14px',
+                    transition: 'all 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
+                    boxShadow: isActive
+                      ? '0 8px 24px rgba(0, 82, 255, 0.3), inset 0 2px 8px rgba(0,0,0,0.2)'
+                      : 'inset 0 -8px 8px rgba(0,0,0,0.06), 0 4px 6px rgba(0,0,0,0.05)',
+                    transformOrigin: 'top center',
+                    transform: isActive ? 'scaleY(0.97) translateY(2px)' : 'none',
+                    userSelect: 'none'
+                  }}
+                >
+                  <span 
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '15px',
+                      fontWeight: 800,
+                      color: isActive ? '#ffffff' : 'rgba(0,0,0,0.65)',
+                      letterSpacing: '-0.02em',
+                      display: 'block',
+                      marginBottom: '2px'
+                    }}
+                  >
+                    {item.note}
+                  </span>
+                  <span 
+                    style={{
+                      fontSize: '8.5px',
+                      fontWeight: 600,
+                      color: isActive ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.4)',
+                      fontFamily: 'var(--font-mono)',
+                      textTransform: 'uppercase',
+                      textAlign: 'center',
+                      lineHeight: 1.1,
+                      maxWidth: '65px',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis'
+                    }}
+                  >
+                    {item.title}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
       </div>
 
       <style>{`
-        /* ── SPLIT LAYOUT ── */
-        .expertise-split-layout {
-          display: grid;
-          grid-template-columns: 1fr 1.2fr;
-          grid-template-areas: "folder details";
-          gap: var(--space-8);
-          align-items: center;
-        }
-
-        .expertise-left-panel {
-          grid-area: details;
-          display: flex;
-          flex-direction: column;
-          gap: var(--space-3);
-          min-height: 280px;
-          justify-content: center;
-          padding-left: var(--space-6);
-        }
-
         .active-details-wrapper {
           animation: detailFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
@@ -159,305 +395,34 @@ export default function Expertise() {
           to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
-        .expertise-active-title {
-          font-family: var(--font-display);
-          font-size: clamp(28px, 3.2vw, 42px);
-          font-weight: 400;
-          letter-spacing: -0.025em;
-          line-height: 1.15;
-          color: var(--text-primary);
-          margin: var(--space-2) 0;
+        @keyframes floatUp {
+          0% {
+            transform: translate(-50%, 0) scale(0.8);
+            opacity: 0;
+          }
+          15% {
+            opacity: 1;
+            transform: translate(-50%, -20px) scale(1.1);
+          }
+          100% {
+            transform: translate(-50%, -160px) scale(0.9);
+            opacity: 0;
+          }
         }
 
-        .expertise-active-body {
-          font-size: 16px;
-          line-height: 1.7;
-          color: var(--text-secondary);
-          max-width: 48ch;
-          margin: 0;
-        }
-
-        .expertise-right-panel {
-          grid-area: folder;
-          display: flex;
-          justify-content: flex-start;
-          align-items: center;
-        }
-
-        /* ── FOLDER CARD CSS (RIGHT-ALIGNED) ── */
-        .folder-card-wrapper {
-          position: relative;
-          width: 320px;
-          height: 380px;
-          flex-shrink: 0;
-          cursor: pointer;
-          will-change: transform, width;
-          perspective: 1200px;
-          animation: folderFloat 6s ease-in-out infinite;
-          transition: transform 0.65s cubic-bezier(0.19, 1, 0.22, 1), width 0.65s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-
-        @keyframes folderFloat {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-8px); }
-        }
-
-        /* FOLDER BACK */
-        .folder-back {
-          position: absolute;
-          top: 0; left: 0;
-          width: 320px;
-          height: 380px;
-          z-index: 1;
-        }
-
-        .folder-tab {
-          width: 140px;
-          height: 32px;
-          background: linear-gradient(135deg, #4F59F7, #262BDE);
-          border-radius: 16px 16px 0 0;
-          position: absolute;
-          top: 0; left: 0;
-        }
-
-        .folder-back-main {
-          width: 320px;
-          height: calc(380px - 32px);
-          background: linear-gradient(135deg, #4A55F7, #1E22A8);
-          border-radius: 0 16px 16px 16px;
-          position: absolute;
-          top: 32px; left: 0;
-          box-shadow: inset 0 2px 20px rgba(0,0,0,0.15);
-        }
-
-        /* FOLDER FRONT */
-        .folder-front {
-          position: absolute;
-          top: 32px; left: 0;
-          width: 320px;
-          height: calc(380px - 32px);
-          background: linear-gradient(135deg, #626CFF, #3238FF);
-          border-radius: 0 16px 16px 16px;
-          z-index: 3;
-          padding: 24px;
-          box-sizing: border-box;
-          color: #fff;
-          box-shadow: 0 -4px 15px rgba(0,0,0,0.1), inset 0 1px 1px rgba(255,255,255,0.25);
-          transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-          transform-origin: bottom center;
-        }
-
-        .folder-card-wrapper:hover .folder-front,
-        .folder-card-wrapper.is-open .folder-front {
-          transform: rotateX(-8deg) translateY(4px);
-          box-shadow: 0 10px 25px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.3);
-        }
-
-        .folder-title-wrap h3 {
-          margin: 0 0 6px 0;
-          font-family: var(--font-display);
-          font-size: 22px;
-          font-weight: 500;
-          letter-spacing: -0.01em;
-        }
-
-        .folder-subtitle {
+        .floating-note-particle {
+          font-family: var(--font-mono);
           font-size: 13px;
-          opacity: 0.8;
-          font-family: var(--font-body);
-        }
-
-        .folder-front-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-        }
-
-        .folder-icons {
-          display: flex;
-          gap: 12px;
-          opacity: 0.9;
-          font-size: 18px;
-        }
-        
-        .folder-icon-btn {
-          width: 24px; height: 24px;
-          display: flex; align-items: center; justify-content: center;
-          border-radius: 50%;
-          background: rgba(255,255,255,0.15);
-          backdrop-filter: blur(4px);
-        }
-
-        /* THE PAPER (Slides to the right) */
-        .folder-paper {
-          position: absolute;
-          top: 40px; 
-          left: 10px;
-          width: 300px;
-          height: calc(380px - 50px);
-          background: #fdfdfd;
-          border-radius: 12px;
-          z-index: 2;
-          box-sizing: border-box;
-          padding: 20px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-          transition: all 0.65s cubic-bezier(0.19, 1, 0.22, 1);
-          border: 1px solid rgba(0,0,0,0.05);
-          display: flex;
-          flex-direction: column;
-          overflow: hidden; /* Fix: prevents bottom-peek spill when folder is closed */
-        }
-
-        /* Peek on hover */
-        .folder-card-wrapper:hover:not(.is-open) .folder-paper {
-          transform: translateY(-46px);
-          box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-        }
-
-        /* Slide out to the RIGHT on click */
-        .folder-card-wrapper.is-open {
-          width: 630px;
-        }
-
-        .folder-card-wrapper.is-open .folder-paper {
-          transform: translateX(310px) translateY(-10px);
-          box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-          z-index: 4;
-          height: calc(380px - 10px);
-        }
-
-        /* Paper Content */
-        .paper-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 20px;
-          font-family: var(--font-mono);
-          font-size: 11px;
-          color: #888;
-        }
-
-        .paper-date-wrap {
-          display: flex;
-          gap: 8px;
-          align-items: center;
-        }
-
-        .paper-time {
-          background: #f0f0f0;
-          padding: 3px 6px;
-          border-radius: 6px;
-          color: #555;
-          font-weight: 600;
-        }
-
-        .paper-subtitle {
-          font-family: var(--font-mono);
-          font-size: 10px;
           font-weight: 700;
-          letter-spacing: 0.05em;
-          color: #111;
-          margin-bottom: 12px;
-        }
-
-        .paper-checklist-flow {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-
-        .paper-checkbox-item {
-          display: flex;
-          gap: 12px;
-          align-items: center;
-          padding: 6px 8px;
-          border-radius: 8px;
-          transition: all 0.2s ease;
-          cursor: pointer;
-        }
-
-        .paper-checkbox-item:hover,
-        .paper-checkbox-item.active {
-          background: rgba(0, 82, 255, 0.05);
-        }
-
-        .paper-checkbox-item.active .paper-item-title {
-          color: var(--accent);
-          font-weight: 600;
-        }
-
-        .checkbox-box {
-          width: 16px;
-          height: 16px;
-          border-radius: 4px;
-          border: 1px solid rgba(0, 82, 255, 0.15);
-          background: rgba(0, 82, 255, 0.03);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: rgba(0, 82, 255, 0.3);
-          transition: all 0.2s ease;
-          flex-shrink: 0;
-        }
-
-        .checkbox-box svg {
-          width: 10px;
-          height: 10px;
-          opacity: 0.7;
-        }
-
-        .paper-checkbox-item.active .checkbox-box {
-          border-color: var(--accent);
+          color: #ffffff;
           background: var(--accent);
-          color: white;
-          box-shadow: 0 0 8px rgba(0, 82, 255, 0.3);
-        }
-        
-        .paper-checkbox-item.active .checkbox-box svg {
-          opacity: 1;
-        }
-
-        .paper-item-title {
-          font-size: 13.5px;
-          color: #444;
-          transition: color 0.2s;
-        }
-
-        /* ── RESPONSIVE MOBILE ADJUSTMENTS ── */
-        @media (max-width: 900px) {
-          .expertise-wrapper-container {
-            padding: var(--space-8) 0 !important;
-          }
-
-          .expertise-split-layout {
-            grid-template-columns: 1fr;
-            grid-template-areas: 
-              "details"
-              "folder";
-            gap: var(--space-8);
-          }
-
-          .expertise-left-panel {
-            min-height: auto;
-            padding-left: 0;
-          }
-
-          .expertise-right-panel {
-            justify-content: center;
-          }
-
-          .folder-card-wrapper.is-open {
-            height: 700px;
-            width: 320px;
-          }
-
-          .folder-card-wrapper.is-open .folder-paper {
-            transform: translateY(350px) translateX(0);
-            height: 280px;
-          }
+          padding: 6px 12px;
+          border-radius: 20px;
+          box-shadow: 0 4px 15px rgba(0, 82, 255, 0.4);
+          animation: floatUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          white-space: nowrap;
         }
       `}</style>
     </div>
   )
 }
-
