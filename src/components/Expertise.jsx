@@ -72,7 +72,7 @@ export default function Expertise() {
   const [floatingNotes, setFloatingNotes] = useState([])
 
   const activeItem = activeIndex !== null ? expertise[activeIndex] : {
-    title: "What I do really well.",
+    title: "Craft & Capabilities",
     body: "Seven craft areas honed across complex consumer IoT, SaaS dashboards, AI interfaces, and personality. Press the piano keys below to play a note and explore each skill!"
   }
 
@@ -104,7 +104,9 @@ export default function Expertise() {
       style={{ 
         position: 'relative',
         minHeight: '85vh',
-        background: 'var(--bg)',
+        background: 'var(--bg-warm)',
+        borderTop: '1px solid var(--border)',
+        borderBottom: '1px solid var(--border)',
         display: 'flex',
         alignItems: 'center',
         padding: 'var(--space-10) 0',
