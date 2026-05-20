@@ -1137,6 +1137,7 @@ export default function DynamicNotch({ activeProject }) {
           boxShadow: (hovered && notchState === 'compact') ? hoverShadow : glowShadow,
           zIndex: 999999,
           overflow: 'hidden',
+          boxSizing: 'border-box',
           transition: isDocked ? 'none' : 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.1s ease-out, left 0.5s cubic-bezier(0.16, 1, 0.3, 1), right 0.5s cubic-bezier(0.16, 1, 0.3, 1), width 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
           animation: isFullyDocked ? 'floatDock 4s ease-in-out infinite' : 'none',
           display: 'flex',
@@ -1211,7 +1212,8 @@ export default function DynamicNotch({ activeProject }) {
           return (
             <div 
               style={{
-                width: '100%',
+                width: isFloatingPill ? 'max-content' : '100%',
+                boxSizing: 'border-box',
                 height: '100%',
                 display: 'flex',
                 flexDirection: isFullyDocked ? 'column' : 'row',
