@@ -1,6 +1,64 @@
 import { useState, useEffect, useRef } from 'react'
 import { FadeUp, Label } from './utils'
 
+const BOOK_FREQS = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88] // Sa, Re, Ga, Ma, Pa, Dha, Ni (ascending)
+
+let audioCtx = null
+
+function playPianoNote(freq) {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext
+    if (!AudioContext) return
+    if (!audioCtx) {
+      audioCtx = new AudioContext()
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume()
+    }
+
+    const now = audioCtx.currentTime
+
+    // Combine fundamental sine wave with warm triangle harmonic
+    const osc1 = audioCtx.createOscillator()
+    const gain1 = audioCtx.createGain()
+    osc1.type = 'sine'
+    osc1.frequency.setValueAtTime(freq, now)
+    
+    const osc2 = audioCtx.createOscillator()
+    const gain2 = audioCtx.createGain()
+    osc2.type = 'triangle'
+    osc2.frequency.setValueAtTime(freq * 2, now)
+    
+    const masterGain = audioCtx.createGain()
+
+    osc1.connect(gain1)
+    gain1.connect(masterGain)
+    
+    osc2.connect(gain2)
+    gain2.connect(masterGain)
+    
+    masterGain.connect(audioCtx.destination)
+    
+    // Rhodes-like warm electric piano envelope
+    gain1.gain.setValueAtTime(0.28, now)
+    gain1.gain.exponentialRampToValueAtTime(0.008, now + 1.2)
+    
+    gain2.gain.setValueAtTime(0.08, now)
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.8)
+    
+    masterGain.gain.setValueAtTime(1.0, now)
+    masterGain.gain.exponentialRampToValueAtTime(0.01, now + 1.4)
+    
+    osc1.start(now)
+    osc1.stop(now + 1.4)
+    
+    osc2.start(now)
+    osc2.stop(now + 1.4)
+  } catch (e) {
+    console.error("Audio playback failed:", e)
+  }
+}
+
 /* ── Cozy Case Study Data Database ── */
 const PROJECTS = [
   {
@@ -746,7 +804,12 @@ export default function Projects({ activeProject, setActiveProject }) {
                       key={p.id}
                       project={p}
                       isHovered={isHovered}
-                      onHover={() => setActiveProjIndex(i)}
+                      onHover={() => {
+                        if (activeProjIndex !== i) {
+                          setActiveProjIndex(i)
+                          playPianoNote(BOOK_FREQS[i])
+                        }
+                      }}
                       onClick={() => setActiveProject(p)}
                     />
                   )
