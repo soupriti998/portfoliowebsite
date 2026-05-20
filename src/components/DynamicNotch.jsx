@@ -572,45 +572,53 @@ const playSound = (type) => {
       osc.start(now)
       osc.stop(now + 0.08)
     } else if (type === 'chord') {
-      const notes = [261.63, 329.63, 392.00, 493.88] // Sa, Ga, Pa, Ni (Cmaj7 arpeggiated chord)
-      notes.forEach((freq, idx) => {
-        const timeDelay = idx * 0.07 // Rolled arpeggio delay
-        const startTime = now + timeDelay
+      // Voicing mimicking the deep, resonant Mac Startup Chime
+      // Stacking C major notes with low bass notes and mid-high extensions
+      const notes = [
+        { freq: 65.41, delay: 0.0, type: 'sawtooth', detune: -4, gain: 0.22, decay: 4.5 },  // C2 (deep bass foundation)
+        { freq: 130.81, delay: 0.02, type: 'sawtooth', detune: 4, gain: 0.25, decay: 4.2 }, // C3 (tenor warmth)
+        { freq: 196.00, delay: 0.04, type: 'sine', detune: 0, gain: 0.25, decay: 3.8 },     // G3 (fifth anchor)
+        { freq: 261.63, delay: 0.06, type: 'triangle', detune: -2, gain: 0.20, decay: 3.5 }, // C4 (middle C)
+        { freq: 329.63, delay: 0.08, type: 'triangle', detune: 2, gain: 0.18, decay: 3.2 },  // E4 (warm major third)
+        { freq: 392.00, delay: 0.10, type: 'sine', detune: 0, gain: 0.18, decay: 3.0 },     // G4 (bright fifth)
+        { freq: 523.25, delay: 0.12, type: 'sine', detune: 3, gain: 0.12, decay: 2.8 }      // C5 (sparkle top note)
+      ]
+
+      // Filter to cut harshness and create an analog sweeping feel
+      const filter = ctx.createBiquadFilter()
+      filter.type = 'lowpass'
+      filter.frequency.setValueAtTime(1200, now)
+      filter.frequency.exponentialRampToValueAtTime(280, now + 3.8)
+
+      // Master gain node for smooth fadeout
+      const masterGain = ctx.createGain()
+      masterGain.gain.setValueAtTime(0.85, now)
+      masterGain.gain.exponentialRampToValueAtTime(0.001, now + 4.5)
+
+      filter.connect(masterGain)
+      masterGain.connect(ctx.destination)
+
+      notes.forEach((n) => {
+        const startTime = now + n.delay
         
-        const osc1 = ctx.createOscillator()
-        const gain1 = ctx.createGain()
-        osc1.type = 'sine'
-        osc1.frequency.setValueAtTime(freq, startTime)
-        
-        const osc2 = ctx.createOscillator()
-        const gain2 = ctx.createGain()
-        osc2.type = 'triangle'
-        osc2.frequency.setValueAtTime(freq * 2, startTime)
-        
+        const osc = ctx.createOscillator()
         const voiceGain = ctx.createGain()
         
-        osc1.connect(gain1)
-        gain1.connect(voiceGain)
-        
-        osc2.connect(gain2)
-        gain2.connect(voiceGain)
-        
-        voiceGain.connect(ctx.destination)
-        
-        gain1.gain.setValueAtTime(0.18, startTime)
-        gain1.gain.exponentialRampToValueAtTime(0.005, startTime + 1.2)
-        
-        gain2.gain.setValueAtTime(0.05, startTime)
-        gain2.gain.exponentialRampToValueAtTime(0.001, startTime + 0.8)
-        
-        voiceGain.gain.setValueAtTime(0.8, startTime)
-        voiceGain.gain.exponentialRampToValueAtTime(0.01, startTime + 1.4)
-        
-        osc1.start(startTime)
-        osc1.stop(startTime + 1.4)
-        
-        osc2.start(startTime)
-        osc2.stop(startTime + 1.4)
+        osc.type = n.type
+        osc.frequency.setValueAtTime(n.freq, startTime)
+        if (n.detune) {
+          osc.detune.setValueAtTime(n.detune, startTime)
+        }
+
+        osc.connect(voiceGain)
+        voiceGain.connect(filter)
+
+        // Envelope for this voice
+        voiceGain.gain.setValueAtTime(n.gain, startTime)
+        voiceGain.gain.exponentialRampToValueAtTime(0.001, startTime + n.decay)
+
+        osc.start(startTime)
+        osc.stop(startTime + n.decay + 0.1)
       })
     }
   } catch (e) {
