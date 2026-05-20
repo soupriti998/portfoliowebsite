@@ -204,25 +204,6 @@ export default function Expertise() {
               gap: '12px'
             }}
           >
-            {activeIndex !== null && (
-              <div 
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  color: 'var(--accent)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.12em',
-                  background: 'rgba(0, 82, 255, 0.08)',
-                  padding: '4px 12px',
-                  borderRadius: '12px',
-                  border: '1px solid rgba(0, 82, 255, 0.15)',
-                  boxShadow: '0 0 12px rgba(0, 82, 255, 0.1)'
-                }}
-              >
-                Note: {expertise[activeIndex].note}
-              </div>
-            )}
             <h3 
               style={{
                 fontFamily: 'var(--font-display)',
@@ -290,18 +271,6 @@ export default function Expertise() {
                 boxShadow: '0 -1px 3px rgba(0,0,0,0.3)'
               }}
             />
-            {/* Branding */}
-            <span 
-              style={{ 
-                fontFamily: 'var(--font-mono)', 
-                fontSize: '9px', 
-                color: 'rgba(255,255,255,0.25)', 
-                letterSpacing: '0.25em',
-                textTransform: 'uppercase' 
-              }}
-            >
-              Saregama-7
-            </span>
           </div>
 
           {/* Piano Keys Wrapper */}
@@ -335,10 +304,8 @@ export default function Expertise() {
                     outline: 'none',
                     position: 'relative',
                     display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'flex-end',
                     alignItems: 'center',
-                    paddingBottom: '14px',
+                    justifyContent: 'center',
                     transition: 'all 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
                     boxShadow: isActive
                       ? '0 8px 24px rgba(0, 82, 255, 0.3), inset 0 2px 8px rgba(0,0,0,0.2)'
@@ -351,32 +318,14 @@ export default function Expertise() {
                   <span 
                     style={{
                       fontFamily: 'var(--font-mono)',
-                      fontSize: '15px',
+                      fontSize: '18px',
                       fontWeight: 800,
                       color: isActive ? '#ffffff' : 'rgba(0,0,0,0.65)',
                       letterSpacing: '-0.02em',
-                      display: 'block',
-                      marginBottom: '2px'
+                      display: 'block'
                     }}
                   >
                     {item.note}
-                  </span>
-                  <span 
-                    style={{
-                      fontSize: '8.5px',
-                      fontWeight: 600,
-                      color: isActive ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.4)',
-                      fontFamily: 'var(--font-mono)',
-                      textTransform: 'uppercase',
-                      textAlign: 'center',
-                      lineHeight: 1.1,
-                      maxWidth: '65px',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis'
-                    }}
-                  >
-                    {item.title}
                   </span>
                 </button>
               )
