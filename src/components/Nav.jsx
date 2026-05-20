@@ -13,6 +13,8 @@ const menuItems = [
 export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [visible, setVisible] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
   const menuRef = useRef(null)
 
   // ── Light/Dark Mode Initialization ──
@@ -30,14 +32,24 @@ export default function Nav() {
     localStorage.setItem('theme', theme)
   }, [theme])
 
-  // ── Track scrolling for header styling ──
+  // ── Track scrolling for header styling and show/hide direction ──
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20)
+      const currentScrollY = window.scrollY
+      setScrolled(currentScrollY > 20)
+
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scrolling down -> Hide navbar
+        setVisible(false)
+      } else {
+        // Scrolling up -> Show navbar
+        setVisible(true)
+      }
+      setLastScrollY(currentScrollY)
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [lastScrollY])
 
   // ── Click outside to close dropdown ──
   useEffect(() => {
@@ -79,7 +91,8 @@ export default function Nav() {
           borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent',
           backdropFilter: scrolled ? 'blur(20px)' : 'none',
           WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'none',
-          transition: 'all 0.3s var(--ease-out-expo)',
+          transition: 'transform 0.4s var(--ease-out-expo), padding 0.3s var(--ease-out-expo), background 0.3s, border-bottom 0.3s, backdrop-filter 0.3s',
+          transform: (visible || menuOpen) ? 'translateY(0)' : 'translateY(-100%)',
         }}
       >
         <div 

@@ -38,14 +38,7 @@ const StatusHUDIcon = ({ state, theme }) => {
     // Dotted orbit ring + pulsating core matching thinking state
     return (
       <div className="breathing-circle-logo" style={{ position: 'relative', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{
-          position: 'absolute',
-          width: 16, height: 16,
-          borderRadius: '50%',
-          border: `1.5px dashed ${pinkGlow}`,
-          animation: 'spinOrbit 2s linear infinite',
-          opacity: 0.8
-        }} />
+
         <div style={{
           width: 6, height: 6,
           borderRadius: '50%',
@@ -1287,7 +1280,7 @@ export default function DynamicNotch({ activeProject }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: accentColor, boxShadow: `0 0 6px ${accentColor}`, animation: 'speakPulse 1.2s infinite' }} />
                 <span style={{ fontSize: 12, fontFamily: 'var(--font-body)', fontWeight: 600, color: textColor }}>
-                  {notchState === 'chat' ? "soup chat" : (notchState === 'jdMatch' ? "match scanner" : "voice companion")}
+                  {notchState === 'chat' ? "soup" : (notchState === 'jdMatch' ? "match scanner" : "voice companion")}
                 </span>
               </div>
               
