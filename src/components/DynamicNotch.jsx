@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 
 const DIMS = {
-  compact: { width: 440, height: 46, radius: 23 },
+  compact: { width: 308, height: 46, radius: 23 },
   expanded: { width: 500, height: 320, radius: 24 }, 
   chat: { width: 480, height: 520, radius: 25 },
   voice: { width: 480, height: 380, radius: 25 },
