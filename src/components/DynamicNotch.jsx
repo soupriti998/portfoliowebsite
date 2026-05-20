@@ -1124,7 +1124,7 @@ export default function DynamicNotch({ activeProject }) {
           left: isFloatingPill ? 'auto' : finalLeft,
           right: isFloatingPill ? `${rightSpacing}px` : 'auto',
           transform: `${isFloatingPill ? floatingTransform : finalTransformScale} translateY(${translateY}px)`,
-          width: isFloatingPill ? 'max-content' : finalWidth,
+          width: finalWidth,
           height: finalHeight,
           borderBottomLeftRadius: finalRadiusBottom,
           borderBottomRightRadius: finalRadiusBottom,
@@ -1212,8 +1212,7 @@ export default function DynamicNotch({ activeProject }) {
           return (
             <div 
               style={{
-                width: isFloatingPill ? 'max-content' : '100%',
-                boxSizing: 'border-box',
+                width: '100%',
                 height: '100%',
                 display: 'flex',
                 flexDirection: isFullyDocked ? 'column' : 'row',
