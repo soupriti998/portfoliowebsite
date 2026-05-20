@@ -1041,12 +1041,12 @@ export default function DynamicNotch({ activeProject }) {
 
   // Colors & Aesthetic Tokens (Forced dark & pink aesthetic for chatbot notch companion)
   const isDark = true
-  const bgColor = 'rgba(15, 15, 20, 0.65)' // Frosted liquid glass base
+  const bgColor = 'rgba(16, 16, 20, 0.85)' // Darker frosted liquid glass base
   const textColor = '#ffffff'
-  const subtextColor = '#a8acb3'
+  const subtextColor = '#f1f5f9' // Very bright gray/white for high visibility
   const accentColor = '#FF4DA6' // Glowing Pink
-  const borderTint = 'rgba(255, 255, 255, 0.12)' // Clean glass outline
-  const glowShadow = '0 12px 40px rgba(0, 0, 0, 0.35), inset 0 1.5px 2px rgba(255, 255, 255, 0.16), inset 0 -1.5px 2px rgba(0, 0, 0, 0.5), 0 0 12px rgba(255, 77, 166, 0.08)'
+  const borderTint = 'rgba(255, 255, 255, 0.22)' // Sharp glass outline
+  const glowShadow = '0 16px 40px rgba(0, 0, 0, 0.6), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.25), inset 0 -1.5px 1.5px rgba(0, 0, 0, 0.7), 0 0 16px rgba(255, 77, 166, 0.12)'
 
   // -- INTERPOLATION LOGIC --
   const isDocked = dockRect && scrollProgress < 1
@@ -1096,7 +1096,7 @@ export default function DynamicNotch({ activeProject }) {
   // Add floating animation if fully docked
   const isFullyDocked = p === 0
 
-  const hoverShadow = '0 16px 48px rgba(0, 0, 0, 0.45), inset 0 1.5px 2px rgba(255, 255, 255, 0.25), inset 0 -1.5px 2px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 77, 166, 0.15)'
+  const hoverShadow = '0 20px 48px rgba(0, 0, 0, 0.65), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.35), inset 0 -1.5px 1.5px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 77, 166, 0.18)'
 
   const finalTransformScale = notchState === 'compact' && p === 1
     ? `translateX(-50%) scaleX(${(1 + scrollVelocity * 0.04) * (hovered ? 1.03 : 1)}) scaleY(${(1 - scrollVelocity * 0.02) * (hovered ? 1.03 : 1)})`
@@ -1121,16 +1121,18 @@ export default function DynamicNotch({ activeProject }) {
         style={{
           position: 'fixed',
           top: finalTop,
-          left: isFloatingPill ? 'auto' : finalLeft,
-          right: isFloatingPill ? `${rightSpacing}px` : 'auto',
-          transform: `${isFloatingPill ? floatingTransform : finalTransformScale} translateY(${translateY}px)`,
+          left: isDocked ? finalLeft : 'auto',
+          right: isDocked ? 'auto' : `${rightSpacing}px`,
+          transform: isDocked
+            ? `${finalTransformScale} translateY(${translateY}px)`
+            : `${isFloatingPill ? floatingTransform : 'scale(1)'} translateY(${translateY}px)`,
           width: isFloatingPill ? 'max-content' : finalWidth,
           height: finalHeight,
           borderBottomLeftRadius: finalRadiusBottom,
           borderBottomRightRadius: finalRadiusBottom,
           borderTopLeftRadius: finalRadiusTop,
           borderTopRightRadius: finalRadiusTop,
-          background: 'linear-gradient(135deg, rgba(24, 24, 30, 0.55) 0%, rgba(12, 12, 16, 0.7) 100%)',
+          background: 'linear-gradient(135deg, rgba(20, 20, 25, 0.88) 0%, rgba(10, 10, 15, 0.93) 100%)',
           border: `1.2px solid ${borderTint}`,
           backdropFilter: 'blur(24px) saturate(190%)',
           WebkitBackdropFilter: 'blur(24px) saturate(190%)',
@@ -1257,6 +1259,7 @@ export default function DynamicNotch({ activeProject }) {
                   letterSpacing: isFullyDocked ? '-0.02em' : '-0.01em',
                   textTransform: 'none',
                   whiteSpace: isFullyDocked ? 'normal' : 'nowrap',
+                  textShadow: '0 1px 3px rgba(0, 0, 0, 0.75)',
                 }}>
                   {isFullyDocked ? "Hi, this is Soup." : hud.text}
                 </span>
@@ -1269,7 +1272,8 @@ export default function DynamicNotch({ activeProject }) {
                       color: subtextColor,
                       maxWidth: '42ch',
                       lineHeight: 1.5,
-                      opacity: 0.85,
+                      opacity: 0.95,
+                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.6)',
                     }}>
                       I can help you sniff around and see if Soupriti’s the kind of designer your team has been looking for.
                     </span>
@@ -1278,9 +1282,10 @@ export default function DynamicNotch({ activeProject }) {
                       fontFamily: 'var(--font-mono)',
                       color: accentColor,
                       marginTop: 8,
-                      opacity: 0.9,
+                      opacity: 0.95,
                       letterSpacing: '0.02em',
                       fontWeight: 600,
+                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.6)',
                     }}>
                       Press Ctrl + L to start talking.
                     </span>
@@ -1293,18 +1298,19 @@ export default function DynamicNotch({ activeProject }) {
                   marginLeft: 20,
                   padding: '4px 10px',
                   borderRadius: 8,
-                  background: 'rgba(255, 77, 166, 0.12)',
-                  border: '1px solid rgba(255, 77, 166, 0.3)',
-                  color: accentColor,
+                  background: 'rgba(255, 77, 166, 0.18)',
+                  border: '1.2px solid rgba(255, 77, 166, 0.5)',
+                  color: '#ffffff',
                   fontSize: 10,
-                  fontWeight: 600,
+                  fontWeight: 700,
                   fontFamily: 'var(--font-mono)',
                   textTransform: 'uppercase',
                   letterSpacing: '0.04em',
                   whiteSpace: 'nowrap',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  boxShadow: '0 0 8px rgba(255, 77, 166, 0.1)',
+                  boxShadow: '0 2px 8px rgba(255, 77, 166, 0.25)',
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
                 }}>
                   press ctrl + l
                 </div>
