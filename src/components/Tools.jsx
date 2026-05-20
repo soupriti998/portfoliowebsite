@@ -101,6 +101,71 @@ const tools = [
   },
 ]
 
+let audioCtx = null
+
+const playCardChord = (cardIndex) => {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext
+    if (!AudioContext) return
+    if (!audioCtx) {
+      audioCtx = new AudioContext()
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume()
+    }
+
+    const now = audioCtx.currentTime
+
+    // Ascending roots for 8 cards: C3 (Sa), D3 (Re), E3 (Ga), F3 (Ma), G3 (Pa), A3 (Dha), B3 (Ni), C4 (Sa)
+    const roots = [130.81, 146.83, 164.81, 174.61, 196.00, 220.00, 246.94, 261.63]
+    const root = roots[cardIndex]
+
+    // Create a rolled major triad + octave chord arpeggio
+    const notes = [
+      root,
+      root * 1.25, // Major 3rd
+      root * 1.5,  // Perfect 5th
+      root * 2.0   // Octave sparkle
+    ]
+
+    notes.forEach((freq, idx) => {
+      const delayTime = idx * 0.065 // rolled arpeggio delay
+      const startT = now + delayTime
+
+      const osc1 = audioCtx.createOscillator()
+      const osc2 = audioCtx.createOscillator()
+      const gainNode = audioCtx.createGain()
+
+      osc1.type = 'triangle'
+      osc1.frequency.setValueAtTime(freq, startT)
+
+      osc2.type = 'sine'
+      osc2.frequency.setValueAtTime(freq * 2, startT) // high harmonic shimmer
+
+      const filter = audioCtx.createBiquadFilter()
+      filter.type = 'lowpass'
+      filter.frequency.setValueAtTime(800, startT)
+      filter.frequency.exponentialRampToValueAtTime(150, startT + 1.1)
+
+      gainNode.gain.setValueAtTime(0.0, now)
+      gainNode.gain.setValueAtTime(0.09, startT) // sound envelope
+      gainNode.gain.exponentialRampToValueAtTime(0.001, startT + 1.1) // decay duration
+
+      osc1.connect(filter)
+      osc2.connect(filter)
+      filter.connect(gainNode)
+      gainNode.connect(audioCtx.destination)
+
+      osc1.start(startT)
+      osc2.start(startT)
+      osc1.stop(startT + 1.2)
+      osc2.stop(startT + 1.2)
+    })
+  } catch (e) {
+    console.error("Piano card chord failed:", e)
+  }
+}
+
 export default function Tools() {
   const containerRef = useRef(null)
   const [isMobile, setIsMobile] = useState(false)
@@ -228,7 +293,10 @@ export default function Tools() {
                   transition: 'margin-left 0.3s ease',
                   marginBottom: isMobile ? 'var(--space-5)' : '0',
                 }}
-                onMouseEnter={() => setHoveredIndex(i)}
+                onMouseEnter={() => {
+                  setHoveredIndex(i)
+                  playCardChord(i)
+                }}
                 onMouseLeave={() => setHoveredIndex(null)}
               >
                 <motion.div
