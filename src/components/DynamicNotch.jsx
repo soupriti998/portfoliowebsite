@@ -1041,12 +1041,12 @@ export default function DynamicNotch({ activeProject }) {
 
   // Colors & Aesthetic Tokens (Forced dark & pink aesthetic for chatbot notch companion)
   const isDark = true
-  const bgColor = 'rgba(10, 10, 12, 0.95)'
+  const bgColor = 'rgba(15, 15, 20, 0.65)' // Frosted liquid glass base
   const textColor = '#ffffff'
   const subtextColor = '#a8acb3'
   const accentColor = '#FF4DA6' // Glowing Pink
-  const borderTint = 'rgba(255, 77, 166, 0.2)'
-  const glowShadow = '0 12px 40px rgba(255, 77, 166, 0.15), 0 0 12px rgba(255, 77, 166, 0.12), inset 0 1px 0 rgba(255,255,255,0.05)'
+  const borderTint = 'rgba(255, 255, 255, 0.12)' // Clean glass outline
+  const glowShadow = '0 12px 40px rgba(0, 0, 0, 0.35), inset 0 1.5px 2px rgba(255, 255, 255, 0.16), inset 0 -1.5px 2px rgba(0, 0, 0, 0.5), 0 0 12px rgba(255, 77, 166, 0.08)'
 
   // -- INTERPOLATION LOGIC --
   const isDocked = dockRect && scrollProgress < 1
@@ -1096,7 +1096,7 @@ export default function DynamicNotch({ activeProject }) {
   // Add floating animation if fully docked
   const isFullyDocked = p === 0
 
-  const hoverShadow = '0 12px 40px rgba(255, 77, 166, 0.25), 0 0 16px rgba(255, 77, 166, 0.2), inset 0 1px 0 rgba(255,255,255,0.05)'
+  const hoverShadow = '0 16px 48px rgba(0, 0, 0, 0.45), inset 0 1.5px 2px rgba(255, 255, 255, 0.25), inset 0 -1.5px 2px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 77, 166, 0.15)'
 
   const finalTransformScale = notchState === 'compact' && p === 1
     ? `translateX(-50%) scaleX(${(1 + scrollVelocity * 0.04) * (hovered ? 1.03 : 1)}) scaleY(${(1 - scrollVelocity * 0.02) * (hovered ? 1.03 : 1)})`
@@ -1130,10 +1130,10 @@ export default function DynamicNotch({ activeProject }) {
           borderBottomRightRadius: finalRadiusBottom,
           borderTopLeftRadius: finalRadiusTop,
           borderTopRightRadius: finalRadiusTop,
-          background: bgColor,
+          background: 'linear-gradient(135deg, rgba(24, 24, 30, 0.55) 0%, rgba(12, 12, 16, 0.7) 100%)',
           border: `1.2px solid ${borderTint}`,
-          backdropFilter: 'blur(20px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+          backdropFilter: 'blur(24px) saturate(190%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(190%)',
           boxShadow: (hovered && notchState === 'compact') ? hoverShadow : glowShadow,
           zIndex: 999999,
           overflow: 'hidden',
@@ -1152,6 +1152,28 @@ export default function DynamicNotch({ activeProject }) {
           setNotchState('chat')
         } : undefined}
       >
+        {/* Liquid Glass Highlight Sheen */}
+        <div style={{
+          position: 'absolute',
+          top: 0, left: 0, right: 0,
+          height: '45%',
+          background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.04) 60%, rgba(255, 255, 255, 0) 100%)',
+          pointerEvents: 'none',
+          zIndex: 0
+        }} />
+
+        {/* Ambient Liquid Pink Glow Orb */}
+        <div style={{
+          position: 'absolute',
+          bottom: '-30%',
+          right: '-20%',
+          width: 220,
+          height: 220,
+          background: 'radial-gradient(circle, rgba(255, 77, 166, 0.14) 0%, rgba(255, 77, 166, 0) 70%)',
+          pointerEvents: 'none',
+          filter: 'blur(16px)',
+          zIndex: 0
+        }} />
         
         {/* Absolute Left bezel Wing Flare (Hide when docked) */}
         <div style={{
@@ -1202,6 +1224,8 @@ export default function DynamicNotch({ activeProject }) {
                 textAlign: 'center',
                 opacity: isFullyDocked ? 1 : pEase,
                 transition: 'opacity 0.3s, flex-direction 0.3s, gap 0.3s, padding 0.3s',
+                position: 'relative',
+                zIndex: 2,
               }}
               onClick={() => {
                 playSound('pop')
@@ -1291,7 +1315,7 @@ export default function DynamicNotch({ activeProject }) {
 
         {/* CONTENT DOCK WRAPPER FOR DYNAMIC HUGGING */}
         {notchState !== 'compact' && (
-          <div ref={contentRef} style={{ width: '100%', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
+          <div ref={contentRef} style={{ width: '100%', display: 'flex', flexDirection: 'column', boxSizing: 'border-box', position: 'relative', zIndex: 2 }}>
             
             {/* 1. UNIFIED WORKSPACE HEADER */}
             <div style={{
