@@ -1121,11 +1121,9 @@ export default function DynamicNotch({ activeProject }) {
         style={{
           position: 'fixed',
           top: finalTop,
-          left: isDocked ? finalLeft : 'auto',
-          right: isDocked ? 'auto' : `${rightSpacing}px`,
-          transform: isDocked
-            ? `${finalTransformScale} translateY(${translateY}px)`
-            : `${isFloatingPill ? floatingTransform : 'scale(1)'} translateY(${translateY}px)`,
+          left: isFloatingPill ? 'auto' : finalLeft,
+          right: isFloatingPill ? `${rightSpacing}px` : 'auto',
+          transform: `${isFloatingPill ? floatingTransform : finalTransformScale} translateY(${translateY}px)`,
           width: isFloatingPill ? 'max-content' : finalWidth,
           height: finalHeight,
           borderBottomLeftRadius: finalRadiusBottom,
