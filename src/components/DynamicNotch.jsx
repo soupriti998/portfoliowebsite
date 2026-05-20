@@ -159,7 +159,7 @@ const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) 
 
   if (isNearBottom) {
     return {
-      text: "Bottom of the page! Want to go back up? 🎈",
+      text: "Bottom of page! 🎈",
       icon: "idle"
     }
   }
@@ -167,7 +167,7 @@ const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) 
   // 2. Inactive / Sleeping states
   if (inactive) {
     return {
-      text: "Sleeping... Zzz... wake me up once you're done exploring! 🛌💤",
+      text: "Sleeping... Zzz... 🛌💤",
       icon: "inactive"
     }
   }
@@ -176,12 +176,12 @@ const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) 
   if (activeProj) {
     if (velocity > 0.4) {
       return {
-        text: "Scanning case details... *beep boop* 🔍",
+        text: "Scanning details... 🔍",
         icon: "scrolling"
       }
     }
     return {
-      text: "Thinking... analyzing Soupriti's genius... 🧠",
+      text: "Thinking... 🧠",
       icon: "thinking"
     }
   }
@@ -189,17 +189,17 @@ const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) 
   // 4. Scroll Aware states (Scrolling)
   if (velocity > 0.7) {
     return {
-      text: "Scrolling... speed limit 80mph! 🚀💨",
+      text: "Scrolling fast! 🚀💨",
       icon: "scrolling"
     }
   }
 
   if (velocity > 0.3) {
     const scrollPool = [
-      "Scrolling... wheee! 🏎️💨",
-      "Scrolling... scanning for easter eggs... 🔍",
-      "Slow down, I'm getting dizzy! 😵",
-      "Gravity check: scrolling is functional. 👍"
+      "Scrolling... 🏎️💨",
+      "Scanning... 🔍",
+      "Slow down! 😵",
+      "Scrolling... 👍"
     ]
     const idx = Math.floor((window.scrollY / 250) % scrollPool.length)
     return {
@@ -211,10 +211,10 @@ const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) 
   // 5. Reading deep states (time in current section)
   if (readingSecs > 14) {
     const thinkPool = [
-      "Reading... hope this is on the exam! 📖",
-      "Thinking... compiling terrible dad jokes. 🤖",
-      "Thinking... processing coffee into pixels. ☕",
-      "Reading... absorbing human design patterns. 🧠"
+      "Reading... 📖",
+      "Thinking... 🤖",
+      "Thinking... ☕",
+      "Reading... 🧠"
     ]
     const idx = Math.floor((window.scrollY / 200) % thinkPool.length)
     return {
@@ -226,32 +226,32 @@ const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) 
   // 6. Section aware defaults
   const sectionPool = {
     hero: {
-      text: "Just chilling in the Hero section... 😎",
+      text: "Vibing... 😎",
       icon: "idle"
     },
     expertise: {
-      text: "Reading about skills... 10/10 React knowledge. 💅",
+      text: "Reading skills... 💅",
       icon: "idle"
     },
     projects: {
-      text: "Exploring projects... prepare to be wowed! ✨",
+      text: "Viewing projects... ✨",
       icon: "idle"
     },
     about: {
-      text: "Investigating the About section... 🕵️‍♀️",
+      text: "Investigating... 🕵️‍♀️",
       icon: "idle"
     },
     journey: {
-      text: "Reading the timeline... history in the making. 📜",
+      text: "Reading timeline... 📜",
       icon: "idle"
     },
     contact: {
-      text: "Ready to chat? Say hi! 👋",
+      text: "Ready to chat! 👋",
       icon: "idle"
     }
   }
 
-  return sectionPool[section] || { text: "Just vibing here... 🍹", icon: "idle" }
+  return sectionPool[section] || { text: "Vibing... 🍹", icon: "idle" }
 }
 
 /* ── Chat replies dictionary ── */
