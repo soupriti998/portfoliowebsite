@@ -329,7 +329,7 @@ export default function About() {
             </AnimatePresence>
           </div>
 
-          {/* BOTTOM AREA: Horizontal space black guitar fretboard */}
+          {/* BOTTOM AREA: Horizontal white guitar fretboard */}
           <div 
             style={{
               width: '100%',
@@ -344,21 +344,21 @@ export default function About() {
               style={{
                 width: '100%',
                 height: '180px',
-                background: 'linear-gradient(to bottom, #09090b 0%, #151518 50%, #09090b 100%)',
-                boxShadow: 'inset 0 0 30px rgba(0,0,0,0.95), 0 16px 36px rgba(0,0,0,0.25)',
+                background: 'linear-gradient(to bottom, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%)',
+                boxShadow: 'inset 0 0 20px rgba(255,255,255,1), inset 0 0 10px rgba(0,0,0,0.05), 0 12px 32px rgba(0, 0, 0, 0.05)',
                 borderRadius: '24px',
-                border: '2px solid #000000',
+                border: '2px solid #e2e8f0',
                 position: 'relative',
                 overflow: 'hidden'
               }}
             >
-              {/* Vertical wood grain stripes for space black texture */}
+              {/* Vertical wood grain stripes for white maple texture */}
               <div style={{
                 position: 'absolute',
                 top: 0, left: 0, right: 0, bottom: 0,
-                backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(255,255,255,0.015) 4px, rgba(255,255,255,0.015) 8px)',
+                backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(0,0,0,0.015) 4px, rgba(0,0,0,0.015) 8px)',
                 pointerEvents: 'none',
-                opacity: 0.9,
+                opacity: 0.5,
                 zIndex: 1
               }} />
 
@@ -372,14 +372,14 @@ export default function About() {
                     bottom: 0,
                     left: `${pos}%`,
                     width: '3px',
-                    background: 'linear-gradient(to right, #9ca3af 0%, #f3f4f6 50%, #4b5563 100%)',
-                    boxShadow: '1px 0 2px rgba(0,0,0,0.4)',
+                    background: 'linear-gradient(to right, #cbd5e1 0%, #f1f5f9 50%, #94a3b8 100%)',
+                    boxShadow: '1px 0 2px rgba(0,0,0,0.08)',
                     zIndex: 2
                   }}
                 />
               ))}
 
-              {/* Pearl Dot Inlays (centered vertically between strings) */}
+              {/* Charcoal Dot Inlays (centered vertically between strings) */}
               {[32.5, 62.5].map((pos) => (
                 <div 
                   key={pos}
@@ -390,8 +390,8 @@ export default function About() {
                     width: '12px',
                     height: '12px',
                     borderRadius: '50%',
-                    background: 'radial-gradient(circle, #ffffff 0%, #d1d5db 100%)',
-                    boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.4), 0 1px 1px rgba(255,255,255,0.2)',
+                    background: 'radial-gradient(circle, #4b5563 0%, #1f2937 100%)',
+                    boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.4), 0 1px 1px rgba(255,255,255,0.3)',
                     transform: 'translate(-50%, -50%)',
                     opacity: 0.65,
                     zIndex: 2
@@ -437,7 +437,7 @@ export default function About() {
                         background: idx < 3 
                           ? 'linear-gradient(180deg, #c5a059 0%, #fef3c7 50%, #c5a059 100%)' // Bronze winding
                           : 'linear-gradient(180deg, #6b7280 0%, #e5e7eb 50%, #6b7280 100%)', // Plain steel
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.5)',
+                        boxShadow: '0 1px 2px rgba(0,0,0,0.12)',
                         transform: 'translateY(-50%)',
                         pointerEvents: 'none',
                         zIndex: 5
@@ -460,17 +460,17 @@ export default function About() {
                         transform: 'translate(-50%, -50%)',
                         background: isActive 
                           ? 'radial-gradient(circle, #3b82f6 0%, #0052ff 100%)' 
-                          : 'radial-gradient(circle, #ffffff 0%, #d1d5db 100%)',
-                        border: isActive ? '2px solid #ffffff' : '2px solid #6b7280',
-                        color: isActive ? '#ffffff' : '#1f2937',
+                          : 'radial-gradient(circle, #ffffff 0%, #e2e8f0 100%)',
+                        border: isActive ? '2px solid #ffffff' : '2px solid #94a3b8',
+                        color: isActive ? '#ffffff' : '#475569',
                         fontFamily: 'var(--font-mono)',
                         fontSize: '9.5px',
                         fontWeight: 700,
                         cursor: 'pointer',
                         zIndex: 20,
                         boxShadow: isActive 
-                          ? '0 0 15px rgba(0, 82, 255, 0.75), 0 2px 4px rgba(0,0,0,0.4)'
-                          : '0 2px 4px rgba(0,0,0,0.35)',
+                          ? '0 0 15px rgba(0, 82, 255, 0.75), 0 2px 4px rgba(0,0,0,0.2)'
+                          : '0 2px 4px rgba(0,0,0,0.1)',
                         transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                         outline: 'none'
                       }}
