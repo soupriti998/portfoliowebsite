@@ -1247,7 +1247,7 @@ export default function DynamicNotch({ activeProject }) {
                   textTransform: 'none',
                   whiteSpace: isFullyDocked ? 'normal' : 'nowrap',
                 }}>
-                  {isFullyDocked ? "hi, i'm soup — soupriti's digital companion." : "soup — press ctrl+l to talk"}
+                  {isFullyDocked ? "hi this is Soup." : "soup — press ctrl+l to talk"}
                 </span>
 
                 {isFullyDocked && (
@@ -1403,7 +1403,7 @@ export default function DynamicNotch({ activeProject }) {
                         letterSpacing: '-0.01em',
                         lineHeight: 1.2
                       }}>
-                        hi, i'm soup — soupriti's companion.
+                        hi this is Soup.
                       </h3>
                       <p style={{
                         margin: 0,
