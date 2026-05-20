@@ -1240,20 +1240,33 @@ export default function DynamicNotch({ activeProject }) {
                   textTransform: 'none',
                   whiteSpace: isFullyDocked ? 'normal' : 'nowrap',
                 }}>
-                  {isFullyDocked ? "hi this is Soup." : "soup — press ctrl+l to talk"}
+                  {isFullyDocked ? "Hi, this is Soup." : "soup — press ctrl+l to talk"}
                 </span>
 
                 {isFullyDocked && (
-                  <span style={{
-                    fontSize: 12,
-                    fontFamily: 'var(--font-body)',
-                    color: subtextColor,
-                    maxWidth: '32ch',
-                    lineHeight: 1.5,
-                    opacity: 0.8,
-                  }}>
-                    I can help you sniff around and see if Soupriti is a strong fit for your team, product, or role.
-                  </span>
+                  <>
+                    <span style={{
+                      fontSize: 12,
+                      fontFamily: 'var(--font-body)',
+                      color: subtextColor,
+                      maxWidth: '42ch',
+                      lineHeight: 1.5,
+                      opacity: 0.85,
+                    }}>
+                      I can help you sniff around and see if Soupriti’s the kind of designer your team has been looking for. Peek into projects, systems, interactions, and late-night creative experiments.
+                    </span>
+                    <span style={{
+                      fontSize: 11,
+                      fontFamily: 'var(--font-mono)',
+                      color: pinkGlow,
+                      marginTop: 8,
+                      opacity: 0.9,
+                      letterSpacing: '0.02em',
+                      fontWeight: 600,
+                    }}>
+                      Press Ctrl + L to start talking.
+                    </span>
+                  </>
                 )}
               </div>
             </div>
@@ -1396,7 +1409,7 @@ export default function DynamicNotch({ activeProject }) {
                         letterSpacing: '-0.01em',
                         lineHeight: 1.2
                       }}>
-                        hi this is Soup.
+                        Hi, this is Soup.
                       </h3>
                       <p style={{
                         margin: 0,
@@ -1405,7 +1418,7 @@ export default function DynamicNotch({ activeProject }) {
                         color: subtextColor,
                         fontFamily: 'var(--font-body)'
                       }}>
-                        i can help you sniff around and see if soupriti is a strong fit for your team, product, or role.
+                        I can help you sniff around and see if Soupriti’s the kind of designer your team has been looking for. Peek into projects, systems, interactions, and late-night creative experiments.
                       </p>
                     </div>
 
