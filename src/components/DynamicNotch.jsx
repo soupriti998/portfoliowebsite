@@ -136,14 +136,7 @@ const StatusHUDIcon = ({ state, theme }) => {
         filter: 'blur(3px)',
         animation: 'pulseCore 2.5s ease-in-out infinite alternate'
       }} />
-      <div style={{
-        position: 'absolute',
-        width: 18, height: 18,
-        borderRadius: '50%',
-        border: '1.2px solid rgba(255, 77, 166, 0.25)',
-        animation: 'pulseCore 2.5s ease-in-out infinite alternate',
-        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-      }} />
+
       <div style={{
         position: 'absolute',
         width: 3,
