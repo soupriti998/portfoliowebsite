@@ -1220,7 +1220,7 @@ export default function DynamicNotch({ activeProject }) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: isFullyDocked ? 20 : 12,
-                padding: isFullyDocked ? '40px 24px' : '0 20px',
+                padding: isFullyDocked ? '40px 24px' : (isFloatingPill ? '0 20px 0 10px' : '0 20px'),
                 animation: 'fadeIn 0.25s ease-out',
                 cursor: 'pointer',
                 textAlign: 'center',
