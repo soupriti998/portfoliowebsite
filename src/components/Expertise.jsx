@@ -1,13 +1,74 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { FadeUp, Label } from './utils'
 
 const expertise = [
-  { icon: '⬡', title: 'Product Design', body: 'End-to-end product thinking from concept to shipped feature — balancing user needs, business goals, and technical constraints.' },
-  { icon: '◑', title: 'UX Strategy', body: 'Shaping product direction through research synthesis, opportunity mapping, and outcome-driven design roadmaps.' },
-  { icon: '◎', title: 'User Research', body: 'Qualitative and quantitative methods — interviews, usability tests, behavioral analytics — to ground decisions in real evidence.' },
-  { icon: '⬟', title: 'Interaction Design', body: 'Crafting micro-interactions, spring animations, and state transitions that make digital products feel alive and responsive.' },
-  { icon: '⬤', title: 'Design Systems', body: 'Building scalable, token-driven systems in Figma that empower teams to ship consistently and iterate rapidly at scale.' },
-  { icon: '✦', title: 'AI Experiences', body: 'Designing human-centered AI interfaces — translating complex machine learning models into intuitive, transparent interactions.' },
+  { 
+    icon: '🎨', 
+    title: 'Product Design', 
+    body: 'End-to-end product thinking from concept to shipped feature — balancing user needs, business goals, and technical constraints.',
+    color: '#E0F2FE', // Coinbase pale blue
+    textColor: '#0369A1',
+    defaultRotate: -4,
+    top: '40px',
+    left: '45px',
+    number: '01'
+  },
+  { 
+    icon: '🧭', 
+    title: 'UX Strategy', 
+    body: 'Shaping product direction through research synthesis, opportunity mapping, and outcome-driven design roadmaps.',
+    color: '#DCFCE7', // Pale green
+    textColor: '#15803D',
+    defaultRotate: 6,
+    top: '25px',
+    left: '185px',
+    number: '02'
+  },
+  { 
+    icon: '🔍', 
+    title: 'User Research', 
+    body: 'Qualitative and quantitative methods — interviews, usability tests, behavioral analytics — to ground decisions in real evidence.',
+    color: '#FEF9C3', // Pale yellow
+    textColor: '#A16207',
+    defaultRotate: -5,
+    top: '150px',
+    left: '198px',
+    number: '03'
+  },
+  { 
+    icon: '⚡', 
+    title: 'Interaction Design', 
+    body: 'Crafting micro-interactions, spring animations, and state transitions that make digital products feel alive and responsive.',
+    color: '#FEE2E2', // Pale red
+    textColor: '#B91C1C',
+    defaultRotate: 7,
+    top: '200px',
+    left: '35px',
+    number: '04'
+  },
+  { 
+    icon: '📦', 
+    title: 'Design Systems', 
+    body: 'Building scalable, token-driven systems in Figma that empower teams to ship consistently and iterate rapidly at scale.',
+    color: '#F3E8FF', // Pale purple
+    textColor: '#6B21A8',
+    defaultRotate: 4,
+    top: '265px',
+    left: '200px',
+    number: '05'
+  },
+  { 
+    icon: '🤖', 
+    title: 'AI Experiences', 
+    body: 'Designing human-centered AI interfaces — translating complex machine learning models into intuitive, transparent interactions.',
+    color: '#FFEDD5', // Pale orange
+    textColor: '#C2410C',
+    defaultRotate: -3,
+    top: '310px',
+    left: '105px',
+    number: '06'
+  },
 ]
 
 export default function Expertise() {
@@ -17,22 +78,19 @@ export default function Expertise() {
   // Use the active index if selected, otherwise fallback to the general section introduction
   const activeItem = activeIndex !== null ? expertise[activeIndex] : {
     title: "What I do really well.",
-    body: "Six craft areas honed across complex consumer IoT, SaaS dashboard architecture, and conversational interfaces. Hover and click the folder to explore each file."
+    body: "Six craft areas honed across complex consumer IoT, SaaS dashboard architecture, and conversational interfaces. Hover over the fridge magnets to explore each craft."
   }
-
-  const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }).replace(/,/g, '')
-  const timeStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
 
   return (
     <div 
       id="expertise" 
       style={{ 
         position: 'relative',
-        minHeight: '85vh',
+        minHeight: '60vh', // Minimized height
         background: 'var(--bg-warm)',
         display: 'flex',
         alignItems: 'center',
-        padding: 'var(--space-10) 0',
+        padding: 'var(--space-8) 0', // Minimized padding
         overflow: 'hidden'
       }}
       className="expertise-wrapper-container"
@@ -54,75 +112,378 @@ export default function Expertise() {
               </div>
             </div>
 
-            {/* ── RIGHT PANEL: THE 3D INTERACTIVE FOLDER ── */}
+            {/* ── RIGHT PANEL: THE INTERACTIVE FRIDGE ── */}
             <div className="expertise-right-panel">
               <div 
-                className={`folder-card-wrapper ${isOpen ? 'is-open' : ''}`}
-                onClick={() => setIsOpen(!isOpen)}
-                onMouseLeave={() => {
-                  setIsOpen(false)
-                  setActiveIndex(null)
+                className="fridge-wrapper"
+                style={{
+                  position: 'relative',
+                  width: '320px',
+                  height: '420px',
+                  perspective: '1200px',
+                  flexShrink: 0
                 }}
               >
-                {/* BACK FLAP */}
-                <div className="folder-back">
-                  <div className="folder-tab" />
-                  <div className="folder-back-main" />
+                {/* ── FRIDGE CABINET INTERIOR (Visible when door is open) ── */}
+                <div 
+                  className="fridge-interior"
+                  onClick={() => setIsOpen(false)}
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: '#f3f4f6', // Cabinet interior light gray
+                    borderRadius: '24px',
+                    border: '1.5px solid var(--border)',
+                    boxShadow: 'inset 0 10px 30px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.05)',
+                    zIndex: 1,
+                    overflow: 'hidden',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {/* Internal Warm Yellow Light Glow */}
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'radial-gradient(circle at center, rgba(254, 240, 138, 0.35) 0%, transparent 80%)',
+                    pointerEvents: 'none'
+                  }} />
+
+                  {/* SHELF 1 */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '120px', left: '12px', right: '12px', height: '6px',
+                    background: 'rgba(255, 255, 255, 0.75)',
+                    border: '1px solid rgba(0,0,0,0.12)',
+                    borderRadius: '3px',
+                    zIndex: 2
+                  }} />
+
+                  {/* SHELF 1 ITEMS */}
+                  {/* Soda Can */}
+                  <div style={{ position: 'absolute', left: '50px', bottom: '300px', zIndex: 3 }}>
+                    <div style={{
+                      width: '22px',
+                      height: '38px',
+                      background: 'linear-gradient(135deg, #FF4B4B, #C0392B)',
+                      borderRadius: '4px',
+                      border: '1px solid rgba(0,0,0,0.15)',
+                      position: 'relative',
+                      boxShadow: '0 3px 6px rgba(0,0,0,0.15)'
+                    }}>
+                      <div style={{ position: 'absolute', top: '-1.5px', left: '2px', right: '2px', height: '1.5px', background: '#e0e0e0', borderRadius: '50%' }} />
+                      <div style={{ position: 'absolute', top: '12px', left: 0, right: 0, height: '6px', background: '#fff', transform: 'skewY(-8deg)', opacity: 0.75 }} />
+                    </div>
+                  </div>
+
+                  {/* Milk Bottle */}
+                  <div style={{ position: 'absolute', left: '90px', bottom: '300px', zIndex: 3 }}>
+                    <div style={{
+                      width: '26px',
+                      height: '58px',
+                      background: 'rgba(255, 255, 255, 0.95)',
+                      borderTopLeftRadius: '10px',
+                      borderTopRightRadius: '10px',
+                      borderBottomLeftRadius: '3px',
+                      borderBottomRightRadius: '3px',
+                      border: '1px solid rgba(0,0,0,0.12)',
+                      position: 'relative',
+                      boxShadow: '0 3px 5px rgba(0,0,0,0.08)',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{ position: 'absolute', top: '22px', left: 0, right: 0, height: '14px', background: 'rgba(0, 82, 255, 0.08)', borderTop: '1px solid rgba(0, 82, 255, 0.15)', borderBottom: '1px solid rgba(0, 82, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: '6.5px', fontWeight: 800, color: 'var(--accent)', fontFamily: 'var(--font-mono)', scale: 0.85 }}>MILK</span>
+                      </div>
+                      <div style={{ position: 'absolute', top: 0, left: '5px', right: '5px', height: '3.5px', background: '#FF4B4B', borderRadius: '1px' }} />
+                    </div>
+                  </div>
+
+                  {/* SHELF 2 */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '260px', left: '12px', right: '12px', height: '6px',
+                    background: 'rgba(255, 255, 255, 0.75)',
+                    border: '1px solid rgba(0,0,0,0.12)',
+                    borderRadius: '3px',
+                    zIndex: 2
+                  }} />
+
+                  {/* SHELF 2 ITEMS */}
+                  {/* Slice of Cake on Plate */}
+                  <div style={{ position: 'absolute', left: '120px', bottom: '160px', display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 3 }}>
+                    <div style={{ width: '52px', height: '7px', background: '#f3f4f6', borderRadius: '50%', border: '1px solid #d1d5db', position: 'absolute', bottom: 0 }} />
+                    <div style={{
+                      width: '34px',
+                      height: '28px',
+                      position: 'absolute',
+                      bottom: '3px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'flex-end',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#FF4B4B', alignSelf: 'center', marginBottom: '-2px', zIndex: 2 }} />
+                      <div style={{
+                        height: '20px',
+                        width: '100%',
+                        background: 'linear-gradient(to bottom, #FFF, #FED7D7 40%, #7B3F00 45%, #7B3F00 55%, #FFF 60%, #FFF)',
+                        borderRadius: '1.5px',
+                        border: '1px solid rgba(0,0,0,0.1)',
+                        zIndex: 1
+                      }} />
+                    </div>
+                    {/* Small warning note next to the cake */}
+                    <div style={{
+                      position: 'absolute',
+                      left: '46px',
+                      bottom: '8px',
+                      background: '#FFD166',
+                      border: '1px solid rgba(0,0,0,0.08)',
+                      padding: '1px 4px',
+                      fontSize: '6.5px',
+                      fontWeight: 800,
+                      fontFamily: 'var(--font-mono)',
+                      whiteSpace: 'nowrap',
+                      rotate: '6deg',
+                      boxShadow: '0 1.5px 3px rgba(0,0,0,0.08)',
+                      color: '#0a0b0d'
+                    }}>
+                      Luffy's! 🐾
+                    </div>
+                  </div>
+
                 </div>
 
-                {/* SLIDING PAPER CHECKLIST */}
-                <div className="folder-paper">
-                  <div className="paper-header">
-                    <div className="paper-date-wrap">
-                      <span>{dateStr}</span>
-                      <span className="paper-time">{timeStr}</span>
-                    </div>
-                    <span>...</span>
+                {/* ── FRIDGE DOOR (Swings open to the left on click) ── */}
+                <motion.div
+                  className="fridge-door"
+                  onClick={(e) => {
+                    // Prevent toggling door state if clicking on handle, magnets or sticky note directly (to keep focus clean)
+                    if (e.target.closest('.fridge-magnet') || e.target.closest('.sticky-note')) return
+                    setIsOpen(!isOpen)
+                  }}
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(135deg, #B5EAD7, #85D3CB)', // Retro mint green
+                    borderRadius: '24px',
+                    border: '1.5px solid rgba(0, 0, 0, 0.08)',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.08), inset 0 2px 4px rgba(255,255,255,0.4)',
+                    zIndex: 5,
+                    transformOrigin: 'left center',
+                    backfaceVisibility: 'hidden',
+                    overflow: 'visible'
+                  }}
+                  animate={{
+                    rotateY: isOpen ? -100 : 0,
+                    boxShadow: isOpen 
+                      ? '12px 10px 30px rgba(0,0,0,0.15)' 
+                      : '0 10px 30px rgba(0,0,0,0.08)'
+                  }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 110,
+                    damping: 18
+                  }}
+                >
+                  {/* Gloss reflection line */}
+                  <div style={{
+                    position: 'absolute',
+                    top: 0, left: 0, bottom: 0, width: '45px',
+                    background: 'linear-gradient(to right, rgba(255,255,255,0.22), transparent)',
+                    borderTopLeftRadius: '24px',
+                    borderBottomLeftRadius: '24px',
+                    pointerEvents: 'none'
+                  }} />
+
+                  {/* Chrome Retro Handle (Left edge) */}
+                  <div 
+                    className="fridge-handle"
+                    onClick={() => setIsOpen(!isOpen)}
+                    style={{
+                      position: 'absolute',
+                      right: '16px', // Right side of the door so it swings from the left hinge!
+                      top: '80px',
+                      width: '14px',
+                      height: '130px',
+                      background: 'linear-gradient(to right, #bdbdbd, #ffffff 30%, #e0e0e0 70%, #9e9e9e)',
+                      borderRadius: '6px',
+                      boxShadow: '0 4px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.4)',
+                      cursor: 'pointer',
+                      zIndex: 10
+                    }}
+                  >
+                    {/* Handle brackets */}
+                    <div style={{ position: 'absolute', left: '-3px', top: '12px', width: '20px', height: '6px', background: '#9e9e9e', borderRadius: '1.5px', border: '0.5px solid rgba(0,0,0,0.1)' }} />
+                    <div style={{ position: 'absolute', left: '-3px', bottom: '12px', width: '20px', height: '6px', background: '#9e9e9e', borderRadius: '1.5px', border: '0.5px solid rgba(0,0,0,0.1)' }} />
                   </div>
-                  <div className="paper-content">
-                    <div className="paper-subtitle">CRAFT INDEX</div>
-                    
-                    <div className="paper-checklist-flow">
-                      {expertise.map((item, idx) => (
-                        <div 
-                          key={item.title}
-                          className={`paper-checkbox-item ${activeIndex === idx ? 'active' : ''}`}
-                          onMouseEnter={() => setActiveIndex(idx)}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setActiveIndex(idx)
-                          }}
-                        >
-                          <div className="checkbox-box">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                              <path d="M20 6L9 17l-5-5"/>
-                            </svg>
+
+                  {/* ── YELLOW STICKY NOTE (Post-it Checklist) ── */}
+                  <div 
+                    className="sticky-note"
+                    style={{
+                      position: 'absolute',
+                      left: '100px',
+                      top: '145px',
+                      width: '120px',
+                      height: '130px',
+                      background: '#FDF0CD', // Warm post-it yellow
+                      boxShadow: '0 4px 10px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)',
+                      transform: 'rotate(1.5deg)',
+                      padding: '12px 10px',
+                      boxSizing: 'border-box',
+                      zIndex: 6,
+                      border: '1px solid rgba(0,0,0,0.04)'
+                    }}
+                  >
+                    {/* Post-it header tape */}
+                    <div style={{
+                      position: 'absolute',
+                      top: '-6px',
+                      left: '30px',
+                      width: '60px',
+                      height: '14px',
+                      background: 'rgba(255,255,255,0.45)',
+                      transform: 'rotate(-2deg)',
+                      border: '0.5px solid rgba(0,0,0,0.03)'
+                    }} />
+
+                    {/* Handwritten style checklist */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', height: '100%' }}>
+                      <div style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '8px',
+                        fontWeight: 800,
+                        color: 'var(--text-secondary)',
+                        letterSpacing: '0.08em',
+                        borderBottom: '1px solid rgba(0,0,0,0.08)',
+                        paddingBottom: '3px'
+                      }}>
+                        CRAFT INDEX
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '2px' }}>
+                        {expertise.map((item, idx) => (
+                          <div 
+                            key={item.title} 
+                            style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+                          >
+                            {/* Tiny checkbox */}
+                            <div style={{
+                              width: '8px',
+                              height: '8px',
+                              border: `1px solid ${activeIndex === idx ? 'var(--accent)' : 'rgba(0,0,0,0.18)'}`,
+                              background: activeIndex === idx ? 'var(--accent)' : 'transparent',
+                              borderRadius: '1.5px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              transition: 'all 0.15s ease'
+                            }}>
+                              {activeIndex === idx && (
+                                <div style={{ width: '3px', height: '3px', background: '#FFF', borderRadius: '50%' }} />
+                              )}
+                            </div>
+                            {/* Short label */}
+                            <span style={{
+                              fontFamily: 'var(--font-body)',
+                              fontSize: '7.5px',
+                              fontWeight: activeIndex === idx ? 700 : 500,
+                              color: activeIndex === idx ? 'var(--accent)' : 'rgba(0,0,0,0.65)',
+                              transition: 'color 0.15s ease',
+                              whiteSpace: 'nowrap'
+                            }}>
+                              {item.title}
+                            </span>
                           </div>
-                          <span className="paper-item-title">{item.title}</span>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* FRONT FLAP */}
-                <div className="folder-front">
-                  <div className="folder-front-header">
-                     <div className="folder-title-wrap">
-                       <h3>Expertise</h3>
-                       <span className="folder-subtitle">6 notes</span>
-                     </div>
-                     <div className="folder-icons">
-                       <div className="folder-icon-btn">
-                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                       </div>
-                       <div className="folder-icon-btn">
-                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                       </div>
-                     </div>
-                  </div>
-                </div>
+                  {/* ── THE 6 FRIDGE MAGNETS (Expertise Categories) ── */}
+                  {expertise.map((item, idx) => {
+                    const isHovered = activeIndex === idx
+                    return (
+                      <motion.div
+                        key={item.title}
+                        className="fridge-magnet"
+                        onMouseEnter={() => setActiveIndex(idx)}
+                        onMouseLeave={() => setActiveIndex(null)}
+                        onClick={() => {
+                          setActiveIndex(idx)
+                          const speakEvent = new CustomEvent('cat-speak', {
+                            detail: { text: `My ${item.title} expertise: ${item.body}` }
+                          })
+                          window.dispatchEvent(speakEvent)
+                        }}
+                        style={{
+                          position: 'absolute',
+                          left: item.left,
+                          top: item.top,
+                          width: '85px',
+                          height: '108px',
+                          background: item.color,
+                          borderRadius: '8px',
+                          border: '4px solid #ffffff',
+                          boxShadow: '0 4px 8px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04), 1px 1px 0px rgba(0,0,0,0.08)',
+                          outline: '1px solid rgba(0, 0, 0, 0.08)',
+                          cursor: 'pointer',
+                          zIndex: isHovered ? 12 : 7,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          padding: '6px',
+                          boxSizing: 'border-box',
+                          userSelect: 'none'
+                        }}
+                        animate={{
+                          rotate: isHovered ? 0 : item.defaultRotate,
+                          scale: isHovered ? 1.08 : 1,
+                          boxShadow: isHovered 
+                            ? '0 12px 24px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06)' 
+                            : '0 4px 8px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04), 1px 1px 0px rgba(0,0,0,0.08)'
+                        }}
+                        transition={{
+                          type: 'spring',
+                          stiffness: 150,
+                          damping: 15
+                        }}
+                      >
+                        {/* Magnet Graphics */}
+                        <span style={{ fontSize: '24px', marginBottom: '6px', filter: 'drop-shadow(0 2px 3px rgba(0,0,0,0.06))' }}>{item.icon}</span>
+                        
+                        {/* Title text */}
+                        <div style={{
+                          fontFamily: 'var(--font-display)',
+                          fontSize: '8px',
+                          fontWeight: 800,
+                          color: item.textColor,
+                          letterSpacing: '0.04em',
+                          lineHeight: 1.1,
+                          textAlign: 'center',
+                          wordWrap: 'break-word',
+                          maxWidth: '100%'
+                        }}>
+                          {item.title.toUpperCase()}
+                        </div>
 
+                        {/* Miniature catalog ID */}
+                        <span style={{
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '6.5px',
+                          color: item.textColor,
+                          opacity: 0.55,
+                          marginTop: '4px'
+                        }}>
+                          M-{item.number}
+                        </span>
+                      </motion.div>
+                    )
+                  })}
+
+                </motion.div>
               </div>
             </div>
 
@@ -134,8 +495,8 @@ export default function Expertise() {
         /* ── SPLIT LAYOUT ── */
         .expertise-split-layout {
           display: grid;
-          grid-template-columns: 1fr 1.2fr;
-          grid-template-areas: "folder details";
+          grid-template-columns: 1fr 1.1fr;
+          grid-template-areas: "details folder";
           gap: var(--space-8);
           align-items: center;
         }
@@ -145,23 +506,23 @@ export default function Expertise() {
           display: flex;
           flex-direction: column;
           gap: var(--space-3);
-          min-height: 280px;
+          min-height: 200px;
           justify-content: center;
-          padding-left: var(--space-6);
+          padding-left: var(--space-4);
         }
 
         .active-details-wrapper {
-          animation: detailFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation: detailFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         @keyframes detailFadeIn {
-          from { opacity: 0; transform: translateY(12px); filter: blur(4px); }
+          from { opacity: 0; transform: translateY(8px); filter: blur(3px); }
           to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
         .expertise-active-title {
           font-family: var(--font-display);
-          font-size: clamp(28px, 3.2vw, 42px);
+          font-size: clamp(28px, 3.2vw, 40px);
           font-weight: 400;
           letter-spacing: -0.025em;
           line-height: 1.15;
@@ -170,263 +531,24 @@ export default function Expertise() {
         }
 
         .expertise-active-body {
-          font-size: 16px;
-          line-height: 1.7;
+          font-size: 15.5px;
+          line-height: 1.65;
           color: var(--text-secondary);
-          max-width: 48ch;
+          max-width: 46ch;
           margin: 0;
         }
 
         .expertise-right-panel {
           grid-area: folder;
           display: flex;
-          justify-content: flex-start;
-          align-items: center;
-        }
-
-        /* ── FOLDER CARD CSS (RIGHT-ALIGNED) ── */
-        .folder-card-wrapper {
-          position: relative;
-          width: 320px;
-          height: 380px;
-          flex-shrink: 0;
-          cursor: pointer;
-          will-change: transform, width;
-          perspective: 1200px;
-          animation: folderFloat 6s ease-in-out infinite;
-          transition: transform 0.65s cubic-bezier(0.19, 1, 0.22, 1), width 0.65s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-
-        @keyframes folderFloat {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-8px); }
-        }
-
-        /* FOLDER BACK */
-        .folder-back {
-          position: absolute;
-          top: 0; left: 0;
-          width: 320px;
-          height: 380px;
-          z-index: 1;
-        }
-
-        .folder-tab {
-          width: 140px;
-          height: 32px;
-          background: linear-gradient(135deg, #4F59F7, #262BDE);
-          border-radius: 16px 16px 0 0;
-          position: absolute;
-          top: 0; left: 0;
-        }
-
-        .folder-back-main {
-          width: 320px;
-          height: calc(380px - 32px);
-          background: linear-gradient(135deg, #4A55F7, #1E22A8);
-          border-radius: 0 16px 16px 16px;
-          position: absolute;
-          top: 32px; left: 0;
-          box-shadow: inset 0 2px 20px rgba(0,0,0,0.15);
-        }
-
-        /* FOLDER FRONT */
-        .folder-front {
-          position: absolute;
-          top: 32px; left: 0;
-          width: 320px;
-          height: calc(380px - 32px);
-          background: linear-gradient(135deg, #626CFF, #3238FF);
-          border-radius: 0 16px 16px 16px;
-          z-index: 3;
-          padding: 24px;
-          box-sizing: border-box;
-          color: #fff;
-          box-shadow: 0 -4px 15px rgba(0,0,0,0.1), inset 0 1px 1px rgba(255,255,255,0.25);
-          transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-          transform-origin: bottom center;
-        }
-
-        .folder-card-wrapper:hover .folder-front,
-        .folder-card-wrapper.is-open .folder-front {
-          transform: rotateX(-8deg) translateY(4px);
-          box-shadow: 0 10px 25px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.3);
-        }
-
-        .folder-title-wrap h3 {
-          margin: 0 0 6px 0;
-          font-family: var(--font-display);
-          font-size: 22px;
-          font-weight: 500;
-          letter-spacing: -0.01em;
-        }
-
-        .folder-subtitle {
-          font-size: 13px;
-          opacity: 0.8;
-          font-family: var(--font-body);
-        }
-
-        .folder-front-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-        }
-
-        .folder-icons {
-          display: flex;
-          gap: 12px;
-          opacity: 0.9;
-          font-size: 18px;
-        }
-        
-        .folder-icon-btn {
-          width: 24px; height: 24px;
-          display: flex; align-items: center; justify-content: center;
-          border-radius: 50%;
-          background: rgba(255,255,255,0.15);
-          backdrop-filter: blur(4px);
-        }
-
-        /* THE PAPER (Slides to the right) */
-        .folder-paper {
-          position: absolute;
-          top: 40px; 
-          left: 10px;
-          width: 300px;
-          height: calc(380px - 50px);
-          background: #fdfdfd;
-          border-radius: 12px;
-          z-index: 2;
-          box-sizing: border-box;
-          padding: 20px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-          transition: all 0.65s cubic-bezier(0.19, 1, 0.22, 1);
-          border: 1px solid rgba(0,0,0,0.05);
-          display: flex;
-          flex-direction: column;
-          overflow: hidden; /* Fix: prevents bottom-peek spill when folder is closed */
-        }
-
-        /* Peek on hover */
-        .folder-card-wrapper:hover:not(.is-open) .folder-paper {
-          transform: translateY(-46px);
-          box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-        }
-
-        /* Slide out to the RIGHT on click */
-        .folder-card-wrapper.is-open {
-          width: 630px;
-        }
-
-        .folder-card-wrapper.is-open .folder-paper {
-          transform: translateX(310px) translateY(-10px);
-          box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-          z-index: 4;
-          height: calc(380px - 10px);
-        }
-
-        /* Paper Content */
-        .paper-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 20px;
-          font-family: var(--font-mono);
-          font-size: 11px;
-          color: #888;
-        }
-
-        .paper-date-wrap {
-          display: flex;
-          gap: 8px;
-          align-items: center;
-        }
-
-        .paper-time {
-          background: #f0f0f0;
-          padding: 3px 6px;
-          border-radius: 6px;
-          color: #555;
-          font-weight: 600;
-        }
-
-        .paper-subtitle {
-          font-family: var(--font-mono);
-          font-size: 10px;
-          font-weight: 700;
-          letter-spacing: 0.05em;
-          color: #111;
-          margin-bottom: 12px;
-        }
-
-        .paper-checklist-flow {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-
-        .paper-checkbox-item {
-          display: flex;
-          gap: 12px;
-          align-items: center;
-          padding: 6px 8px;
-          border-radius: 8px;
-          transition: all 0.2s ease;
-          cursor: pointer;
-        }
-
-        .paper-checkbox-item:hover,
-        .paper-checkbox-item.active {
-          background: rgba(0, 82, 255, 0.05);
-        }
-
-        .paper-checkbox-item.active .paper-item-title {
-          color: var(--accent);
-          font-weight: 600;
-        }
-
-        .checkbox-box {
-          width: 16px;
-          height: 16px;
-          border-radius: 4px;
-          border: 1px solid rgba(0, 82, 255, 0.15);
-          background: rgba(0, 82, 255, 0.03);
-          display: flex;
-          align-items: center;
           justify-content: center;
-          color: rgba(0, 82, 255, 0.3);
-          transition: all 0.2s ease;
-          flex-shrink: 0;
-        }
-
-        .checkbox-box svg {
-          width: 10px;
-          height: 10px;
-          opacity: 0.7;
-        }
-
-        .paper-checkbox-item.active .checkbox-box {
-          border-color: var(--accent);
-          background: var(--accent);
-          color: white;
-          box-shadow: 0 0 8px rgba(0, 82, 255, 0.3);
-        }
-        
-        .paper-checkbox-item.active .checkbox-box svg {
-          opacity: 1;
-        }
-
-        .paper-item-title {
-          font-size: 13.5px;
-          color: #444;
-          transition: color 0.2s;
+          align-items: center;
         }
 
         /* ── RESPONSIVE MOBILE ADJUSTMENTS ── */
         @media (max-width: 900px) {
           .expertise-wrapper-container {
-            padding: var(--space-8) 0 !important;
+            padding: var(--space-6) 0 !important;
           }
 
           .expertise-split-layout {
@@ -434,7 +556,7 @@ export default function Expertise() {
             grid-template-areas: 
               "details"
               "folder";
-            gap: var(--space-8);
+            gap: var(--space-6);
           }
 
           .expertise-left-panel {
@@ -444,20 +566,10 @@ export default function Expertise() {
 
           .expertise-right-panel {
             justify-content: center;
-          }
-
-          .folder-card-wrapper.is-open {
-            height: 700px;
-            width: 320px;
-          }
-
-          .folder-card-wrapper.is-open .folder-paper {
-            transform: translateY(350px) translateX(0);
-            height: 280px;
+            margin-top: var(--space-4);
           }
         }
       `}</style>
     </div>
   )
 }
-

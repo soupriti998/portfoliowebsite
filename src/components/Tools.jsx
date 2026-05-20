@@ -136,7 +136,7 @@ export default function Tools() {
   const shiftAmount = Math.abs(overlap) * 0.95
 
   return (
-    <section id="tools" style={{ padding: 'var(--space-11) 0', background: 'var(--bg)', borderTop: '1px solid var(--border)', overflow: 'visible' }}>
+    <section id="tools" style={{ position: 'relative', zIndex: 3, padding: 'var(--space-11) 0', background: 'var(--bg)', borderTop: '1px solid var(--border)', overflow: 'visible' }}>
       <div className="container" style={{ position: 'relative' }}>
         
         {/* Centered Heading */}

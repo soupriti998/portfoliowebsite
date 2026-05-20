@@ -1,4 +1,5 @@
-import { useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { motion, useScroll, useMotionValueEvent, AnimatePresence, useTransform } from 'framer-motion'
 import { FadeUp, Label } from './utils'
 
 const roles = [
@@ -9,11 +10,10 @@ const roles = [
     location: 'Bangalore',
     tag: 'AI Product',
     logo: '/upliance.ai-logo.png',
+    number: '01',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="role-icon-svg">
-        {/* Smart induction cooker + steaming heat waves */}
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 14h18M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5M8 9V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4" />
-        <path d="M12 2v1M9 2.5l.5 1M15 2.5l-.5 1" stroke="var(--accent)" strokeWidth="1.5" />
         <circle cx="12" cy="17" r="1.5" fill="var(--accent)" />
       </svg>
     ),
@@ -22,8 +22,8 @@ const roles = [
       'Reduced perceived cooking time by 24% through interaction design',
       'Built scalable design system with reusable card components',
       'Partnered with founders to align UX strategy with business KPIs',
-      'Led user research & behavioral analysis to drive data-informed design',
     ],
+    nodePercent: 0 // Left percentage on timeline
   },
   {
     company: 'Divami Design Labs',
@@ -32,21 +32,18 @@ const roles = [
     location: 'Hyderabad',
     tag: 'SaaS & Enterprise',
     logo: '/divami-Logo.png',
+    number: '02',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="role-icon-svg">
-        {/* Dynamic lightning bolt node connection */}
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-        <circle cx="13" cy="2" r="1.5" fill="var(--accent)" />
-        <circle cx="3" cy="14" r="1.5" fill="var(--accent)" />
-        <circle cx="21" cy="10" r="1.5" fill="var(--accent)" />
       </svg>
     ),
     highlights: [
       'Designed interfaces for SaaS and enterprise platforms',
       'Introduced AI tools into design workflows to accelerate delivery',
       'Created 3D elements and micro-interactions for richer experiences',
-      'Collaborated in Agile teams delivering quality under tight timelines',
     ],
+    nodePercent: 33.3
   },
   {
     company: 'Incture Technologies',
@@ -55,19 +52,18 @@ const roles = [
     location: 'Bangalore',
     tag: 'SaaS Products',
     logo: '/Incture - Logo.png',
+    number: '03',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="role-icon-svg">
-        {/* Editorial diamond grid layout wireframe */}
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M6 3h12l4 6-10 12L2 9z" />
-        <path d="M11 3 8 9l4 12 4-12-3-6" stroke="var(--accent)" strokeWidth="1" />
       </svg>
     ),
     highlights: [
       'Led UX design for Cherrywork SaaS platform (PhonePe client)',
       'Revamped Cherrywork dashboard — boosted engagement by 30%',
       'Conducted user research, personas, usability testing',
-      'Simplified complex enterprise data into intuitive dashboards',
     ],
+    nodePercent: 66.6
   },
   {
     company: 'Brandshape',
@@ -76,12 +72,11 @@ const roles = [
     location: 'Mumbai',
     tag: 'Client: HDFC Bank',
     logo: '/Branshape-logo.jpeg',
+    number: '04',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="role-icon-svg">
-        {/* Banking vault gateway / dynamic rotation lock */}
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="3" width="18" height="18" rx="2" />
         <circle cx="12" cy="12" r="4" stroke="var(--accent)" />
-        <path d="M12 8v8M8 12h8" />
       </svg>
     ),
     highlights: [
@@ -89,334 +84,403 @@ const roles = [
       'Conducted user research to identify pain points',
       'Improved clarity of key banking customer journeys',
     ],
+    nodePercent: 100
   },
 ]
 
 export default function Journey() {
-  const containerRef = useRef(null)
+  const sectionRef = useRef(null)
+  const [isMobile, setIsMobile] = useState(false)
+  const [activeStep, setActiveStep] = useState(1) // Ranges 1 to 4 based on scroll progress
 
-  const scroll = (direction) => {
-    if (containerRef.current) {
-      const amount = direction === 'left' ? -380 : 380
-      containerRef.current.scrollBy({ left: amount, behavior: 'smooth' })
+  // Track scroll position exactly within the pinning window of the sticky container
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"]
+  })
+
+  // Map traveling tracker horizontal offset (0% to 100%)
+  const travelerX = useTransform(scrollYProgress, [0, 1], ['0%', '100%'])
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    if (isMobile) return
+
+    // Segment horizontal progress into 4 ranges
+    if (latest < 0.25) {
+      setActiveStep(1) // upliance.ai
+    } else if (latest >= 0.25 && latest < 0.5) {
+      setActiveStep(2) // Divami
+    } else if (latest >= 0.5 && latest < 0.75) {
+      setActiveStep(3) // Incture
+    } else {
+      setActiveStep(4) // Brandshape
     }
+  })
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024)
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  // Card render (enlarged width: 500px, premium layouts)
+  const renderCard = (role) => {
+    return (
+      <div 
+        className="role-card"
+        onClick={() => {
+          const speakEvent = new CustomEvent('cat-speak', {
+            detail: { text: `At ${role.company}, I worked as a ${role.role} focused on ${role.tag}.` }
+          })
+          window.dispatchEvent(speakEvent)
+        }}
+        style={{
+          width: isMobile ? '100%' : '500px',
+          background: 'var(--bg-card)',
+          borderRadius: 'var(--radius-xl)',
+          border: '1.5px solid var(--border)',
+          padding: '32px',
+          boxShadow: 'var(--shadow-lg), 0 20px 40px rgba(0, 0, 0, 0.02)',
+          cursor: 'pointer',
+          textAlign: 'left',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)', minWidth: 0, flex: 1 }}>
+            {role.logo ? (
+              <div className="role-logo-container">
+                <img 
+                  src={role.logo} 
+                  alt={`${role.company} logo`} 
+                  className="role-logo-img"
+                />
+              </div>
+            ) : (
+              <span className="role-icon-box">{role.icon}</span>
+            )}
+            <div style={{ minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>{role.number}</span>
+                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 19, fontWeight: 500, color: 'var(--text-primary)', letterSpacing: '-0.015em', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {role.company}
+                </h3>
+              </div>
+              <p style={{ fontSize: 14, color: 'var(--text-secondary)', margin: '4px 0 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {role.role}
+              </p>
+            </div>
+          </div>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px', flexShrink: 0 }}>
+            <span className="role-card-tag" style={{
+              fontSize: '10px',
+              fontWeight: 600,
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+              padding: '3px 10px',
+              borderRadius: 'var(--radius-pill)',
+              background: 'rgba(0, 82, 255, 0.06)',
+              color: 'var(--accent)',
+              border: '1px solid rgba(0, 82, 255, 0.15)',
+              whiteSpace: 'nowrap'
+            }}>{role.tag}</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)' }}>
+              {role.period}
+            </span>
+          </div>
+        </div>
+
+        <ul style={{ paddingLeft: '18px', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {role.highlights.map((h, idx) => (
+            <li key={idx} style={{ fontSize: '13.5px', lineHeight: '1.5', color: 'var(--text-secondary)', fontFamily: 'var(--font-body)' }}>
+              {h}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
   }
 
   return (
-    <section id="journey" style={{ padding: 'var(--space-11) 0', background: 'var(--bg)', position: 'relative', overflow: 'hidden' }}>
-      
-      {/* Ambient background glowing orbs */}
-      <div style={{ position: 'absolute', top: '15%', left: '5%', width: 350, height: 350, borderRadius: '50%', background: 'rgba(0, 82, 255, 0.02)', filter: 'blur(100px)', pointerEvents: 'none', zIndex: 0 }} />
-      <div style={{ position: 'absolute', bottom: '20%', right: '5%', width: 450, height: 450, borderRadius: '50%', background: 'rgba(0, 82, 255, 0.01)', filter: 'blur(120px)', pointerEvents: 'none', zIndex: 0 }} />
-
-      <div className="container" style={{ position: 'relative', zIndex: 2 }}>
-        
-        {/* Title Block with Slide Nav Buttons */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 'var(--space-8)', flexWrap: 'wrap', gap: 'var(--space-5)' }}>
-          <FadeUp>
-            <Label>Journey</Label>
-            <h2 style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(32px, 4vw, 48px)',
-              fontWeight: 400,
-              letterSpacing: '-0.025em',
-              lineHeight: 1.1,
-              color: 'var(--text-primary)',
-              marginTop: 'var(--space-5)',
-              marginBottom: 0,
-            }}>
-              Where I've <span style={{ color: 'var(--accent)' }}>made my mark.</span>
-            </h2>
-          </FadeUp>
-
-          {/* Sliding Control Arrows */}
-          <FadeUp delay={60}>
-            <div style={{ display: 'flex', gap: 'var(--space-3)', alignItems: 'center' }}>
-              <button
-                onClick={() => scroll('left')}
-                aria-label="Scroll left"
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: '50%',
-                  border: '1px solid var(--border)',
-                  background: 'var(--bg-card)',
+    <>
+      <section 
+        ref={sectionRef} 
+        id="journey" 
+        style={{ 
+          position: 'relative', 
+          zIndex: 1,
+          background: 'var(--bg)', 
+          borderTop: '1px solid var(--border)',
+          minHeight: isMobile ? 'auto' : '180vh', // Comfortably spaced scroll range
+          overflow: 'visible'
+        }}
+      >
+        {/* Sticky layout container for Desktop */}
+        <div 
+          style={{
+            position: isMobile ? 'relative' : 'sticky',
+            top: 0,
+            height: isMobile ? 'auto' : '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%',
+            overflow: 'hidden',
+            zIndex: 2,
+            padding: isMobile ? 'var(--space-11) 0' : '0'
+          }}
+        >
+          <div className="container" style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: 1100 }}>
+            
+            {/* Header Title Block */}
+            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+              <FadeUp>
+                <Label>Journey</Label>
+                <h2 style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 'clamp(32px, 4vw, 46px)',
+                  fontWeight: 400,
+                  letterSpacing: '-0.025em',
+                  lineHeight: 1.1,
                   color: 'var(--text-primary)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  transition: 'all 0.25s var(--ease-out-expo)',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = 'var(--accent)'
-                  e.currentTarget.style.background = 'var(--bg-warm)'
-                  e.currentTarget.style.transform = 'translateX(-2px)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = 'var(--border)'
-                  e.currentTarget.style.background = 'var(--bg-card)'
-                  e.currentTarget.style.transform = 'none'
-                }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M19 12H5M12 19l-7-7 7-7" />
-                </svg>
-              </button>
-
-              <button
-                onClick={() => scroll('right')}
-                aria-label="Scroll right"
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: '50%',
-                  border: '1px solid var(--border)',
-                  background: 'var(--bg-card)',
-                  color: 'var(--text-primary)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  transition: 'all 0.25s var(--ease-out-expo)',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = 'var(--accent)'
-                  e.currentTarget.style.background = 'var(--bg-warm)'
-                  e.currentTarget.style.transform = 'translateX(2px)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = 'var(--border)'
-                  e.currentTarget.style.background = 'var(--bg-card)'
-                  e.currentTarget.style.transform = 'none'
-                }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </button>
+                  marginTop: 'var(--space-4)',
+                  marginBottom: 0,
+                }}>
+                  Where I've <span style={{ color: 'var(--accent)' }}>made my mark.</span>
+                </h2>
+              </FadeUp>
             </div>
-          </FadeUp>
-        </div>
 
-        {/* Horizontal Timeline Track Container */}
-        <div style={{ position: 'relative', width: '100%' }}>
-          
-          {/* Continuous Glowing Horizontal Line behind cards */}
-          <div style={{
-            position: 'absolute',
-            top: '46px',
-            left: '50%',
-            width: '100vw',
-            transform: 'translateX(-50%)',
-            height: 2,
-            background: 'linear-gradient(90deg, var(--border) 0%, var(--accent) 50%, var(--border) 100%)',
-            opacity: 0.35,
-            zIndex: 1,
-          }} />
-
-          {/* Horizontally scrollable row */}
-          <div 
-            ref={containerRef}
-            className="journey-scroll-container"
-            style={{
-              display: 'flex',
-              gap: 'var(--space-6)',
-              overflowX: 'auto',
-              scrollSnapType: 'x mandatory',
-              padding: '12px 4px 36px',
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
-              position: 'relative',
-              zIndex: 2,
-              width: '100vw',
-              marginLeft: '50%',
-              transform: 'translateX(-50%)',
-            }}
-          >
-            {roles.map((role, i) => (
+            {/* HORIZONTAL TIMELINE DISPLAY */}
+            {!isMobile ? (
               <div 
-                key={role.company}
-                className="role-card"
-                onClick={() => {
-                  const speakEvent = new CustomEvent('cat-speak', {
-                    detail: { text: `At ${role.company}, I worked as a ${role.role} focused on ${role.tag}.` }
-                  });
-                  window.dispatchEvent(speakEvent);
-                }}
                 style={{
-                  flex: '0 0 380px',
-                  scrollSnapAlign: 'start',
-                  background: 'var(--bg-card)',
-                  borderRadius: 'var(--radius-xl)',
-                  border: '1px solid var(--border)',
-                  padding: 'var(--space-6)',
-                  boxShadow: 'var(--shadow-sm)',
-                  cursor: 'pointer',
-                  position: 'relative',
-                  textAlign: 'left',
+                  width: '100%',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '16px',
+                  alignItems: 'center',
+                  gap: '60px', // Space between Card display and Timeline line below
+                  overflow: 'visible',
+                  position: 'relative'
                 }}
               >
-                {/* Node connection bubble directly on top edge */}
+                {/* Active Card Viewer (Centered) */}
                 <div style={{
-                  position: 'absolute',
-                  top: '-28px',
-                  left: '32px',
-                  width: 14,
-                  height: 14,
-                  borderRadius: '50%',
-                  background: 'var(--bg-card)',
-                  border: '2.5px solid var(--accent)',
-                  boxShadow: '0 0 10px rgba(0, 82, 255, 0.4)',
-                  zIndex: 3,
-                }} />
-
-                {/* Card Header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', width: '100%' }}>
-                  {/* Left Side: Logo and Company Info */}
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-3)', minWidth: 0, flex: 1 }}>
-                    {role.logo ? (
-                      <div className="role-logo-container" style={{ marginTop: '2px' }}>
-                        <img 
-                          src={role.logo} 
-                          alt={`${role.company} logo`} 
-                          className="role-logo-img"
-                        />
-                      </div>
-                    ) : (
-                      <span className="role-icon-box">{role.icon}</span>
-                    )}
-                    <div style={{ minWidth: 0 }}>
-                      <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 17, fontWeight: 500, color: 'var(--text-primary)', letterSpacing: '-0.015em', margin: 0, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {role.company}
-                      </h3>
-                      <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', marginTop: '4px', margin: '4px 0 0 0', textAlign: 'left', lineHeight: 1.3 }}>
-                        {role.role}
-                      </p>
-                      <p style={{ fontSize: 11.5, color: 'var(--text-muted)', margin: '2px 0 0 0', textAlign: 'left' }}>
-                        {role.location}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Right Side: Tag and Period (Locked in Top Right, never pushed down!) */}
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px', flexShrink: 0 }}>
-                    <span className="role-card-tag" style={{
-                      fontSize: 9.5,
-                      fontWeight: 600,
-                      letterSpacing: '0.04em',
-                      textTransform: 'uppercase',
-                      padding: '2px 8px',
-                      borderRadius: 'var(--radius-pill)',
-                      background: 'rgba(0, 82, 255, 0.06)',
-                      color: 'var(--accent)',
-                      border: '1px solid rgba(0, 82, 255, 0.15)',
-                      whiteSpace: 'nowrap'
-                    }}>{role.tag}</span>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
-                      {role.period}
-                    </span>
-                  </div>
+                  height: '320px', 
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative',
+                  width: '100%'
+                }}>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeStep}
+                      initial={{ opacity: 0, x: 40, scale: 0.98 }}
+                      animate={{ opacity: 1, x: 0, scale: 1 }}
+                      exit={{ opacity: 0, x: -40, scale: 0.98 }}
+                      transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
+                    >
+                      {renderCard(roles[activeStep - 1])}
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
 
-                {/* Highlights List */}
-                <ul style={{
-                  paddingLeft: '16px',
-                  margin: 0,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  textAlign: 'left',
+                {/* BOTTOM HORIZONTAL TIMELINE TRACK */}
+                <div style={{
+                  width: '80%',
+                  position: 'relative',
+                  paddingBottom: '40px' // Space for text labels below nodes
                 }}>
-                  {role.highlights.map((h, idx) => (
-                    <li 
-                      key={idx}
-                      style={{
-                        fontSize: '12px',
-                        lineHeight: '1.5',
-                        color: 'var(--text-secondary)',
-                        fontFamily: 'var(--font-body)',
-                        textAlign: 'left',
-                      }}
-                    >
-                      {h}
-                    </li>
-                  ))}
-                </ul>
+                  {/* Background Track Line */}
+                  <div style={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    top: '6px',
+                    height: '4px',
+                    background: 'var(--border)',
+                    borderRadius: '2px',
+                    zIndex: 1
+                  }} />
+
+                  {/* Traveling Blue Line */}
+                  <motion.div 
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      right: 0,
+                      top: '6px',
+                      height: '4px',
+                      background: 'var(--accent)',
+                      borderRadius: '2px',
+                      zIndex: 2,
+                      originX: 0,
+                      scaleX: scrollYProgress
+                    }}
+                  />
+
+                  {/* Horizontal Traveling Dot */}
+                  <motion.div 
+                    style={{
+                      position: 'absolute',
+                      top: '8px',
+                      left: travelerX,
+                      transform: 'translate(-50%, -50%)',
+                      width: 14,
+                      height: 14,
+                      borderRadius: '50%',
+                      background: 'var(--accent)',
+                      border: '3px solid var(--bg)',
+                      boxShadow: '0 0 10px rgba(0, 82, 255, 0.5)',
+                      zIndex: 3,
+                    }}
+                  />
+
+                  {/* Node Checkpoints & Labels */}
+                  {roles.map((r, i) => {
+                    const nodeNum = i + 1
+                    const isNodeActive = activeStep >= nodeNum
+
+                    return (
+                      <div
+                        key={r.company}
+                        style={{
+                          position: 'absolute',
+                          left: `${r.nodePercent}%`,
+                          top: '8px',
+                          transform: 'translate(-50%, -50%)',
+                          zIndex: 4,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center'
+                        }}
+                      >
+                        {/* Dot node */}
+                        <div style={{
+                          width: 10,
+                          height: 10,
+                          borderRadius: '50%',
+                          background: isNodeActive ? 'var(--accent)' : 'var(--border)',
+                          border: '2px solid var(--bg)',
+                          transition: 'background 0.3s'
+                        }} />
+
+                        {/* Label below dot */}
+                        <span style={{
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: 10.5,
+                          fontWeight: 700,
+                          color: activeStep === nodeNum ? 'var(--text-primary)' : 'var(--text-muted)',
+                          marginTop: 14,
+                          whiteSpace: 'nowrap',
+                          transition: 'color 0.3s'
+                        }}>
+                          {r.company}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
-            ))}
+            ) : (
+              /* Mobile Stack View fallback with Left side timeline line */
+              <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 'var(--space-6)', width: '100%', marginTop: 'var(--space-4)', paddingLeft: '24px' }}>
+                {/* Timeline vertical line on mobile */}
+                <div style={{
+                  position: 'absolute',
+                  left: '4px',
+                  top: '12px',
+                  bottom: '12px',
+                  width: '2px',
+                  background: 'var(--border)',
+                  zIndex: 1
+                }} />
+
+                {roles.map((role, i) => (
+                  <div key={role.company} style={{ position: 'relative', width: '100%' }}>
+                    {/* Node checkpoint dot on mobile */}
+                    <div style={{
+                      position: 'absolute',
+                      left: '-23px',
+                      top: '26px',
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      background: 'var(--accent)',
+                      border: '2px solid var(--bg)',
+                      zIndex: 2
+                    }} />
+
+                    <FadeUp delay={i * 80}>
+                      {renderCard(role)}
+                    </FadeUp>
+                  </div>
+                ))}
+              </div>
+            )}
+
           </div>
         </div>
+      </section>
 
-        {/* Education Section */}
-        <FadeUp delay={100}>
-          <div style={{
-            marginTop: 'var(--space-8)',
-            padding: 'var(--space-6) var(--space-7)',
-            background: 'var(--bg-warm)',
-            borderRadius: 'var(--radius-xl)',
-            border: '1px solid var(--border)',
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-5)',
-            position: 'relative',
-            zIndex: 2,
-          }}>
-            <div>
-              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 'var(--space-2)' }}>Education</div>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: 19, fontWeight: 400, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>Bachelor of Design — Fashion Communication</div>
-              <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 'var(--space-1)' }}>National Institute of Fashion Technology (NIFT), Chennai · 2018–2022</div>
+      {/* Education Section - Rendered as a separate sibling so it scrolls up naturally with 0% overlap */}
+      <section 
+        id="education" 
+        style={{ 
+          position: 'relative', 
+          zIndex: 2,
+          background: 'var(--bg)', 
+          borderBottom: '1px solid var(--border)',
+          paddingBottom: isMobile ? 'var(--space-8)' : 'var(--space-12)',
+          paddingTop: isMobile ? 'var(--space-2)' : 'var(--space-8)'
+        }}
+      >
+        <div className="container" style={{ position: 'relative', zIndex: 12 }}>
+          <FadeUp delay={100}>
+            <div style={{
+              padding: 'var(--space-5) var(--space-6)',
+              background: 'var(--bg-warm)',
+              borderRadius: 'var(--radius-xl)',
+              border: '1px solid var(--border)',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-4)',
+              position: 'relative',
+              zIndex: 2,
+            }}>
+              <div>
+                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px' }}>Education</div>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: isMobile ? 16 : 17, fontWeight: 400, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>Bachelor of Design — Fashion Communication</div>
+                <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: '2px' }}>
+                  {isMobile ? "NIFT Chennai · 2018–2022" : "National Institute of Fashion Technology (NIFT), Chennai · 2018–2022"}
+                </div>
+              </div>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
+              </svg>
             </div>
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-              <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
-            </svg>
-          </div>
-        </FadeUp>
+          </FadeUp>
+        </div>
+      </section>
 
-      </div>
-
-      {/* Premium Micro-Interaction Styles */}
       <style>{`
-        .journey-scroll-container {
-          padding-left: calc((100vw - 1200px) / 2 + var(--space-8)) !important;
-          padding-right: calc((100vw - 1200px) / 2 + var(--space-8)) !important;
-        }
-        @media (max-width: 1200px) {
-          .journey-scroll-container {
-            padding-left: var(--space-8) !important;
-            padding-right: var(--space-8) !important;
-          }
-        }
-        @media (max-width: 768px) {
-          .journey-scroll-container {
-            padding-left: var(--space-5) !important;
-            padding-right: var(--space-5) !important;
-          }
-        }
-        .journey-scroll-container::-webkit-scrollbar {
-          display: none;
-        }
         .role-card {
-          transition: all 0.45s var(--ease-out-expo) !important;
+          transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
         }
         .role-card:hover {
-          transform: translateY(-8px) scale(1.005) !important;
           border-color: var(--accent) !important;
-          box-shadow: var(--shadow-lg), 0 16px 36px rgba(0, 82, 255, 0.08) !important;
-        }
-        .role-icon-svg {
-          transition: transform 0.45s var(--ease-out-expo), color 0.45s var(--ease-out-expo);
-          color: var(--text-secondary);
-        }
-        .role-card:hover .role-icon-svg {
-          transform: scale(1.2) rotate(6deg);
-          color: var(--accent) !important;
+          box-shadow: var(--shadow-md), 0 10px 24px rgba(0, 82, 255, 0.08) !important;
         }
         .role-logo-container {
-          width: 46px;
-          height: 46px;
+          width: 48px;
+          height: 48px;
           border-radius: 12px;
           background: #ffffff;
           border: 1px solid var(--border);
@@ -425,40 +489,18 @@ export default function Journey() {
           justify-content: center;
           overflow: hidden;
           padding: 6px;
-          transition: all 0.45s var(--ease-out-expo);
           flex-shrink: 0;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
-        [data-theme="dark"] .role-logo-container {
-          background: #ffffff;
-          border-color: #24272e;
-          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-        }
-        .role-card:hover .role-logo-container {
-          transform: scale(1.1) rotate(4deg);
-          border-color: var(--accent) !important;
-          box-shadow: 0 8px 20px rgba(0, 82, 255, 0.18) !important;
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
         }
         .role-logo-img {
           width: 100%;
           height: 100%;
           object-fit: contain;
-          transition: transform 0.45s var(--ease-out-expo);
         }
-        .role-card:hover .role-logo-img {
-          transform: scale(1.05);
-        }
-        .role-card:hover .role-card-tag {
-          background: var(--accent) !important;
-          color: white !important;
-          border-color: var(--accent) !important;
-        }
-        @media (max-width: 480px) {
-          .role-card {
-            flex: 0 0 300px !important;
-          }
+        .role-card:hover .role-logo-container {
+          border-color: var(--accent);
         }
       `}</style>
-    </section>
+    </>
   )
 }
