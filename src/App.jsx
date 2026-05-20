@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Lenis from '@studio-freight/lenis'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 import DynamicNotch from './components/DynamicNotch'
 import Hero from './components/Hero'
 import About from './components/About'
@@ -76,6 +77,7 @@ export default function App() {
           )}
         </>
       )}
+      <SpeedInsights />
     </>
   )
 }
