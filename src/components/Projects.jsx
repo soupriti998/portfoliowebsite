@@ -199,7 +199,7 @@ export const PROJECTS = [
   {
     id: 'graduation-project',
     title: 'Graduation Project — Spatial Booking App',
-    role: 'Lead UI/UX Designer',
+    role: 'Personal Project',
     duration: '4 Months',
     impact: 'Spatial Preview Integration',
     category: 'Spatial Design & Mobile App',

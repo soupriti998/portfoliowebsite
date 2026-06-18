@@ -185,7 +185,7 @@ function DesktopFolderItem({ label, icon, onClick, handleHover, tagText, tagColo
           display: 'flex',
           alignItems: 'center',
           gap: '4px',
-          padding: '2px 8px',
+          padding: '2px 10px',
           background: tagColor === 'blue' ? 'rgba(59, 130, 246, 0.12)' : 'rgba(34, 197, 94, 0.12)',
           border: tagColor === 'blue' ? '1px solid rgba(59, 130, 246, 0.25)' : '1px solid rgba(34, 197, 94, 0.25)',
           borderRadius: '100px',
@@ -194,9 +194,10 @@ function DesktopFolderItem({ label, icon, onClick, handleHover, tagText, tagColo
           color: tagColor === 'blue' ? '#3b82f6' : '#16a34a',
           marginTop: '4px',
           letterSpacing: '0.01em',
-          width: 'fit-content',
+          width: 'max-content',
           marginInline: 'auto',
-          boxShadow: tagColor === 'blue' ? '0 1px 2px rgba(59,130,246,0.1)' : '0 1px 2px rgba(34,197,94,0.1)'
+          boxShadow: tagColor === 'blue' ? '0 1px 2px rgba(59,130,246,0.1)' : '0 1px 2px rgba(34,197,94,0.1)',
+          whiteSpace: 'nowrap'
         }}>
           <span style={{
             width: '5px',

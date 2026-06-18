@@ -33,9 +33,6 @@ export default function FinderAboutMe() {
 
   return (
     <div className="about-me-single-column">
-      {/* 1. Purple Physics Hero Banner (Universal Curious Footer) */}
-      <CuriousFooter />
-
       {/* 2. Centered Avatar Portrait */}
       <div className="about-me-avatar-centered">
         <img 
@@ -188,6 +185,9 @@ export default function FinderAboutMe() {
           </div>
         </div>
       </div>
+
+      {/* Purple Physics Hero Banner (Universal Curious Footer) at the very bottom */}
+      <CuriousFooter />
     </div>
   );
 }

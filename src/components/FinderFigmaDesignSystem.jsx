@@ -142,7 +142,7 @@ export default function FinderFigmaDesignSystem({ isMuted }) {
           maxWidth: '620px',
           margin: '0 0 20px 0'
         }}>
-          A premium suite of modular UI kits, neubrutalist dashboards, conversation graphs, and functional vector components designed to scale digital products with engineering precision.
+          Over the years, working with design systems has made it much easier for me to adapt to complex requirements and deliver high-quality assets faster. In addition, leveraging AI and Model Context Protocols (MCPs) has been incredibly helpful for rapid prototyping in the early stages, enabling me to quickly iterate and share interactive concepts with the team before executing on the final design or idea.
         </p>
 
         {/* CTA Button to open external community profile */}

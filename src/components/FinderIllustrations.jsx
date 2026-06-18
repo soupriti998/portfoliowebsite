@@ -111,8 +111,8 @@ export default function FinderIllustrations({ isMuted }) {
       `}</style>
 
       <h1 style={{ fontSize: '24px', fontWeight: 700, margin: '0 0 6px 0', color: 'var(--text-primary)' }}>Illustration Works</h1>
-      <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: '0 0 24px 0' }}>
-        A dynamic bento collection of editorial, surrealism, trippy, character design, and motion illustrations.
+      <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: '0 0 24px 0', lineHeight: 1.5, maxWidth: '620px' }}>
+        I have always found a deep sense of joy in illustrating human characters. Engaging with this creative process helps me master color psychology and the natural flow of tones, which directly translates into more balanced, visually intuitive color palettes for my UI/UX designs.
       </p>
 
       {/* Dynamic Masonry Bento Grid */}
