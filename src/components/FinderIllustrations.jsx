@@ -2,11 +2,20 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ILLUSTRATIONS = [
-  { id: 1, type: "video", src: "/illustrations/gen_4_turbo_psychedelic_trippy_art_3539934174.mp4" },
-  { id: 2, type: "image", src: "/illustrations/gen_4_turbo_psychedelic_surrealism_trippy_use_facial_expressions_and_flying_buterflies_3359775701.mp4.gif" },
-  { id: 3, type: "image", src: "/illustrations/gen_4_turbo_psychedelic_surrealism_3359775701.gif" },
-  { id: 4, type: "image", src: "/illustrations/gen_4_turbo_psychedelic_3359775701.gif" },
-  { id: 5, type: "image", src: "/illustrations/illustration_01.png" }
+  { id: 1, type: "image", src: "/illustrations/img_1418.png" },
+  { id: 2, type: "image", src: "/illustrations/img_1419.png" },
+  { id: 3, type: "image", src: "/illustrations/img_1421.png" },
+  { id: 4, type: "image", src: "/illustrations/img_1424.png" },
+  { id: 5, type: "image", src: "/illustrations/img_1425.png" },
+  { id: 6, type: "image", src: "/illustrations/img_1427.png" },
+  { id: 7, type: "image", src: "/illustrations/img_1432.png" },
+  { id: 8, type: "image", src: "/illustrations/img_1433.png" },
+  { id: 9, type: "image", src: "/illustrations/img_1434.png" },
+  { id: 10, type: "image", src: "/illustrations/img_1435.png" },
+  { id: 11, type: "image", src: "/illustrations/img_1439.png" },
+  { id: 12, type: "image", src: "/illustrations/img_1440.png" },
+  { id: 13, type: "image", src: "/illustrations/img_1444.png" },
+  { id: 14, type: "image", src: "/illustrations/img_1445.gif" }
 ];
 
 let synthAudioCtx = null;
