@@ -330,11 +330,7 @@ export default function Desktop({
   const handleFolderClick = (e, tab) => {
     e.stopPropagation();
     playOpenSound();
-    if (tab === 'figma-design-system') {
-      window.open('https://www.figma.com/@soupritidas', '_blank');
-    } else {
-      onOpenWindow(tab);
-    }
+    onOpenWindow(tab);
   };
 
   const handleDockItemClick = (e, tab, isExternal, url) => {
@@ -471,48 +467,10 @@ export default function Desktop({
             { label: "Not Shipped", icon: <FolderIcon color1="#ec4899" color2="#db2777" />, tab: 'not-shipped' },
             { 
               label: "Figma Design System", 
+              icon: <FolderIcon color1="#a78bfa" color2="#7c3aed" />, 
               tab: 'figma-design-system',
-              tagText: "used by 10k designers in Figma community",
-              tagColor: "blue",
-              isFile: true,
-              icon: (
-                <div style={{
-                  position: 'relative',
-                  width: '100%',
-                  height: '100%',
-                  borderRadius: '10px',
-                  overflow: 'hidden',
-                  background: '#1a082e',
-                  border: '1.5px solid rgba(255, 255, 255, 0.12)',
-                  boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
-                  display: 'flex',
-                  flexDirection: 'column'
-                }}>
-                  {/* File Header */}
-                  <div style={{
-                    height: '14px',
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    paddingLeft: '6px',
-                    flexShrink: 0
-                  }}>
-                    <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#ff5f56' }} />
-                    <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#ffbd2e' }} />
-                    <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#27c93f' }} />
-                  </div>
-                  {/* File Thumbnail body */}
-                  <div style={{ flex: 1, overflow: 'hidden', background: '#130522' }}>
-                    <img 
-                      src="/figma_design_system.png" 
-                      alt="Figma Design System Collage" 
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                    />
-                  </div>
-                </div>
-              )
+              tagText: "Used by 10k designers",
+              tagColor: "blue"
             }
           ].map((item, idx) => (
             <motion.div

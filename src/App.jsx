@@ -8,6 +8,7 @@ import FinderSelectedWorks from './components/FinderSelectedWorks'
 import FinderIllustrations from './components/FinderIllustrations'
 import FinderAIExperiments from './components/FinderAIExperiments'
 import FinderAboutMe from './components/FinderAboutMe'
+import FinderFigmaDesignSystem from './components/FinderFigmaDesignSystem'
 import Chatbot from './components/Chatbot'
 
 export default function App() {
@@ -103,6 +104,9 @@ export default function App() {
                 )}
                 {activeFinderTab === 'about-me' && (
                   <FinderAboutMe isMuted={isMuted} />
+                )}
+                {activeFinderTab === 'figma-design-system' && (
+                  <FinderFigmaDesignSystem isMuted={isMuted} />
                 )}
               </FinderWindow>
             </div>

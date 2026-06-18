@@ -86,6 +86,7 @@ export default function FinderWindow({
       case 'not-shipped': return 'Not Shipped';
       case 'illustrations': return 'Illustration Works';
       case 'ai-experiments': return 'AI Experiments';
+      case 'figma-design-system': return 'Figma Design System';
       case 'about-me': return 'About Me';
       default: return 'Finder';
     }
@@ -272,6 +273,18 @@ export default function FinderWindow({
                     ))}
                   </div>
                 )}
+
+                {/* Figma Design System Tab */}
+                <li 
+                  className={`finder-sidebar-item ${activeTab === 'figma-design-system' ? 'active' : ''}`}
+                  onMouseEnter={handleHover}
+                  onClick={() => handleTabClick('figma-design-system')}
+                  style={{ display: 'flex', alignItems: 'center', width: '100%', paddingLeft: '18px' }}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ fontSize: '13px' }}>📁</span> Figma Design System
+                  </span>
+                </li>
               </ul>
             </div>
 
