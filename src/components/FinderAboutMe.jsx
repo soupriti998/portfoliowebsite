@@ -1,8 +1,40 @@
 import React from 'react';
 import CuriousFooter from './CuriousFooter';
 
+let synthAudioCtx = null;
+
+function playSynthSound(type) {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    if (!synthAudioCtx) {
+      synthAudioCtx = new AudioContext();
+    }
+    if (synthAudioCtx.state === 'suspended') {
+      synthAudioCtx.resume();
+    }
+    const now = synthAudioCtx.currentTime;
+    const osc = synthAudioCtx.createOscillator();
+    const gain = synthAudioCtx.createGain();
+    
+    osc.connect(gain);
+    gain.connect(synthAudioCtx.destination);
+    
+    if (type === 'hover') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(130, now);
+      osc.frequency.exponentialRampToValueAtTime(170, now + 0.05);
+      gain.gain.setValueAtTime(0.012, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+      osc.start(now);
+      osc.stop(now + 0.05);
+    }
+  } catch (e) {
+    console.warn("Synth audio failed:", e);
+  }
+}
+
 export default function FinderAboutMe() {
-  // Remaining 5 cards (Sa-Re-Ga-Ma strings text cards without the tuner notes/Sa-Re-Ga-Ma details or Telemetry card)
   const BENTO_CARDS_DATA = [
     {
       title: 'Interaction Craft',
@@ -28,12 +60,72 @@ export default function FinderAboutMe() {
       title: 'Quirky Personality',
       icon: '✨',
       desc: 'Empathic, enthusiastic, and easily makes friends. Brings high energy, collaborative laughter, and positive team dynamics to any design sprint.',
+    },
+    {
+      title: 'Design Engineer Stack',
+      icon: '💻',
+      isTechStack: true,
+      techs: ['Figma', 'Framer', 'Cursor', 'Midjourney', 'Claude', 'Lottie', 'Whimsical', 'Illustrator', 'React.js', 'HTML5', 'CSS3', 'JavaScript', 'Vite']
     }
   ];
 
+  // Duplicate the list for infinite looping marquee
+  const carouselCards = [...BENTO_CARDS_DATA, ...BENTO_CARDS_DATA];
+
   return (
     <div className="about-me-single-column">
-      {/* 2. Centered Avatar Portrait */}
+      {/* CSS Styles for Horizontal Marquee Scroll Carousel */}
+      <style>{`
+        .about-me-carousel-container {
+          width: 100%;
+          overflow: hidden;
+          position: relative;
+          padding: 12px 0;
+          margin-top: 10px;
+          mask-image: linear-gradient(to right, transparent, white 20px, white calc(100% - 20px), transparent);
+          -webkit-mask-image: linear-gradient(to right, transparent, white 20px, white calc(100% - 20px), transparent);
+        }
+        .about-me-carousel-track {
+          display: flex;
+          gap: 16px;
+          width: max-content;
+          animation: marquee-horizontal 32s linear infinite;
+        }
+        .about-me-carousel-track:hover {
+          animation-play-state: paused;
+        }
+        .carousel-card {
+          width: 290px;
+          height: 175px;
+          flex-shrink: 0;
+          background: var(--bg-card);
+          border: 1px solid var(--border);
+          border-radius: 16px;
+          padding: 18px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          cursor: pointer;
+          user-select: none;
+        }
+        .carousel-card:hover {
+          transform: translateY(-5px) scale(1.02);
+          border-color: rgba(139, 92, 246, 0.55);
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
+        }
+        @keyframes marquee-horizontal {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+      `}</style>
+
+      {/* 1. Centered Avatar Portrait */}
       <div className="about-me-avatar-centered">
         <img 
           src="/soupriti.jpg" 
@@ -53,7 +145,7 @@ export default function FinderAboutMe() {
         </span>
       </div>
 
-      {/* 3. Work Experience timeline */}
+      {/* 2. Work Experience timeline */}
       <div style={{ width: '100%' }}>
         <h3 style={{ 
           fontSize: '13px', 
@@ -126,8 +218,8 @@ export default function FinderAboutMe() {
         </div>
       </div>
 
-      {/* 4. Bento Grid (excluding Bio and Skills Sandbox) */}
-      <div style={{ width: '100%' }}>
+      {/* 3. Horizontal Auto Scroll Carousel */}
+      <div style={{ width: '100%', overflow: 'hidden' }}>
         <h3 style={{ 
           fontSize: '13px', 
           fontWeight: 800, 
@@ -140,48 +232,41 @@ export default function FinderAboutMe() {
           💡 Specializations & Craft
         </h3>
 
-        <div className="about-me-bento-grid">
-          {BENTO_CARDS_DATA.map((item) => (
-            <div 
-              key={item.title} 
-              className="bento-card"
-              style={{
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'flex-start',
-                padding: '18px'
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <h4 style={{ fontSize: '14px', fontWeight: 700, margin: 0 }}>{item.title}</h4>
-                <span style={{ fontSize: '16px' }}>{item.icon}</span>
+        <div className="about-me-carousel-container">
+          <div className="about-me-carousel-track">
+            {carouselCards.map((item, idx) => (
+              <div 
+                key={`${item.title}-${idx}`} 
+                className="carousel-card"
+                onMouseEnter={() => playSynthSound('hover')}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <h4 style={{ fontSize: '13.5px', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>{item.title}</h4>
+                  <span style={{ fontSize: '16px' }}>{item.icon}</span>
+                </div>
+                {item.isTechStack ? (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px' }}>
+                    {item.techs.map(tech => (
+                      <span key={tech} style={{
+                        fontSize: '9.5px',
+                        fontWeight: 600,
+                        padding: '3px 8px',
+                        borderRadius: '20px',
+                        background: 'var(--bg-card-frosted, rgba(255,255,255,0.65))',
+                        border: '1px solid var(--border)',
+                        color: 'var(--text-secondary)',
+                      }}>
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
+                    {item.desc}
+                  </p>
+                )}
               </div>
-              <p style={{ fontSize: '12.5px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
-                {item.desc}
-              </p>
-            </div>
-          ))}
-
-          {/* Design Stack Card */}
-          <div className="bento-card span-2">
-            <h4 style={{ fontSize: '14px', fontWeight: 700, margin: '0 0 10px 0' }}>💻 Design Engineer Stack</h4>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {['Figma', 'Framer', 'Cursor', 'Midjourney', 'Claude', 'Lottie', 'Whimsical', 'Illustrator', 'React.js', 'HTML5', 'CSS3', 'JavaScript', 'Vite'].map(tech => (
-                <span key={tech} style={{
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  padding: '4px 10px',
-                  borderRadius: '20px',
-                  background: 'var(--bg-card-frosted, rgba(255,255,255,0.65))',
-                  border: '1px solid var(--border)',
-                  color: 'var(--text-secondary)',
-                }}>
-                  {tech}
-                </span>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
       </div>
