@@ -209,7 +209,7 @@ export default function Testimonial() {
   const capsule3 = testimonials.slice(5, 5 + extraCount)
 
   return (
-    <section id="testimonial" style={{ position: 'relative', zIndex: 4, padding: 'var(--space-11) 0', background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
+    <section id="testimonial" style={{ position: 'relative', zIndex: 14, padding: 'var(--space-11) 0', background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
       <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         
         <FadeUp>

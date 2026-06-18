@@ -1,0 +1,9 @@
+{
+  "name": "portfoliowebsite",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

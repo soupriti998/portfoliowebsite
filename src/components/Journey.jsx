@@ -216,7 +216,7 @@ export default function Journey() {
         id="journey" 
         style={{ 
           position: 'relative', 
-          zIndex: 1,
+          zIndex: 11,
           background: 'var(--bg)', 
           borderTop: '1px solid var(--border)',
           minHeight: isMobile ? 'auto' : '180vh', // Comfortably spaced scroll range
@@ -255,7 +255,7 @@ export default function Journey() {
                   marginTop: 'var(--space-4)',
                   marginBottom: 0,
                 }}>
-                  Where I've <span style={{ color: 'var(--accent)' }}>made my mark.</span>
+                  The paths <span style={{ color: 'var(--accent)' }}>I've traveled.</span>
                 </h2>
               </FadeUp>
             </div>
@@ -439,7 +439,7 @@ export default function Journey() {
         id="education" 
         style={{ 
           position: 'relative', 
-          zIndex: 2,
+          zIndex: 12,
           background: 'var(--bg)', 
           borderBottom: '1px solid var(--border)',
           paddingBottom: isMobile ? 'var(--space-12)' : '140px',

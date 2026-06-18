@@ -1,66 +1,40 @@
 import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { FadeUp, Label } from './utils'
+import Footer from './Footer'
+import Contact from './Contact'
 
-const BOOK_FREQS = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88] // Sa, Re, Ga, Ma, Pa, Dha, Ni (ascending)
-
-let audioCtx = null
-
-function playPianoNote(freq) {
-  try {
-    const AudioContext = window.AudioContext || window.webkitAudioContext
-    if (!AudioContext) return
-    if (!audioCtx) {
-      audioCtx = new AudioContext()
-    }
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume()
-    }
-
-    const now = audioCtx.currentTime
-
-    // Combine fundamental sine wave with warm triangle harmonic
-    const osc1 = audioCtx.createOscillator()
-    const gain1 = audioCtx.createGain()
-    osc1.type = 'sine'
-    osc1.frequency.setValueAtTime(freq, now)
-    
-    const osc2 = audioCtx.createOscillator()
-    const gain2 = audioCtx.createGain()
-    osc2.type = 'triangle'
-    osc2.frequency.setValueAtTime(freq * 2, now)
-    
-    const masterGain = audioCtx.createGain()
-
-    osc1.connect(gain1)
-    gain1.connect(masterGain)
-    
-    osc2.connect(gain2)
-    gain2.connect(masterGain)
-    
-    masterGain.connect(audioCtx.destination)
-    
-    // Rhodes-like warm electric piano envelope
-    gain1.gain.setValueAtTime(0.28, now)
-    gain1.gain.exponentialRampToValueAtTime(0.008, now + 1.2)
-    
-    gain2.gain.setValueAtTime(0.08, now)
-    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.8)
-    
-    masterGain.gain.setValueAtTime(1.0, now)
-    masterGain.gain.exponentialRampToValueAtTime(0.01, now + 1.4)
-    
-    osc1.start(now)
-    osc1.stop(now + 1.4)
-    
-    osc2.start(now)
-    osc2.stop(now + 1.4)
-  } catch (e) {
-    console.error("Audio playback failed:", e)
-  }
-}
-
-/* ── Cozy Case Study Data Database ── */
-const PROJECTS = [
+/* ── Narrative Case Studies Database (Airfryer Removed) ── */
+export const PROJECTS = [
+  {
+    id: 'search-to-intent',
+    title: 'Search to Intent',
+    role: 'Lead Product Designer',
+    duration: '1 Month',
+    impact: 'Generative Discovery',
+    category: 'AI Product',
+    teamType: 'AI Experience Design',
+    accent: '#8b5cf6',
+    bg: '#f5f3ff',
+    emoji: '🤖',
+    categoryGroup: 'AI Product',
+    tabColor: '#8b5cf6',
+    coverImage: '/projects/search_to_intent_cover.png',
+    cardImage: '/projects/search_to_intent_cover.png',
+    tags: ['AI Product Design', 'Generative UI', 'Contextual Discovery', 'Mobile App', 'Shift'],
+    overview: 'Transformed recipe discovery from keyword-based search into an AI-powered cooking companion, helping users find recipes through natural conversations and social media.',
+    mockups: [
+      '/projects/search_to_intent_slide_2.png',
+      '/projects/search_to_intent_slide_3.png',
+      '/projects/search_to_intent_slide_6.png',
+      '/projects/search_to_intent_slide_9.png',
+      '/projects/search_to_intent_slide_10.png',
+      '/projects/search_to_intent_slide_12.png',
+      '/projects/search_to_intent_mockup1.png',
+      '/projects/search_to_intent_mockup2.jpg'
+    ],
+    sections: []
+  },
   {
     id: 'ai-cooking',
     title: 'Rethinking AI Cooking Experience',
@@ -69,13 +43,15 @@ const PROJECTS = [
     impact: '+24% efficiency',
     category: 'AI Product',
     teamType: '0→1 Experience',
-    accent: 'oklch(60% 0.14 200)',
-    bg: 'oklch(96% 0.03 200)',
+    accent: '#0052ff',
+    bg: '#f8fafc',
     emoji: '🍳',
+    categoryGroup: 'AI Product',
+    tabColor: '#0052ff',
     framerUrl: 'https://productgrowthsoupriti.framer.website/ai-cooking-experience-redesign',
     coverImage: '/projects/ai_cooking_cover.avif',
     cardImage: '/projects/ai_cooking_cover.avif',
-    tags: ['AI UX', 'Mobile UX', 'Design System', 'User Research'],
+    tags: ['AI UX', 'Mobile UX', 'Design System', 'User Research', 'Shift'],
     overview: 'Designed a guided cooking flow to reduce mid-way drop-offs, helping the team protect their core north star metric by turning first-time setup into everyday cooking habits.',
     sections: [
       {
@@ -109,6 +85,48 @@ const PROJECTS = [
     ],
   },
   {
+    id: 'toothlens',
+    title: 'Toothlens — AI Dental Scan Platform',
+    role: 'Lead Product Designer',
+    duration: '6 Months',
+    impact: 'AI Diagnostic Flow',
+    category: 'AI Product',
+    teamType: '0→1 Experience',
+    accent: '#3b82f6',
+    bg: '#eff6ff',
+    emoji: '🦷',
+    categoryGroup: 'AI Product',
+    tabColor: '#3b82f6',
+    coverImage: '/projects/toothlens_cover.png',
+    cardImage: '/projects/toothlens_cover.png',
+    tags: ['AI UX', 'SaaS Dashboard', 'Mobile App', 'Dental Tech'],
+    overview: 'Designed the mobile patient scanning interface and the dentist analysis dashboard, utilizing AI-driven image validation to make dental checkups accessible from home.',
+    sections: [
+      {
+        label: 'Context & Problem',
+        content: 'Dental checkups are often delayed due to high costs, lack of insurance, or clinical anxiety. Toothlens was designed as an AI-powered smartphone scanning app that allows patients to scan their teeth at home. The key challenge was guiding patients to take high-quality mouth photos that the AI model could accurately process, and designing a clear dashboard for dentists to review the results.'
+      },
+      {
+        label: 'Design Approach',
+        content: 'I designed a step-by-step smart capture interface with real-time feedback (such as "Align your teeth", "Increase lighting") to minimize error states. For dentists, I created a web dashboard that visualizes the AI-detected risk levels per tooth, logs historic scans, and generates printable patient reports.'
+      },
+      {
+        label: 'Impact & Outcomes',
+        content: '• Guided flow reduced image rejection rates by 38%.\n• Average home checkup completion time dropped to under 3 minutes.\n• High satisfaction from partner dental clinics using the diagnostics board.'
+      }
+    ],
+    mockups: [
+      '/projects/toothlens_login.png',
+      '/projects/toothlens_accounts.png',
+      '/projects/toothlens_mockup1.png',
+      '/projects/toothlens_guid.png',
+      '/projects/toothlens_camera_capture.png',
+      '/projects/toothlens_mockup2.png',
+      '/projects/toothlens_notifications.png',
+      '/projects/toothlens_reports.png'
+    ]
+  },
+  {
     id: 'onboarding',
     title: 'Reducing Returns via Behavior-Driven Onboarding',
     role: 'Product Designer',
@@ -116,12 +134,20 @@ const PROJECTS = [
     impact: '-7% drop rate',
     category: 'Mobile UX',
     teamType: 'Growth Design Squad',
-    accent: 'oklch(58% 0.12 42)',
-    bg: 'oklch(96% 0.03 42)',
+    accent: '#fb923c',
+    bg: '#fff7ed',
     emoji: '📱',
+    categoryGroup: '0-1 & END TO end projects',
+    tabColor: '#fb923c',
     framerUrl: 'https://productgrowthsoupriti.framer.website/7-day-learning-experience',
+    coverImage: '/projects/onboarding_cover.png',
+    cardImage: '/projects/onboarding_cover.png',
     tags: ['Onboarding UX', 'Behavioral Design', 'Retention'],
     overview: 'Designed a 7-day progressive learning experience that guides users through features step-by-step, reducing drop-off and returns by 7% in the crucial first week.',
+    mockups: [
+      '/projects/onboarding_mockup1.jpg',
+      '/projects/onboarding_mockup2.jpg'
+    ],
     sections: [
       {
         label: 'Problem',
@@ -138,243 +164,527 @@ const PROJECTS = [
     ],
   },
   {
-    id: 'airfryer',
-    title: 'Designing a Smart Air Fryer Experience',
+    id: 'phonepe',
+    title: 'PhonePe — Internal Employee Portal',
     role: 'Product Designer',
-    duration: '10 Months',
-    impact: 'Faster adoption',
-    category: 'Consumer IoT',
-    teamType: 'Cross-functional Team',
-    accent: 'oklch(62% 0.14 60)',
-    bg: 'oklch(96% 0.03 60)',
-    emoji: '✈️',
-    framerUrl: 'https://productgrowthsoupriti.framer.website/airfryer',
-    tags: ['IoT UX', 'Interaction Design', 'Outcome-driven'],
-    overview: 'Shifted interface parameters from complex temperature inputs to intuitive outcome-driven texture selections — crispy, juicy, golden — for stress-free adoption.',
+    duration: '3 Months',
+    impact: 'Workspace Automation',
+    category: 'Enterprise UX',
+    teamType: 'Internal System Squad',
+    accent: '#5f259f',
+    bg: '#f5f0fa',
+    emoji: '💼',
+    categoryGroup: '0-1 & END TO end projects',
+    tabColor: '#5f259f',
+    coverImage: '/projects/phonepe_cover.png',
+    cardImage: '/projects/phonepe_cover.png',
+    tags: ['Enterprise UX', 'Internal Tools', 'Design System'],
+    overview: 'Streamlined employee operations and internal service desk ticketing, creating a unified portal that reduced support resolution times.',
     sections: [
       {
-        label: 'Problem',
-        content: 'Traditional air fryer interfaces forced users to guess time and temperature parameters, creating cooking anxiety and highly inconsistent meals.',
+        label: 'Context & Problem',
+        content: 'Internal teams at PhonePe managed employee onboarding, asset requests, and HR tickets across fragmented, legacy enterprise applications. This caused delays and operational friction. My task was to design a single, unified employee portal that automated routine requests and gave HR managers a centralized control dashboard.'
       },
       {
         label: 'Solution',
-        content: 'Redesigned core inputs to target desired textures (Crispy, Golden, Juicy), backed by smart adaptive progress loops and quick-adjust manual overrides.',
+        content: 'I designed a modular ticketing and request dashboard with custom widgets for approvals, IT asset tracking, and personal settings. I utilized PhonePe\'s design tokens to ensure visual consistency across all enterprise internal tools.'
       },
       {
         label: 'Impact',
-        content: '• Faster product adoption and recipe experimentation\n• Lower overcook support tickets\n• Elevated first-cook satisfaction scores',
-      },
+        content: '• Reduced HR ticket resolution time by 32%.\n• Automated 70% of routine hardware allocation approvals.\n• Simplified the employee onboarding queue from 5 screens down to a single workspace view.'
+      }
     ],
+    mockups: ['/projects/phonepe_mockup.png']
   },
   {
-    id: 'medpod',
-    title: 'Medpod — Smart Medication Pod for Elderly',
-    role: 'Product Designer',
-    duration: '6 Months',
-    impact: 'Accessibility-first',
-    category: 'HealthTech',
-    teamType: '0→1 Experience',
-    accent: 'oklch(62% 0.11 150)',
-    bg: 'oklch(96% 0.03 150)',
-    emoji: '💊',
-    framerUrl: 'https://productgrowthsoupriti.framer.website/medpod',
-    tags: ['Elderly UX', 'Hardware IoT', 'Accessibility'],
-    overview: 'Designed a smart medicine dispenser experience focusing on elderly cognitive/motor limits, error prevention, and automated caregiver reassurance loops.',
-    sections: [
-      {
-        label: 'Challenge',
-        content: 'Elderly users struggle with complex schedules, memory constraints, and hard-to-read labels, while caregivers lack structured tracking without intrusive check-ins.',
-      },
-      {
-        label: 'Design Approach',
-        content: 'Large tactile touch targets, simple voice-confirmation loops, calming notification color indicators, and remote status dashboards for family peace of mind.',
-      },
-      {
-        label: 'Key Decisions',
-        content: 'Substituted small visual confirmation targets with spoken prompts and utilized distinct amber-glow alert states to alleviate anxiety.',
-      },
-    ],
-  },
-  {
-    id: 'battle-pass',
-    title: 'Battle Pass Progression for LILA Games',
-    role: 'Game UX Designer',
-    duration: '3 Months',
-    impact: 'Engagement loops',
-    category: 'Gaming UX',
-    teamType: 'Core Mechanics Team',
-    accent: 'oklch(58% 0.14 300)',
-    bg: 'oklch(96% 0.02 300)',
-    emoji: '🎮',
-    framerUrl: 'https://productgrowthsoupriti.framer.website/battle-pass-system',
-    tags: ['Gamification', 'Progression Systems', 'Reward UX'],
-    overview: 'Designed a progression-driven battle pass featuring intuitive milestone anticipation, mission tracking, and seamless reward upgrade interactions.',
-    sections: [
-      {
-        label: 'Goal',
-        content: 'Craft a highly engaging battle pass experience that increases active play retention and purchase conversion without resorting to deceptive practices.',
-      },
-      {
-        label: 'System Design',
-        content: 'Clear effort-to-reward metrics, visually distinct milestone progression trails, delightful animated chest openings, and honest pricing transparency.',
-      },
-      {
-        label: 'Outcome',
-        content: '• Better player returning rates through meaningful progression\n• High satisfaction on reward claims and tier upgrades',
-      },
-    ],
-  },
-  {
-    id: 'mcb-school',
-    title: 'Imagination-Led MCB School Portal',
-    role: 'UI/UX Designer',
+    id: 'graduation-project',
+    title: 'Graduation Project — Spatial Booking App',
+    role: 'Lead UI/UX Designer',
     duration: '4 Months',
-    impact: 'Brand transformation',
-    category: 'EdTech',
-    teamType: 'Small Studio Squad',
-    accent: 'oklch(60% 0.12 220)',
-    bg: 'oklch(96% 0.02 220)',
-    emoji: '🏫',
-    framerUrl: 'https://productgrowthsoupriti.framer.website/works',
-    tags: ['Brand Identity', 'UI Design', 'Digital Portal'],
-    overview: 'Transformed traditional learning documentation into an imagination-driven digital experience for students, featuring friendly layouts and clear parental guides.',
+    impact: 'Spatial Preview Integration',
+    category: 'Spatial Design & Mobile App',
+    teamType: 'End-to-End Individual Project',
+    accent: '#0052ff',
+    bg: '#f8fafc',
+    emoji: '🏠',
+    categoryGroup: '0-1 & END TO end projects',
+    tabColor: '#0052ff',
+    coverImage: '/projects/booking_landing_page.png',
+    cardImage: '/projects/booking_landing_page.png',
+    tags: ['Spatial UI', 'Mobile UX', 'Try-Before-Commit', 'Rental Search'],
+    overview: 'An end-to-end spatial booking platform concept (inspired by Apple Vision Pro UI design for booking.com), designed to solve the critical trust gap in rental house discovery.',
     sections: [
       {
-        label: 'Brief',
-        content: 'MCB School wanted a modernized digital presence matching their creative philosophy: that learning must be joyful, collaborative, and student-first.',
+        label: 'Context & Origin Story',
+        content: 'This project was born out of personal frustration. During my internships, I faced the recurring headache of finding and choosing a rental house. Online listings would show beautiful, wide-angle photos of spaces with promises of no brokers and a clean setup. In reality, once I visited in person, the spaces were cramped, dimly lit, and disappointing. The experience was constantly underwhelming and stressful.\n\nI realized that traditional photo galleries create a massive trust gap. Users waste valuable time committing to visit a place physically, only to realize within seconds that the images did not reflect reality. This scheduling friction wastes time for the prospect, the property owners, and the brokers.'
       },
       {
-        label: 'Design Direction',
-        content: 'Created a warm, visual language, approachable copy, simplified student-parent navigation modules, and highly responsive page layouts.',
+        label: 'The Challenge & Friction Loop',
+        content: 'Additionally, when a current tenant is set to leave a house in a month, brokers frequently bring multiple prospective tenants to view the property while it is still occupied. This results in significant time waste, disruption of privacy for current residents, and scheduling overhead. \n\nHow can we use technology to make the remote home preview experience feel so real that users can confidently pre-evaluate or even commit to a space without physically visiting? How can we reduce scheduling waste for all three stakeholders: owners, brokers, and renters?'
       },
       {
-        label: 'Impact',
-        content: '• Strong brand modernization signals\n• Double-digit increase in digital admission inquiries\n• Positive parental user test scores',
+        label: 'The Spatial Vision (Vision Pro + iOS)',
+        content: 'To bridge this trust gap, I explored spatial computing design paradigms. Drawing inspiration from Apple Vision Pro\'s immersive canvas, I designed an iOS/Spatial Booking App concept that brings properties closer to users. \n\nBy leveraging immersive spatial tours, interactive 3D floorplans, and real-time volumetric light analysis (letting users see exactly how much sunlight a room gets at 10:00 AM vs 4:00 PM), the app delivers a true "try-before-commit" experience. This spatial realism allows renters to filter out unsuitable spaces instantly, protecting occupied homes from constant physical viewings and streamlining the leasing pipeline.'
       },
+      {
+        label: 'Outcomes & Core Takeaways',
+        content: 'By bringing high-fidelity spatial telemetry into the property search loop, we can eliminate up to 70% of unnecessary physical viewings. This protects the privacy of departing tenants, eliminates dead scheduling time for brokers/owners, and gives renters total confidence that the home they see on their screen is exactly the home they will walk into.'
+      }
     ],
-  },
-  {
-    id: 'doctorite',
-    title: 'Doctorite — Operational Hospital Dashboard',
-    role: 'Product Designer',
-    duration: '8 Months',
-    impact: '+94% efficiency',
-    category: 'HealthTech SaaS',
-    teamType: 'Dashboard Operations',
-    accent: 'oklch(48% 0.14 165)',
-    bg: 'oklch(96% 0.03 165)',
-    emoji: '🏥',
-    cardImage: '/projects/healthcare.png',
-    coverImage: '/projects/healthcare.png',
-    framerUrl: 'https://productgrowthsoupriti.framer.website/works',
-    tags: ['SaaS Dashboard', 'Data Visualization', 'Operations'],
-    overview: 'Designed a real-time clinical control deck surfacing key case metrics, pipelines, and patient transfers — giving administrators instant clarity.',
-    sections: [
-      {
-        label: 'Problem',
-        content: 'Operational staff juggled 4+ distinct legacy applications, delaying response times and leading to critical cases getting delayed.',
-      },
-      {
-        label: 'Approach',
-        content: 'Unified active patient flows, occupancy graphs, staff ratios, and response trackers into a single desktop dashboard with high data density.',
-      },
-      {
-        label: 'Impact',
-        content: '• Surge to 94% clinician tracking accuracy\n• Reduced case transfer queries from 5 screens to 1 glance\n• Strong praise for operational speed during medical tests',
-      },
-    ],
-  },
+    mockups: [
+      '/projects/booking_landing_page.png',
+      '/projects/booking_landing_page_1.png',
+      '/projects/booking_landing_page_2.png'
+    ]
+  }
 ]
 
-/* ── Upright Bookshelf Book Component ── */
-function BookshelfBook({ project, isHovered, onHover, onClick }) {
+// SearchToIntentSlidesView removed because Document mode is preferred.
+
+function SearchToIntentDocView({ isMobile }) {
+  const mockups = [
+    { src: '/projects/search_to_intent_slide_2.png', label: 'Problem & Discovery Mechanics' },
+    { src: '/projects/search_to_intent_slide_3.png', label: 'User Intent & Context Mapping' },
+    { src: '/projects/search_to_intent_slide_6.png', label: 'Conversational Prompting & UI Exploration' },
+    { src: '/projects/search_to_intent_slide_9.png', label: 'Multimodal Input & Camera Recognition Flow' },
+    { src: '/projects/search_to_intent_slide_10.png', label: 'Interaction Easing & Transition Logic' },
+    { src: '/projects/search_to_intent_slide_12.png', label: 'Design System Tokens & Grid Specifications' },
+    { src: '/projects/search_to_intent_mockup1.png', label: 'Homepage Recommendation & AI Discovery Dashboard' },
+    { src: '/projects/search_to_intent_mockup2.jpg', label: 'Conversational Intent & Preferred Choice Assistant' },
+  ]
+
   return (
-    <div 
-      className={`bookshelf-book-container ${isHovered ? 'book-expanded' : ''}`}
-      onMouseEnter={onHover}
-      onClick={onClick}
-      style={{
-        '--book-accent': isHovered ? 'var(--accent)' : 'var(--border)',
-        '--book-bg': 'var(--bg-card)',
-      }}
-    >
-      <div className="bookshelf-book-3d">
-        
-        {/* Book Spine (Quiet grey unselected, dynamic electric blue active) */}
-        <div 
-          className="book-spine-face"
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+      {/* 1. HERO COVER IMAGE */}
+      <div style={{
+        width: '100%',
+        background: 'var(--bg-warm)',
+        borderBottom: '1px solid var(--border)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: '24px 0',
+      }}>
+        <img 
+          src="/projects/search_to_intent_cover.png" 
+          alt="Search to Intent cover"
           style={{
-            background: isHovered ? 'var(--accent)' : 'var(--bg-card)',
-            color: isHovered ? '#ffffff' : 'var(--text-secondary)',
-            border: isHovered ? '1px solid var(--accent)' : '1px solid var(--border)',
-            boxShadow: isHovered ? 'none' : 'inset -2px 0 5px rgba(0,0,0,0.04)',
-            borderRadius: '4px 0 0 4px',
+            width: '100%',
+            height: 'auto',
+            maxHeight: '85vh',
+            objectFit: 'contain',
+            display: 'block',
           }}
-        >
-          {isHovered ? (
-            <>
-              <span className="spine-emoji">{project.emoji}</span>
-              <span className="spine-title">{project.category}</span>
-              <span className="spine-impact">{project.impact}</span>
-            </>
-          ) : (
-            <span className="spine-title-quiet">{project.category}</span>
-          )}
+        />
+      </div>
+
+      {/* 2. OVERVIEW & CONTRIBUTION (id="overview") */}
+      <div id="overview" style={{ background: 'var(--bg)', padding: '100px 0', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ maxWidth: '820px', margin: '0 auto', width: '100%', paddingInline: '24px' }}>
+          <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', color: 'var(--accent)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', display: 'block', marginBottom: '12px' }}>
+            AI Experience Design + Generative Discovery
+          </span>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(32px, 5vw, 54px)', fontWeight: 400, letterSpacing: '-0.025em', lineHeight: 1.1, color: 'var(--text-primary)', margin: '0 0 24px 0' }}>
+            Search to Intent
+          </h1>
+          <p style={{ fontSize: '18px', lineHeight: 1.7, color: 'var(--text-secondary)', marginBottom: '48px' }}>
+            Transformed recipe discovery from keyword-based search into an AI-powered cooking companion, helping users create food from around the world through natural conversations, fridge scans, and social media inspiration.
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '32px', borderTop: '1px solid var(--border)', paddingTop: '40px' }}>
+            <div>
+              <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 700, display: 'block', marginBottom: '8px', letterSpacing: '0.08em' }}>MY CONTRIBUTION</span>
+              <p style={{ fontSize: '14px', lineHeight: 1.6, color: 'var(--text-secondary)', margin: 0 }}>
+                Led end-to-end product design including UX research, product strategy, AI experience design, interaction design, information architecture, UI design, prototyping, user testing, and design system. Designed conversational and multimodal discovery experiences using text prompts, ingredient recognition, fridge scans, and social media content.
+              </p>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 700, display: 'block', marginBottom: '6px', letterSpacing: '0.08em' }}>TIMELINE</span>
+                  <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>1 Month</span>
+                </div>
+                <div>
+                  <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 700, display: 'block', marginBottom: '6px', letterSpacing: '0.08em' }}>TARGET USER</span>
+                  <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Busy Cooks</span>
+                </div>
+              </div>
+              <div>
+                <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 700, display: 'block', marginBottom: '6px', letterSpacing: '0.08em' }}>STAKEHOLDERS</span>
+                <span style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>Consumers, Product Team, AI Engineers, Frontend Developers, Founders</span>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
 
-        {/* Book Cover (Vibrant design system Electric Blue active cover layout!) */}
-        <div 
-          className="book-cover-face"
-          style={{
-            background: 'var(--bg-card)',
-            border: '2px solid var(--accent)',
-            borderRadius: '0 8px 8px 0',
-          }}
-        >
-          <div className="cover-glow" style={{ background: 'var(--accent)' }} />
+      {/* 3. RECIPE DISCOVERY MOCKUP */}
+      <div style={{ background: 'var(--bg-warm)', padding: '100px 0', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto', width: '100%', paddingInline: '24px' }}>
+          <div 
+            style={{
+              background: 'var(--bg-card)',
+              borderRadius: '32px',
+              padding: isMobile ? '12px' : '24px',
+              boxShadow: '0 24px 60px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.03)',
+              overflow: 'hidden',
+            }}
+          >
+            <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', borderRadius: '20px', overflow: 'hidden' }}>
+              <iframe 
+                src="https://www.canva.com/design/DAHLaWrsGuo/nd2_fdOFi5_mQC632ooo1g/watch?embed" 
+                title="Search to Intent Presentation Video"
+                width="100%"
+                height="100%"
+                style={{ border: 'none', display: 'block' }}
+                allowFullScreen
+                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
+              />
+            </div>
+          </div>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', fontFamily: 'var(--font-body)', marginTop: '20px', display: 'block', textAlign: 'center' }}>
+            AI-Powered Recipe Discovery & Contextual Search Video Walkthrough
+          </span>
+        </div>
+      </div>
+
+      {/* 4. PROBLEM STATEMENT & SCOPE (id="problem") */}
+      <div id="problem" style={{ background: 'var(--bg)', padding: '100px 0', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ maxWidth: '820px', margin: '0 auto', width: '100%', paddingInline: '24px' }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px, 4vw, 40px)', fontWeight: 400, color: 'var(--text-primary)', marginBottom: '40px', letterSpacing: '-0.02em' }}>
+            Problem Statement
+          </h2>
           
-          <div className="cover-header">
-            <span className="cover-category" style={{ color: 'var(--accent)' }}>{project.category.toUpperCase()}</span>
-            <span className="cover-emoji">{project.emoji}</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', marginBottom: '60px' }}>
+            <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+              <div style={{ fontSize: '24px', background: 'rgba(139, 92, 246, 0.08)', padding: '12px', borderRadius: '16px', color: 'var(--accent)' }}>🔍</div>
+              <div>
+                <h4 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>Discovery was hard</h4>
+                <p style={{ fontSize: '15px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.65 }}>Not because of lack of content, but because users didn't know what to search for. They faced immediate decision fatigue when presented with standard keyword query boxes.</p>
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+              <div style={{ fontSize: '24px', background: 'rgba(139, 92, 246, 0.08)', padding: '12px', borderRadius: '16px', color: 'var(--accent)' }}>👥</div>
+              <div>
+                <h4 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>Decision Fatigue</h4>
+                <p style={{ fontSize: '15px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.65 }}>Users relied heavily on external social platforms for cooking inspiration, struggling to translate that casual interest into actual recipes inside the app.</p>
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+              <div style={{ fontSize: '24px', background: 'rgba(139, 92, 246, 0.08)', padding: '12px', borderRadius: '16px', color: 'var(--accent)' }}>🎯</div>
+              <div>
+                <h4 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>The Real Problem</h4>
+                <p style={{ fontSize: '15px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.65 }}>The core issue wasn't the search capability itself — it was understanding user intent. Because discovery was rigid, thousands of highly rated recipes remained completely undiscovered.</p>
+              </div>
+            </div>
           </div>
 
-          <h3 className="cover-title">{project.title}</h3>
+          <div style={{ borderTop: '1px solid var(--border)', paddingTop: '60px', marginTop: '60px' }}>
+            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '24px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '32px' }}>Project Scope</h3>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '40px' }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: '#10b981', fontFamily: 'var(--font-mono)', display: 'block', marginBottom: '16px', letterSpacing: '0.08em' }}>IN SCOPE</span>
+                <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.8, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <li>Conversational AI for recipe discovery</li>
+                  <li>Intent-based recipe recommendations</li>
+                  <li>Fridge image recognition</li>
+                  <li>Ingredient-based recipe generation</li>
+                  <li>Social media link-to-recipe generation</li>
+                  <li>Blog and web recipe interpretation</li>
+                  <li>Mobile-first discovery experience</li>
+                  <li>Homepage exploration redesign</li>
+                </ul>
+              </div>
+              
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: '#ef4444', fontFamily: 'var(--font-mono)', display: 'block', marginBottom: '16px', letterSpacing: '0.08em' }}>OUT OF SCOPE</span>
+                <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.8, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <li>Cooking hardware experience</li>
+                  <li>Cooking execution workflows</li>
+                  <li>Device onboarding</li>
+                  <li>Community features</li>
+                  <li>Social validation systems</li>
+                  <li>Hardware-specific interactions</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-          <div className="cover-meta-row">
-            <span className="cover-role-label">{project.role}</span>
-            <span className="cover-meta-dot">·</span>
-            <span className="cover-duration-label">{project.duration}</span>
+      {/* 5. APPROACH & AIM (id="approach") */}
+      <div id="approach" style={{ 
+        background: 'rgba(0, 82, 255, 0.04)', 
+        padding: '100px 0', 
+        borderTop: '1px solid rgba(0, 82, 255, 0.08)',
+        borderBottom: '1px solid rgba(0, 82, 255, 0.08)' 
+      }}>
+        <div style={{ maxWidth: '820px', margin: '0 auto', width: '100%', paddingInline: '24px' }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px, 4vw, 40px)', fontWeight: 400, color: 'var(--text-primary)', marginBottom: '24px', letterSpacing: '-0.025em' }}>
+            Approach & Aim
+          </h2>
+          
+          <div style={{ fontSize: '18px', lineHeight: 1.65, color: 'var(--text-primary)', marginBottom: '48px', borderLeft: '4px solid #0052ff', paddingLeft: '24px', fontWeight: 400 }}>
+            <span style={{ color: '#0052ff', fontWeight: 600, display: 'block', marginBottom: '8px', fontSize: '12px', fontFamily: 'var(--font-mono)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Hypothesis</span>
+            "If users express intent naturally through conversations, images, ingredients, and social inspiration, they will discover recipes faster with less effort. Shifting from keyword search to intent-driven discovery makes cooking more approachable and increases exploration."
           </div>
 
-          <p className="cover-overview">{project.overview}</p>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.2fr 1fr', gap: '48px', marginTop: '48px', borderTop: '1px solid var(--border)', paddingTop: '40px' }}>
+            <div>
+              <h4 style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent)', fontFamily: 'var(--font-mono)', margin: '0 0 20px 0', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Core Objectives</h4>
+              <p style={{ fontSize: '15px', color: 'var(--text-primary)', margin: '0 0 16px 0' }}><strong>Primary Goal:</strong> Reduce decision fatigue during recipe discovery.</p>
+              <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.8, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <li>Increase recipe exploration rates</li>
+                <li>Improve confidence for beginner cooks</li>
+                <li>Increase engagement and retention on mobile</li>
+                <li>Help users get started with the device faster</li>
+                <li>Enable discovery through natural, casual behavior</li>
+              </ul>
+            </div>
+            <div style={{ background: 'var(--bg-card)', border: '1.2px solid var(--border)', borderRadius: '24px', padding: '28px', display: 'flex', gap: '20px', flexDirection: 'column' }}>
+              <div style={{ fontSize: '32px', lineHeight: 1 }}>📱</div>
+              <div>
+                <h4 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>Core Insight</h4>
+                <p style={{ fontSize: '14px', lineHeight: 1.6, color: 'var(--text-secondary)', margin: 0 }}>
+                  Users don't decide what to cook in the kitchen. They decide while scrolling social media, relaxing at work, shopping, or checking what ingredients are expiring in their fridge. We extended discovery to mobile and designed the AI experience around real-world lifestyle behavior.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-          {/* Embedded design tags - Sharp corners */}
-          <div className="cover-tags-row">
-            {project.tags?.slice(0, 3).map((t) => (
-              <span key={t} className="cover-tag-pill">{t}</span>
+      {/* 6. METHODOLOGIES */}
+      <div style={{ background: 'var(--bg)', padding: '100px 0', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ maxWidth: '820px', margin: '0 auto', width: '100%', paddingInline: '24px' }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px, 4vw, 40px)', fontWeight: 400, color: 'var(--text-primary)', marginBottom: '16px', letterSpacing: '-0.025em' }}>
+            Methodologies
+          </h2>
+          <p style={{ fontSize: '16px', color: 'var(--text-secondary)', marginBottom: '48px', lineHeight: 1.6 }}>
+            A human-centered, AI-enhanced research and design framework to understand how people discover and decide what to cook.
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '48px', marginBottom: '60px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.3fr 1fr', gap: '32px', alignItems: 'center' }}>
+              <div>
+                <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--accent)', fontFamily: 'var(--font-mono)', display: 'block', marginBottom: '8px', letterSpacing: '0.08em' }}>RESEARCH CATEGORY</span>
+                <h4 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 16px 0' }}>Mixed Methods</h4>
+                <p style={{ fontSize: '14.5px', lineHeight: 1.65, color: 'var(--text-secondary)', margin: 0, fontStyle: 'italic', borderLeft: '3px solid var(--accent)', paddingLeft: '16px' }}>
+                  "We combined qualitative and quantitative research with AI exploration to uncover real user behavior and build intent-driven discovery experiences."
+                </p>
+              </div>
+              <div style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+                <img src="/projects/search_to_intent_research_category.png" alt="Research Category" style={{ width: '100%', display: 'block' }} />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.3fr 1fr', gap: '32px', alignItems: 'center', borderTop: '1px solid var(--border)', paddingTop: '48px' }}>
+              <div>
+                <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--accent)', fontFamily: 'var(--font-mono)', display: 'block', marginBottom: '8px', letterSpacing: '0.08em' }}>PARTICIPANTS</span>
+                <h4 style={{ fontSize: '17px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 12px 0', lineHeight: 1.45 }}>
+                  Students, busy professionals, beginner cooks, parents, home cooks, and recipe explorers.
+                </h4>
+                <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <li>Wide range of cooking confidence levels</li>
+                  <li>Different lifestyles, family structures, and routines</li>
+                  <li>Users who cook at home, occasionally, or rarely</li>
+                </ul>
+              </div>
+              <div style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+                <img src="/projects/search_to_intent_research_participants.png" alt="Research Participants" style={{ width: '100%', display: 'block' }} />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.3fr 1fr', gap: '32px', alignItems: 'center', borderTop: '1px solid var(--border)', paddingTop: '48px' }}>
+              <div>
+                <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--accent)', fontFamily: 'var(--font-mono)', display: 'block', marginBottom: '8px', letterSpacing: '0.08em' }}>GEOGRAPHY / CONTEXT</span>
+                <h4 style={{ fontSize: '17px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 12px 0', lineHeight: 1.45 }}>
+                  Urban Indian households across multiple cities and regions.
+                </h4>
+                <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <li>Research conducted in real kitchen environments and mobile-first contexts</li>
+                  <li>Included shared living spaces, nuclear families, and multi-generational households</li>
+                  <li>Food choices studied across seasons, weather, moods, and daily routines</li>
+                </ul>
+              </div>
+              <div style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+                <img src="/projects/search_to_intent_research_geography.png" alt="Research Geography" style={{ width: '100%', display: 'block' }} />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.3fr 1fr', gap: '32px', alignItems: 'center', borderTop: '1px solid var(--border)', paddingTop: '48px' }}>
+              <div>
+                <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--accent)', fontFamily: 'var(--font-mono)', display: 'block', marginBottom: '8px', letterSpacing: '0.08em' }}>DATA ANALYSIS</span>
+                <h4 style={{ fontSize: '17px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 16px 0' }}>Behavior Clustering & Intent Mapping</h4>
+                <p style={{ fontSize: '14px', lineHeight: 1.6, color: 'var(--text-secondary)', margin: 0 }}>
+                  We combined qualitative insights with AI-assisted synthesis to identify patterns, gaps, and opportunities that informed product and AI experience design.
+                </p>
+              </div>
+              <div style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+                <img src="/projects/search_to_intent_research_analysis.png" alt="Research Analysis" style={{ width: '100%', display: 'block' }} />
+              </div>
+            </div>
+          </div>
+
+          <div style={{ background: 'var(--bg-warm)', border: '1px solid var(--border)', borderRadius: '24px', padding: '36px', marginTop: '60px' }}>
+            <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--accent)', fontFamily: 'var(--font-mono)', display: 'block', marginBottom: '24px', letterSpacing: '0.08em' }}>DISCOVERY FRAMEWORK</span>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '24px' }}>
+              <div>
+                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 6px 0' }}>❤️ Mood-Based Decisions</h4>
+                <p style={{ fontSize: '13.5px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>Food choices are deeply tied to how users feel—comfort, indulgent, light, nostalgic, or celebratory.</p>
+              </div>
+              <div>
+                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 6px 0' }}>🌤️ Weather Influence</h4>
+                <p style={{ fontSize: '13.5px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>Weather directly impacts cravings and cooking behavior (rainy = comfort food, summer = light & cooling).</p>
+              </div>
+              <div>
+                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 6px 0' }}>🌿 Seasonal Context</h4>
+                <p style={{ fontSize: '13.5px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>Seasonality, festivals, and regional food traditions shape what and how people cook.</p>
+              </div>
+              <div>
+                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 6px 0' }}>🛒 Ingredient Availability</h4>
+                <p style={{ fontSize: '13.5px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>Users often decide based on what's in their fridge or what's easily available.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 7. INSIGHTS & OUTCOMES (id="outcomes") */}
+      <div id="outcomes" style={{ background: 'var(--bg-warm)', padding: '100px 0', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ maxWidth: '820px', margin: '0 auto', width: '100%', paddingInline: '24px' }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px, 4vw, 40px)', fontWeight: 400, color: 'var(--text-primary)', marginBottom: '40px', letterSpacing: '-0.025em' }}>
+            Key Insights & Outcomes
+          </h2>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', marginBottom: '60px' }}>
+            <div>
+              <h5 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>1. Decision-making, not search</h5>
+              <p style={{ fontSize: '14.5px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+                Recipe discovery wasn't a search problem—it was a decision-making problem. Users rarely knew exactly what they wanted to cook. They started with a feeling, craving, occasion, or constraint rather than a recipe name.
+              </p>
+            </div>
+            <div>
+              <h5 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>2. Contextual Influence</h5>
+              <p style={{ fontSize: '14.5px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+                Food choices were heavily influenced by context. Weather, seasonality, mood, time of day, family preferences, and ingredient availability played a significant role in cooking decisions.
+              </p>
+            </div>
+            <div>
+              <h5 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>3. Social Inspiration</h5>
+              <p style={{ fontSize: '14.5px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+                Social content became the new discovery engine. Instagram reels, YouTube videos, blogs, and creator content were often the starting point of recipe exploration rather than dedicated cooking platforms.
+              </p>
+            </div>
+          </div>
+
+          <div style={{ background: 'var(--bg-card)', border: '1.2px solid var(--border)', borderRadius: '24px', padding: '36px', margin: '48px 0' }}>
+            <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--accent)', fontFamily: 'var(--font-mono)', display: 'block', marginBottom: '16px', letterSpacing: '0.08em' }}>PROJECT IMPACT</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div>
+                <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 6px 0', fontFamily: 'var(--font-mono)', letterSpacing: '0.04em' }}>BUSINESS OUTCOME</h4>
+                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>
+                  Increased recipe exploration and discoverability across the platform by enabling multimodal discovery. Improved retention by empowering users to find anything they crave, anytime.
+                </p>
+              </div>
+              <div style={{ borderTop: '1.2px solid var(--border)', paddingTop: '20px' }}>
+                <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 6px 0', fontFamily: 'var(--font-mono)', letterSpacing: '0.04em' }}>TEAM OUTCOME</h4>
+                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>
+                  Established reusable multimodal discovery patterns that can be applied across future AI experiences. Created a framework for designing around intent, context, and user behavior instead of traditional search flows.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 8. SHOWCASE & TRY LIVE (id="showcase") */}
+      <div id="showcase" style={{ background: 'var(--bg)', padding: '100px 0', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto', width: '100%', paddingInline: '24px' }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px, 4vw, 40px)', fontWeight: 400, color: 'var(--text-primary)', marginBottom: '48px', textAlign: 'center', letterSpacing: '-0.025em' }}>
+            Search to Intent Showcase
+          </h2>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '64px', alignItems: 'center', width: '100%' }}>
+            {mockups.map((item, index) => (
+              <div key={index} style={{ width: '100%', maxWidth: '100%', textAlign: 'center' }}>
+                <div style={{
+                  background: 'var(--bg-card)',
+                  borderRadius: '32px',
+                  padding: isMobile ? '12px' : '24px',
+                  boxShadow: '0 24px 60px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.03)',
+                  overflowX: 'auto',
+                  overflowY: 'hidden',
+                  width: '100%',
+                  boxSizing: 'border-box'
+                }}>
+                  <img src={item.src} alt={item.label} style={{ minWidth: '100%', width: 'auto', maxWidth: 'none', height: 'auto', display: 'block', borderRadius: '20px' }} />
+                </div>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)', fontFamily: 'var(--font-body)', marginTop: '16px', display: 'block' }}>
+                  {item.label}
+                </span>
+              </div>
             ))}
           </div>
 
-          <div className="cover-footer">
-            <div className="cover-impact-badge" style={{ background: 'rgba(0, 82, 255, 0.06)', border: '1px solid rgba(0, 82, 255, 0.15)', color: 'var(--accent)' }}>
-              {project.impact}
+          <div style={{ maxWidth: '820px', margin: '100px auto 0 auto', width: '100%' }}>
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(0, 82, 255, 0.04) 100%)',
+              border: '1.5px solid rgba(139, 92, 246, 0.25)',
+              borderRadius: '24px',
+              padding: '54px 36px',
+              textAlign: 'center',
+              position: 'relative',
+              overflow: 'hidden',
+              boxShadow: '0 12px 40px rgba(139, 92, 246, 0.08)',
+            }}>
+              <div style={{
+                position: 'absolute',
+                top: '-50%',
+                left: '-50%',
+                width: '200%',
+                height: '200%',
+                background: 'radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 60%)',
+                pointerEvents: 'none',
+              }} />
+              <span style={{ fontSize: '11px', fontWeight: 700, fontFamily: 'var(--font-mono)', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '12px' }}>
+                LIVE EXPERIENCE
+              </span>
+              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '30px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '16px', letterSpacing: '-0.02em' }}>
+                Try the upliance App Live
+              </h3>
+              <p style={{ fontSize: '15px', color: 'var(--text-secondary)', maxWidth: '520px', margin: '0 auto 36px auto', lineHeight: 1.6 }}>
+                Experience the AI cooking companion, recipe discovery engine, and smart hardware integration directly on your mobile device. Download the app today.
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                <a href="https://play.google.com/store/apps/details?id=com.upliance.android.app&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', padding: '12px 24px', background: '#0a0a0f', border: '1.2px solid rgba(255,255,255,0.15)', borderRadius: '14px', color: '#ffffff', textDecoration: 'none', transition: 'all 0.25s' }} className="store-btn">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M5,3.14c-0.23,0-0.46,0.06-0.67,0.18L14.1,12l-9.77,8.68C4.54,20.8,4.77,20.86,5,20.86c0.35,0,0.69-0.1,0.98-0.29l12.75-7.59c0.75-0.45,0.75-1.51,0-1.96L5.98,3.43C5.69,3.24,5.35,3.14,5,3.14z" /></svg>
+                  <div style={{ textAlign: 'left' }}><span style={{ fontSize: '9px', textTransform: 'uppercase', display: 'block', color: 'rgba(255,255,255,0.6)', letterSpacing: '0.05em' }}>GET IT ON</span><span style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-body)' }}>Google Play</span></div>
+                </a>
+                <a href="https://apps.apple.com/in/app/upliance/id6514318061" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', padding: '12px 24px', background: '#0a0a0f', border: '1.2px solid rgba(255,255,255,0.15)', borderRadius: '14px', color: '#ffffff', textDecoration: 'none', transition: 'all 0.25s' }} className="store-btn">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M18.71,19.5C17.88,20.74,17,21.95,15.66,22c-1.34,0-1.77-0.83-3.32-0.83c-1.54,0-2,.81-3.28,0.86 c-1.26,0.05-2.24-1.32-3.08-2.54c-1.72-2.5-3.03-7.05-1.27-10.13c0.88-1.53,2.45-2.5,4.16-2.53c1.3-0.02,2.53,0.88,3.33,0.88 c0.8,0,2.27-1.07,3.81-0.91c0.65,0.03,2.47,0.26,3.64,1.98c-0.09,0.06-2.17,1.28-2.15,3.81c0.03,3.02,2.65,4.03,2.68,4.04 C19.97,16.24,19.54,18.25,18.71,19.5z M15.97,4.17c0.66-0.81,1.11-1.93,0.99-3.06c-0.96,0.04-2.13,0.64-2.82,1.45 c-0.6,0.7-1.12,1.84-0.98,2.94C14.12,5.55,15.28,4.92,15.97,4.17z" /></svg>
+                  <div style={{ textAlign: 'left' }}><span style={{ fontSize: '9px', textTransform: 'uppercase', display: 'block', color: 'rgba(255,255,255,0.6)', letterSpacing: '0.05em' }}>Download on the</span><span style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-body)' }}>App Store</span></div>
+                </a>
+              </div>
             </div>
-            <span className="cover-action-cta" style={{ color: 'var(--accent)' }}>Read Case Study ↗</span>
           </div>
         </div>
-
-        {/* Book Pages Thickness Edge */}
-        <div className="book-pages-face" />
       </div>
     </div>
   )
 }
 
 /* ── Full-Page Case Study Overlay View ── */
-function CaseStudyPage({ project, onClose, onNextProject }) {
+function CaseStudyPage({ project, onClose, onNextProject, isMobile }) {
   const contentRef = useRef(null)
   const [readProgress, setReadProgress] = useState(0)
+  const [navVisible, setNavVisible] = useState(true)
   const [scrolled, setScrolled] = useState(false)
+  const [lastScrollTop, setLastScrollTop] = useState(0)
+  const [activeSection, setActiveSection] = useState('overview')
 
   // Sync scroll lock on open
   useEffect(() => {
@@ -385,11 +695,35 @@ function CaseStudyPage({ project, onClose, onNextProject }) {
   // Calculate reading progress as the modal scrolls
   const handleScroll = (e) => {
     const el = e.currentTarget
+    const currentScrollTop = el.scrollTop
     const totalHeight = el.scrollHeight - el.clientHeight
     if (totalHeight > 0) {
-      setReadProgress(el.scrollTop / totalHeight)
+      setReadProgress(currentScrollTop / totalHeight)
     }
-    setScrolled(el.scrollTop > 40)
+
+    setScrolled(currentScrollTop > 20)
+
+    // Sync visibility of top bar
+    if (currentScrollTop > lastScrollTop && currentScrollTop > 100) {
+      setNavVisible(false)
+    } else {
+      setNavVisible(true)
+    }
+    setLastScrollTop(currentScrollTop)
+
+    // Check active section
+    const sectionIds = ['overview', 'problem', 'approach', 'outcomes', 'showcase']
+    for (const id of sectionIds) {
+      const secEl = el.querySelector(id === 'overview' ? '.case-study-overlay' : `#${id}`)
+      if (secEl) {
+        const rect = secEl.getBoundingClientRect()
+        // If section is in view near top of viewport
+        if (rect.top <= 160 && rect.bottom > 160) {
+          setActiveSection(id)
+          break
+        }
+      }
+    }
   }
 
   // Calculate next project loop index
@@ -401,11 +735,12 @@ function CaseStudyPage({ project, onClose, onNextProject }) {
       data-lenis-prevent
       onScroll={handleScroll}
       className="case-study-overlay"
+      ref={contentRef}
       style={{
         position: 'fixed',
         inset: 0,
         background: 'var(--bg)',
-        zIndex: 9999,
+        zIndex: 999999, // Just below global Nav (zIndex: 1000000)
         overflowY: 'auto',
         color: 'var(--text-primary)',
         scrollBehavior: 'smooth',
@@ -420,336 +755,513 @@ function CaseStudyPage({ project, onClose, onNextProject }) {
           height: 3,
           background: 'var(--accent)',
           width: `${readProgress * 100}%`,
-          zIndex: 10001,
+          zIndex: 10000002,
           boxShadow: '0 0 8px var(--accent)',
           transition: 'width 0.1s ease',
         }}
       />
 
-      {/* ── Nav Bar mimicking the Homepage header ── */}
-      <header
+      {/* ── Secondary Nav Bar ── */}
+      <div
         style={{
           position: 'fixed',
-          top: 0,
+          top: scrolled ? (isMobile ? '56px' : '64px') : (isMobile ? '80px' : '88px'),
           left: 0,
           width: '100%',
-          zIndex: 10000,
-          paddingTop: scrolled ? '16px' : '32px',
-          paddingBottom: scrolled ? '16px' : '32px',
-          background: scrolled ? 'var(--bg-overlay)' : 'transparent',
-          borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent',
-          backdropFilter: scrolled ? 'blur(20px)' : 'none',
-          WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'none',
-          transition: 'padding 0.3s var(--ease-out-expo), background 0.3s, border-bottom 0.3s, backdrop-filter 0.3s',
+          height: '48px',
+          background: 'var(--bg-overlay)',
+          borderBottom: '1px solid var(--border)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          zIndex: 999998,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          transition: 'transform 0.4s var(--ease-out-expo), top 0.3s var(--ease-out-expo), background 0.3s, border-bottom 0.3s',
+          transform: navVisible ? 'translateY(0)' : 'translateY(-180px)',
         }}
       >
-        <div 
-          className="container" 
+        <div
           style={{
             display: 'flex',
-            justifyContent: 'space-between',
+            gap: isMobile ? '8px' : '32px',
             alignItems: 'center',
-            maxWidth: 1440,
-            paddingInline: 'clamp(24px, 5vw, 72px)',
+            justifyContent: 'center',
+            width: '100%',
+            maxWidth: '820px',
+            paddingInline: '16px',
           }}
         >
-          {/* Left: Back Button + Emoji + Project Category */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <button
-              onClick={onClose}
-              aria-label="Back to portfolio shelf"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '10px 18px',
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border)',
-                borderRadius: 'var(--radius-pill)',
-                boxShadow: 'var(--shadow-sm)',
-                cursor: 'pointer',
-                color: 'var(--text-primary)',
-                fontSize: 13,
-                fontWeight: 600,
-                fontFamily: 'var(--font-body)',
-                letterSpacing: '-0.015em',
-                outline: 'none',
-                transition: 'all 0.25s var(--ease-out-expo)',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = 'translateY(-1px)'
-                e.currentTarget.style.boxShadow = 'var(--shadow-md)'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = 'var(--shadow-sm)'
-              }}
-            >
-              ← Back to Shelf
-            </button>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 16 }}>{project.emoji}</span>
-              <span style={{ 
-                fontSize: 12, 
-                fontWeight: 700, 
-                fontFamily: 'var(--font-mono)', 
-                color: 'var(--text-secondary)', 
-                textTransform: 'uppercase', 
-                letterSpacing: '0.04em' 
-              }}>
-                {project.category}
-              </span>
-            </div>
-          </div>
+          {[
+            { id: 'overview', label: 'Overview' },
+            { id: 'problem', label: 'Problem' },
+            { id: 'approach', label: 'Approach' },
+            { id: 'outcomes', label: 'Outcomes' },
+            { id: 'showcase', label: 'Showcase' },
+          ].map((item) => {
+            const isActive = activeSection === item.id
+            return (
+              <button
+                key={item.id}
+                onClick={() => {
+                  const container = contentRef.current
+                  
+                  if (item.id === 'overview') {
+                    container.scrollTo({ top: 0, behavior: 'smooth' })
+                    setActiveSection('overview')
+                    return
+                  }
 
-          {/* Right: Next Project Button */}
-          <div>
-            <button 
-              onClick={() => {
-                if (contentRef.current) contentRef.current.scrollTop = 0
-                onNextProject(nextProj)
-              }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '10px 18px',
-                background: 'var(--accent)',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: 'var(--radius-pill)',
-                boxShadow: '0 4px 12px rgba(0, 82, 255, 0.2)',
-                cursor: 'pointer',
-                fontSize: 13,
-                fontWeight: 600,
-                fontFamily: 'var(--font-body)',
-                letterSpacing: '-0.015em',
-                outline: 'none',
-                transition: 'all 0.25s var(--ease-out-expo)',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = 'translateY(-1px)'
-                e.currentTarget.style.background = 'var(--accent-light)'
-                e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 82, 255, 0.3)'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.background = 'var(--accent)'
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 82, 255, 0.2)'
-              }}
-            >
-              Next Project ↗
-            </button>
-          </div>
+                  const targetEl = container.querySelector(`#${item.id}`)
+                  if (targetEl) {
+                    const containerRect = container.getBoundingClientRect()
+                    const targetRect = targetEl.getBoundingClientRect()
+                    const topOffset = container.scrollTop + (targetRect.top - containerRect.top) - (isMobile ? 110 : 130)
+                    container.scrollTo({
+                      top: topOffset,
+                      behavior: 'smooth'
+                    })
+                    setActiveSection(item.id)
+                  }
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
+                  fontSize: isMobile ? '11px' : '13px',
+                  fontWeight: 600,
+                  fontFamily: 'var(--font-mono)',
+                  letterSpacing: '0.04em',
+                  textTransform: 'uppercase',
+                  padding: '6px 12px',
+                  cursor: 'pointer',
+                  position: 'relative',
+                  outline: 'none',
+                  transition: 'color 0.2s ease',
+                }}
+              >
+                {item.label}
+                {isActive && (
+                  <motion.div
+                    layoutId="activeCSNavDot"
+                    style={{
+                      position: 'absolute',
+                      bottom: -2,
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: '4px',
+                      height: '4px',
+                      borderRadius: '50%',
+                      background: 'var(--accent)',
+                    }}
+                  />
+                )}
+              </button>
+            )
+          })}
         </div>
-      </header>
+      </div>
 
       {/* Case Study Scrollable Content */}
       <div 
-        ref={contentRef}
         style={{
           width: '100%',
-          maxWidth: '920px',
+          maxWidth: project.id === 'search-to-intent' ? '100%' : '1200px',
           margin: '0 auto',
-          padding: '120px 24px 100px 24px',
+          padding: project.id === 'search-to-intent' ? '0px' : '120px 24px 60px 24px',
         }}
       >
-        {/* Category Label */}
-        <span style={{
-          fontSize: '11px',
-          fontWeight: 700,
-          letterSpacing: '0.15em',
-          color: 'var(--accent)',
-          fontFamily: 'var(--font-mono)',
-          textTransform: 'uppercase',
-          display: 'block',
-          marginBottom: 'var(--space-3)'
-        }}>
-          {project.category} · {project.teamType}
-        </span>
+        {project.id === 'search-to-intent' ? (
+          <SearchToIntentDocView isMobile={isMobile} />
+        ) : (
+          <>
+            <div id="overview" style={{ maxWidth: '820px', margin: '0 auto', width: '100%' }}>
+              {/* Category Label */}
+              <span style={{
+                fontSize: '11px',
+                fontWeight: 700,
+                letterSpacing: '0.15em',
+                color: 'var(--accent)',
+                fontFamily: 'var(--font-mono)',
+                textTransform: 'uppercase',
+                display: 'block',
+                marginBottom: 'var(--space-3)'
+              }}>
+                {project.category} · {project.teamType}
+              </span>
 
-        <h1 style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: 'clamp(28px, 4.5vw, 52px)',
-          fontWeight: 400,
-          letterSpacing: '-0.025em',
-          lineHeight: 1.15,
-          color: 'var(--text-primary)',
-          margin: '0 0 var(--space-4) 0',
-        }}>
-          {project.title}
-        </h1>
-
-        <div style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: 'var(--space-4)',
-          alignItems: 'center',
-          fontSize: '14px',
-          color: 'var(--text-secondary)',
-          borderBottom: '1px solid var(--border)',
-          paddingBottom: 'var(--space-6)',
-          marginBottom: 'var(--space-8)',
-        }}>
-          <span>Role: <strong style={{ color: 'var(--text-primary)' }}>{project.role}</strong></span>
-          <span>•</span>
-          <span>Duration: <strong style={{ color: 'var(--text-primary)' }}>{project.duration}</strong></span>
-          <span>•</span>
-          <span>Impact: <strong style={{ color: 'var(--accent)' }}>{project.impact}</strong></span>
-        </div>
-
-        {/* Render Cover image if present */}
-        {project.coverImage && (
-          <div style={{
-            width: '100%',
-            height: 'clamp(220px, 35vw, 420px)',
-            borderRadius: '24px',
-            overflow: 'hidden',
-            marginBottom: 'var(--space-9)',
-            border: '1px solid var(--border)',
-            boxShadow: 'var(--shadow-sm)',
-            background: 'var(--bg-warm)',
-          }}>
-            <img 
-              src={project.coverImage} 
-              alt={project.title}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-              }}
-            />
-          </div>
-        )}
-
-        {/* Narrative sections */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
-          {project.sections?.map((sec, i) => (
-            <div 
-              key={sec.label}
-              style={{
-                animation: `pageIn 0.5s ease-out ${i * 60}ms both`,
-              }}
-            >
-              <h3 style={{
+              <h1 style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: '22px',
-                fontWeight: 500,
+                fontSize: 'clamp(28px, 4.5vw, 52px)',
+                fontWeight: 400,
+                letterSpacing: '-0.025em',
+                lineHeight: 1.15,
                 color: 'var(--text-primary)',
-                marginBottom: 'var(--space-4)',
-                letterSpacing: '-0.015em',
+                margin: '0 0 var(--space-4) 0',
               }}>
-                {sec.label}
-              </h3>
-              <p style={{
-                fontSize: '16px',
-                lineHeight: 1.75,
-                color: 'var(--text-secondary)',
-                whiteSpace: 'pre-line',
-                margin: 0,
-              }}>
-                {sec.content}
-              </p>
-            </div>
-          ))}
-        </div>
+                {project.title}
+              </h1>
 
-        {/* Framing call to action */}
-        {project.framerUrl && (
-          <div style={{
-            marginTop: '80px',
-            borderTop: '1px solid var(--border)',
-            paddingTop: '40px',
-            textAlign: 'center',
-          }}>
-            <a
-              href={project.framerUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: 'inline-flex',
+              <div style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 'var(--space-4)',
                 alignItems: 'center',
-                gap: 8,
-                padding: '16px 36px',
-                background: 'var(--accent)',
-                color: '#ffffff',
-                borderRadius: 'var(--radius-pill)',
-                fontSize: 15,
-                fontWeight: 600,
-                textDecoration: 'none',
-                boxShadow: '0 4px 16px rgba(0, 82, 255, 0.25)',
-                transition: 'all 0.2s',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 82, 255, 0.4)'; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 82, 255, 0.25)'; }}
-            >
-              Explore live interactive study ↗
-            </a>
-          </div>
+                fontSize: '14px',
+                color: 'var(--text-secondary)',
+                borderBottom: '1px solid var(--border)',
+                paddingBottom: 'var(--space-6)',
+                marginBottom: 'var(--space-8)',
+              }}>
+                <span>Role: <strong style={{ color: 'var(--text-primary)' }}>{project.role}</strong></span>
+                <span>•</span>
+                <span>Duration: <strong style={{ color: 'var(--text-primary)' }}>{project.duration}</strong></span>
+                <span>•</span>
+                <span>Impact: <strong style={{ color: 'var(--accent)' }}>{project.impact}</strong></span>
+              </div>
+            </div>
+
+            {/* Render Cover image if present */}
+            {project.coverImage && (
+              <div style={{
+                width: '100%',
+                height: 'clamp(260px, 45vw, 560px)',
+                borderRadius: '32px',
+                overflow: 'hidden',
+                marginBottom: 'var(--space-9)',
+                border: 'none',
+                boxShadow: '0 24px 60px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.03)',
+                background: 'var(--bg-warm)',
+              }}>
+                <img 
+                  src={project.coverImage} 
+                  alt={project.title}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Narrative sections */}
+            <div style={{ maxWidth: '820px', margin: '0 auto', width: '100%' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
+                {(() => {
+                  let problemIndex = -1
+                  let approachIndex = -1
+                  let outcomesIndex = -1
+
+                  project.sections?.forEach((sec, idx) => {
+                    const l = sec.label.toLowerCase()
+                    if (problemIndex === -1 && (l.includes('problem') || l.includes('challenge') || l.includes('brief') || l.includes('goal'))) {
+                      problemIndex = idx
+                    }
+                    if (approachIndex === -1 && (l.includes('approach') || l.includes('decision') || l.includes('solution') || l.includes('direction') || l.includes('system'))) {
+                      approachIndex = idx
+                    }
+                    if (outcomesIndex === -1 && (l.includes('outcome') || l.includes('impact') || l.includes('result'))) {
+                      outcomesIndex = idx
+                    }
+                  })
+
+                  if (problemIndex === -1 && project.sections?.length > 0) problemIndex = 0
+                  if (approachIndex === -1 && project.sections?.length > 1) {
+                    approachIndex = Math.floor(project.sections.length / 2)
+                    if (approachIndex === problemIndex) approachIndex = Math.min(problemIndex + 1, project.sections.length - 1)
+                  }
+                  if (outcomesIndex === -1 && project.sections?.length > 2) {
+                    outcomesIndex = project.sections.length - 1
+                    if (outcomesIndex === approachIndex) outcomesIndex = Math.max(approachIndex + 1, project.sections.length - 1)
+                  }
+
+                  return project.sections?.map((sec, i) => {
+                    const secId = i === problemIndex ? 'problem' : i === approachIndex ? 'approach' : i === outcomesIndex ? 'outcomes' : undefined
+                    return (
+                      <div 
+                        key={sec.label}
+                        id={secId}
+                        style={{
+                          animation: `pageIn 0.5s ease-out ${i * 60}ms both`,
+                        }}
+                      >
+                        <h3 style={{
+                          fontFamily: 'var(--font-display)',
+                          fontSize: '22px',
+                          fontWeight: 500,
+                          color: 'var(--text-primary)',
+                          marginBottom: 'var(--space-4)',
+                          letterSpacing: '-0.015em',
+                        }}>
+                          {sec.label}
+                        </h3>
+                        <p style={{
+                          fontSize: '16px',
+                          lineHeight: 1.75,
+                          color: 'var(--text-secondary)',
+                          whiteSpace: 'pre-line',
+                          margin: 0,
+                        }}>
+                          {sec.content}
+                        </p>
+                      </div>
+                    )
+                  })
+                })()}
+              </div>
+            </div>
+
+            {/* Generic Project Mockups */}
+            {project.mockups && project.mockups.length > 0 && (
+              <div id="showcase" style={{ marginTop: '80px', borderTop: '1px solid var(--border)', paddingTop: '60px' }}>
+                <h3 style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '28px',
+                  fontWeight: 500,
+                  color: 'var(--text-primary)',
+                  marginBottom: '40px',
+                  textAlign: 'center',
+                  letterSpacing: '-0.015em'
+                }}>
+                  Design Showcase
+                </h3>
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '64px',
+                  alignItems: 'center',
+                  width: '100%'
+                }}>
+                  {project.mockups.map((mockup, index) => (
+                    <div 
+                      key={index} 
+                      style={{ 
+                        width: '100%', 
+                        maxWidth: '100%',
+                        borderRadius: '32px', 
+                        overflowX: 'auto', 
+                        overflowY: 'hidden',
+                        border: 'none', 
+                        boxShadow: '0 24px 60px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.03)',
+                        background: 'var(--bg-card)',
+                        padding: isMobile ? '12px' : '24px',
+                        boxSizing: 'border-box'
+                      }}
+                    >
+                      <img 
+                        src={mockup} 
+                        alt={`${project.title} screen ${index + 1}`} 
+                        style={{ 
+                          minWidth: '100%', 
+                          width: 'auto', 
+                          maxWidth: 'none',
+                          height: 'auto', 
+                          display: 'block',
+                          borderRadius: '20px' 
+                        }} 
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Framing call to action */}
+            {project.framerUrl && (
+              <div id={(!project.mockups || project.mockups.length === 0) ? "showcase" : undefined} style={{ maxWidth: '820px', margin: '80px auto 0 auto', width: '100%', textAlign: 'center' }}>
+                <div style={{
+                  borderTop: '1px solid var(--border)',
+                  paddingTop: '40px',
+                }}>
+                  <a
+                    href={project.framerUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '16px 36px',
+                      background: 'var(--accent)',
+                      color: '#ffffff',
+                      borderRadius: 'var(--radius-pill)',
+                      fontSize: 15,
+                      fontWeight: 600,
+                      textDecoration: 'none',
+                      boxShadow: '0 4px 16px rgba(0, 82, 255, 0.25)',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 82, 255, 0.4)';
+                    }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 82, 255, 0.25)'; }}
+                  >
+                    Explore live interactive study ↗
+                  </a>
+                </div>
+              </div>
+            )}
+          </>
         )}
+
+        {/* Explore More Work Section */}
+        <div 
+          id={(!project.mockups || project.mockups.length === 0) && !project.framerUrl ? "showcase" : undefined}
+          style={{
+            marginTop: '100px',
+            borderTop: '1px solid var(--border)',
+            paddingTop: '60px',
+          width: '100%'
+        }}>
+          <h3 style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '24px',
+            fontWeight: 500,
+            color: 'var(--text-primary)',
+            marginBottom: '32px',
+            textAlign: 'center',
+            letterSpacing: '-0.015em'
+          }}>
+            Explore More Work
+          </h3>
+          
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr',
+            gap: '24px',
+            marginBottom: '48px'
+          }}>
+            {PROJECTS.filter(p => p.id !== project.id).slice(0, 3).map(otherProj => {
+              return (
+                <div
+                  key={otherProj.id}
+                  onClick={() => {
+                    if (contentRef.current) {
+                      contentRef.current.scrollTop = 0
+                    }
+                    onNextProject(otherProj)
+                  }}
+                  style={{
+                    background: 'var(--bg-card)',
+                    border: '1.2px solid var(--border)',
+                    borderRadius: '20px',
+                    padding: '24px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: '20px',
+                    transition: 'all 0.3s var(--ease-out-expo)',
+                  }}
+                  className="explore-card"
+                  onMouseEnter={e => {
+                    e.currentTarget.style.transform = 'translateY(-4px)'
+                    e.currentTarget.style.borderColor = otherProj.accent
+                    e.currentTarget.style.boxShadow = 'var(--shadow-md)'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.transform = 'translateY(0)'
+                    e.currentTarget.style.borderColor = 'var(--border)'
+                    e.currentTarget.style.boxShadow = 'none'
+                  }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '11px', fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                        {otherProj.category}
+                      </span>
+                      <span style={{ fontSize: '20px' }}>{otherProj.emoji}</span>
+                    </div>
+                    <h4 style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '17px',
+                      fontWeight: 600,
+                      color: 'var(--text-primary)',
+                      lineHeight: 1.3,
+                      margin: 0,
+                      letterSpacing: '-0.01em'
+                    }}>
+                      {otherProj.title}
+                    </h4>
+                    <p style={{
+                      fontSize: '13px',
+                      color: 'var(--text-secondary)',
+                      lineHeight: 1.5,
+                      margin: 0,
+                      display: '-webkit-box',
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden'
+                    }}>
+                      {otherProj.overview}
+                    </p>
+                  </div>
+                  <span style={{
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    color: otherProj.accent,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    marginTop: '8px'
+                  }}>
+                    Read Case Study ↗
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
       </div>
+
+      <Contact />
+      <Footer />
 
       <style>{`
         @keyframes pageIn { from { opacity: 0; transform: translateY(36px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .case-nav-btn-action {
-          transition: transform 120ms cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease !important;
-        }
-        .case-nav-btn-action:hover {
-          background: var(--bg-warm) !important;
-          color: var(--text-primary) !important;
-          transform: translateY(-1px) scale(1.03);
-        }
-        .case-nav-btn-action:active {
-          transform: translateY(0) scale(0.95) !important;
-        }
-
-        .case-nav-back-btn-pill {
-          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-        }
-        .case-nav-back-btn-pill:hover {
-          background: var(--accent-light) !important;
-          transform: translateY(-1px) scale(1.04);
-          box-shadow: 0 4px 12px rgba(0, 82, 255, 0.2);
-        }
-        .case-nav-back-btn-pill:active {
-          transform: translateY(0) scale(0.96) !important;
-        }
-
-        .case-nav-btn-next {
-          border: none;
-          cursor: pointer;
-          font-size: 11px;
-          font-weight: 700;
-          font-family: var(--font-mono);
-          padding: 6px 14px;
-          background: var(--accent) !important;
-          color: white !important;
-          border-radius: var(--radius-pill);
-          transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), background-color 200ms ease, box-shadow 200ms ease !important;
-          white-space: nowrap;
-          letter-spacing: -0.01em;
-          display: inline-block;
-          text-decoration: none;
-        }
-
-        .case-nav-btn-next:hover {
-          background: var(--accent-light) !important;
-          transform: translateY(-1px) scale(1.03);
-          box-shadow: 0 4px 12px rgba(0, 82, 255, 0.2);
-        }
-
-        .case-nav-btn-next:active {
-          transform: translateY(0) scale(0.95) !important;
-        }
       `}</style>
     </div>
   )
 }
 
 export default function Projects({ activeProject, setActiveProject }) {
-  // Synchronized active book index
-  const [activeProjIndex, setActiveProjIndex] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
+  const [hoveredCardId, setHoveredCardId] = useState(null)
+
+  // Mobile layout detection
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024)
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const categories = [
+    {
+      id: 'ai-product',
+      title: 'AI PRODUCT',
+      projects: PROJECTS.filter(p => p.categoryGroup === 'AI Product')
+    },
+    {
+      id: '0-1',
+      title: '0-1 & END TO END PROJECTS',
+      projects: PROJECTS.filter(p => p.categoryGroup === '0-1 & END TO end projects')
+    },
+    {
+      id: 'ui',
+      title: 'UI DESIGN',
+      projects: PROJECTS.filter(p => p.categoryGroup === 'UI')
+    },
+    {
+      id: 'interactive',
+      title: 'INTERACTIVE & GAME DESIGN',
+      projects: PROJECTS.filter(p => p.categoryGroup === 'INTERACTIVE & GAME DESIGN')
+    }
+  ]
 
   return (
     <>
@@ -767,382 +1279,379 @@ export default function Projects({ activeProject, setActiveProject }) {
         {/* Header */}
         <div className="container" style={{ position: 'relative', zIndex: 10, marginBottom: '60px' }}>
           <FadeUp>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
-              <div>
-                <Label>Showcase</Label>
-                <h2 style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 'clamp(32px, 3.8vw, 46px)',
-                  fontWeight: 400,
-                  letterSpacing: '-0.025em',
-                  lineHeight: 1.15,
-                  color: 'var(--text-primary)',
-                  marginTop: '16px',
-                }}>
-                  The Design<br />
-                  <span style={{ color: 'var(--accent)' }}>Bookshelf.</span>
-                </h2>
-                <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 8, fontFamily: 'var(--font-body)', opacity: 0.8 }}>
-                  Hover over a book on the shelf to slide it out and reveal its cover, metrics, and details.
-                </p>
-              </div>
-            </div>
+            <Label>Showcase</Label>
+            <h2 style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(32px, 3.8vw, 46px)',
+              fontWeight: 400,
+              letterSpacing: '-0.025em',
+              lineHeight: 1.15,
+              color: 'var(--text-primary)',
+              marginTop: '16px',
+            }}>
+              Along this journey, I've brought several<br />
+              <span style={{ color: 'var(--accent)', fontWeight: 600 }}>visions to life.</span>
+            </h2>
           </FadeUp>
         </div>
 
-        {/* ── Immersive Breathable Full-Width Bookshelf ── */}
-        <div className="container" style={{ position: 'relative', zIndex: 20 }}>
-          <div className="bookshelf-layout-grid-refined">
-            
-            {/* Full-Width Refined Horizontal Bookshelf */}
-            <div className="bookshelf-shelf-wood-refined">
-              <div className="bookshelf-row-books-refined">
-                {PROJECTS.map((p, i) => {
-                  const isHovered = activeProjIndex === i
+        {/* Categories stacked vertically one by one */}
+        <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '80px', position: 'relative', zIndex: 20 }}>
+          {categories.map((cat) => (
+            <div key={cat.id} style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+              {/* Category title */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div style={{ width: '4px', height: '24px', backgroundColor: 'var(--accent)', borderRadius: '2px' }} />
+                <h3 style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  letterSpacing: '0.08em',
+                  color: 'var(--text-primary)',
+                  textTransform: 'uppercase',
+                  margin: 0
+                }}>
+                  {cat.title}
+                </h3>
+              </div>
+
+              {/* Grid of Projects: Stacked vertically one after the other */}
+              <div 
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr',
+                  gap: '96px',
+                  width: '100%'
+                }}
+              >
+                {cat.projects.map((project, pIdx) => {
+                  const isHovered = hoveredCardId === project.id
                   return (
-                    <BookshelfBook 
-                      key={p.id}
-                      project={p}
-                      isHovered={isHovered}
-                      onHover={() => {
-                        if (activeProjIndex !== i) {
-                          setActiveProjIndex(i)
-                          playPianoNote(BOOK_FREQS[i])
-                        }
+                    <div 
+                      key={project.id}
+                      style={{
+                        background: 'var(--bg-card)',
+                        border: '1.5px solid var(--border)',
+                        borderColor: isHovered ? 'var(--accent)' : 'var(--border)',
+                        borderRadius: '24px',
+                        padding: isMobile ? '32px 24px' : '56px',
+                        display: 'grid',
+                        gridTemplateColumns: isMobile ? '1fr' : '1fr 1.25fr',
+                        gap: isMobile ? '32px' : '56px',
+                        boxShadow: isHovered ? 'var(--shadow-md)' : 'var(--shadow-sm)',
+                        transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+                        transition: 'transform 0.3s var(--ease-out-expo), box-shadow 0.3s var(--ease-out-expo), border-color 0.3s',
+                        cursor: 'pointer'
                       }}
-                      onClick={() => setActiveProject(p)}
-                    />
+                      className="project-grid-card"
+                      onClick={() => setActiveProject(project)}
+                      onMouseEnter={() => setHoveredCardId(project.id)}
+                      onMouseLeave={() => setHoveredCardId(null)}
+                    >
+                      {isMobile ? (
+                        <>
+                          {/* Mobile Layout: Top-to-Bottom Flow */}
+                          {/* Top Header of Card */}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span style={{ 
+                              fontSize: '28px', 
+                              fontWeight: 800, 
+                              color: isHovered ? 'rgba(0, 82, 255, 0.08)' : 'var(--border)', 
+                              fontFamily: 'var(--font-mono)',
+                              lineHeight: 1,
+                              transition: 'color 0.3s'
+                            }}>
+                              0{pIdx + 1}.
+                            </span>
+                            <span style={{ fontSize: '20px' }}>{project.emoji}</span>
+                          </div>
+
+                          {/* Card Cover Image (Mockup) */}
+                          {project.coverImage && (
+                            <div style={{
+                              width: '100%',
+                              height: '280px',
+                              borderRadius: '16px',
+                              overflow: 'hidden',
+                              border: '1.2px solid var(--border)',
+                              background: 'var(--bg-warm)',
+                            }}>
+                              <img 
+                                src={project.coverImage} 
+                                alt={project.title}
+                                style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  objectFit: 'cover',
+                                  transition: 'transform 0.4s var(--ease-out-expo)',
+                                  transform: isHovered ? 'scale(1.04)' : 'scale(1)'
+                                }}
+                              />
+                            </div>
+                          )}
+
+                          {/* Card Content */}
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            <h4 style={{
+                              fontFamily: 'var(--font-display)',
+                              fontSize: '24px',
+                              fontWeight: 600,
+                              color: 'var(--text-primary)',
+                              lineHeight: 1.3,
+                              margin: 0,
+                              letterSpacing: '-0.015em'
+                            }}>
+                              {project.title}
+                            </h4>
+                            <p style={{
+                              fontFamily: 'var(--font-body)',
+                              fontSize: '15px',
+                              color: 'var(--text-secondary)',
+                              lineHeight: 1.6,
+                              margin: 0
+                            }}>
+                              {project.overview}
+                            </p>
+                          </div>
+
+                          {/* Tags */}
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                            {project.tags?.slice(0, 4).map(tag => (
+                              <span 
+                                key={tag}
+                                style={{
+                                  fontSize: '11px',
+                                  fontWeight: 600,
+                                  letterSpacing: '0.04em',
+                                  background: 'var(--bg-warm)',
+                                  border: '1px solid var(--border)',
+                                  padding: '6px 14px',
+                                  borderRadius: '100px',
+                                  color: 'var(--text-secondary)'
+                                }}
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+
+                          {/* Metadata Table */}
+                          <div 
+                            style={{ 
+                              display: 'grid', 
+                              gridTemplateColumns: '1fr 1fr', 
+                              gap: '16px',
+                              borderTop: '1px solid var(--border)',
+                              borderBottom: '1px solid var(--border)',
+                              padding: '16px 0'
+                            }}
+                          >
+                            <div>
+                              <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 700, display: 'block', marginBottom: '2px', letterSpacing: '0.08em' }}>ROLE</span>
+                              <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>{project.role}</span>
+                            </div>
+                            <div>
+                              <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 700, display: 'block', marginBottom: '2px', letterSpacing: '0.08em' }}>IMPACT</span>
+                              <span style={{ 
+                                fontSize: '15px', 
+                                fontWeight: 700, 
+                                color: isHovered ? 'var(--accent)' : 'var(--text-primary)',
+                                transition: 'color 0.3s'
+                              }}>
+                                {project.impact}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* CTA Button */}
+                          <button
+                            style={{
+                              width: '100%',
+                              backgroundColor: isHovered ? 'var(--accent)' : 'var(--bg-warm)',
+                              color: isHovered ? '#ffffff' : 'var(--text-primary)',
+                              border: isHovered ? '1px solid transparent' : '1px solid var(--border)',
+                              fontFamily: 'var(--font-body)',
+                              fontSize: '13.5px',
+                              fontWeight: 600,
+                              borderRadius: '100px',
+                              padding: '12px 20px',
+                              cursor: 'pointer',
+                              boxShadow: isHovered ? '0 4px 12px rgba(0, 82, 255, 0.2)' : 'none',
+                              transition: 'all 0.3s var(--ease-out-expo)',
+                              textAlign: 'center',
+                              outline: 'none'
+                            }}
+                            className="project-cta-btn"
+                          >
+                            Read Case Study ↗
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          {/* Desktop Layout: Split Grid Layout */}
+                          {/* Left Column: Details & Actions */}
+                          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '24px' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                              {/* Top Header of Card */}
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span style={{ 
+                                  fontSize: '32px', 
+                                  fontWeight: 800, 
+                                  color: isHovered ? 'rgba(0, 82, 255, 0.08)' : 'var(--border)', 
+                                  fontFamily: 'var(--font-mono)',
+                                  lineHeight: 1,
+                                  transition: 'color 0.3s'
+                                }}>
+                                  0{pIdx + 1}.
+                                </span>
+                                <span style={{ fontSize: '24px' }}>{project.emoji}</span>
+                              </div>
+
+                              {/* Card Content */}
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                <h4 style={{
+                                  fontFamily: 'var(--font-display)',
+                                  fontSize: 'clamp(26px, 2.5vw, 36px)',
+                                  fontWeight: 600,
+                                  color: 'var(--text-primary)',
+                                  lineHeight: 1.2,
+                                  margin: 0,
+                                  letterSpacing: '-0.02em'
+                                }}>
+                                  {project.title}
+                                </h4>
+                                <p style={{
+                                  fontFamily: 'var(--font-body)',
+                                  fontSize: '16px',
+                                  color: 'var(--text-secondary)',
+                                  lineHeight: 1.65,
+                                  margin: 0
+                                }}>
+                                  {project.overview}
+                                </p>
+                              </div>
+
+                              {/* Tags */}
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                {project.tags?.slice(0, 4).map(tag => (
+                                  <span 
+                                    key={tag}
+                                    style={{
+                                      fontSize: '11px',
+                                      fontWeight: 600,
+                                      letterSpacing: '0.04em',
+                                      background: 'var(--bg-warm)',
+                                      border: '1px solid var(--border)',
+                                      padding: '6px 14px',
+                                      borderRadius: '100px',
+                                      color: 'var(--text-secondary)'
+                                    }}
+                                  >
+                                    {tag}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                              {/* Metadata Table */}
+                              <div 
+                                style={{ 
+                                  display: 'grid', 
+                                  gridTemplateColumns: '1fr 1fr', 
+                                  gap: '16px',
+                                  borderTop: '1px solid var(--border)',
+                                  borderBottom: '1px solid var(--border)',
+                                  padding: '16px 0'
+                                }}
+                              >
+                                <div>
+                                  <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 700, display: 'block', marginBottom: '2px', letterSpacing: '0.08em' }}>ROLE</span>
+                                  <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>{project.role}</span>
+                                </div>
+                                <div>
+                                  <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 700, display: 'block', marginBottom: '2px', letterSpacing: '0.08em' }}>IMPACT</span>
+                                  <span style={{ 
+                                    fontSize: '15px', 
+                                    fontWeight: 700, 
+                                    color: isHovered ? 'var(--accent)' : 'var(--text-primary)',
+                                    transition: 'color 0.3s'
+                                  }}>
+                                    {project.impact}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* CTA Button */}
+                              <button
+                                style={{
+                                  width: '100%',
+                                  backgroundColor: isHovered ? 'var(--accent)' : 'var(--bg-warm)',
+                                  color: isHovered ? '#ffffff' : 'var(--text-primary)',
+                                  border: isHovered ? '1px solid transparent' : '1px solid var(--border)',
+                                  fontFamily: 'var(--font-body)',
+                                  fontSize: '13.5px',
+                                  fontWeight: 600,
+                                  borderRadius: '100px',
+                                  padding: '12px 20px',
+                                  cursor: 'pointer',
+                                  boxShadow: isHovered ? '0 4px 12px rgba(0, 82, 255, 0.2)' : 'none',
+                                  transition: 'all 0.3s var(--ease-out-expo)',
+                                  textAlign: 'center',
+                                  outline: 'none'
+                                }}
+                                className="project-cta-btn"
+                              >
+                                Read Case Study ↗
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Right Column: Cover Image Mockup */}
+                          {project.coverImage && (
+                            <div style={{
+                              width: '100%',
+                              height: '100%',
+                              minHeight: '480px',
+                              borderRadius: '16px',
+                              overflow: 'hidden',
+                              border: '1.2px solid var(--border)',
+                              background: 'var(--bg-warm)',
+                              position: 'relative'
+                            }}>
+                              <img 
+                                src={project.coverImage} 
+                                alt={project.title}
+                                style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  objectFit: 'cover',
+                                  transition: 'transform 0.4s var(--ease-out-expo)',
+                                  transform: isHovered ? 'scale(1.04)' : 'scale(1)'
+                                }}
+                              />
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
                   )
                 })}
-
-
-              </div>
-              
-              {/* Crisp Black Shelf Line Plinth */}
-              <div className="shelf-bar-plinth-refined">
-                <div className="shelf-shadow-edge-refined" />
-                <div className="shelf-surface-refined" />
               </div>
             </div>
-
-          </div>
+          ))}
         </div>
-
       </div>
 
-      {/* Case study overlay */}
+      {/* Case study overlay modal */}
       {activeProject && (
         <CaseStudyPage 
           project={activeProject} 
           onClose={() => setActiveProject(null)} 
           onNextProject={(nextP) => setActiveProject(nextP)}
+          isMobile={isMobile}
         />
       )}
-
-      <style>{`
-        /* ── Breathable Bookshelf Layout ── */
-        .bookshelf-layout-grid-refined {
-          display: block;
-          width: 100%;
-          min-height: 400px;
-        }
-
-        /* ── Breathable Horizontal Bookshelf ── */
-        .bookshelf-shelf-wood-refined {
-          width: 100%;
-          position: relative;
-          padding-bottom: 24px;
-        }
-
-        .bookshelf-row-books-refined {
-          display: flex;
-          align-items: flex-end;
-          justify-content: flex-start;
-          gap: 12px;
-          min-height: 380px;
-          padding: 0 16px;
-          perspective: 1500px;
-        }
-
-        /* Sharp Black Shelf Plinth Line */
-        .shelf-bar-plinth-refined {
-          position: relative;
-          width: 100%;
-          height: 6px;
-          background: #000000;
-          margin-top: -2px;
-          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-        }
-
-        .shelf-surface-refined {
-          position: absolute;
-          inset: 0;
-          background: #000000;
-        }
-
-        .shelf-shadow-edge-refined {
-          position: absolute;
-          top: -6px;
-          left: 0;
-          right: 0;
-          height: 6px;
-          background: rgba(0, 0, 0, 0.03);
-          filter: blur(2px);
-        }
-
-        /* ── Refined Larger 3D Book Container ── */
-        .bookshelf-book-container {
-          width: 65px;
-          height: 360px;
-          position: relative;
-          cursor: pointer;
-          perspective: 1200px;
-          transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s;
-          transform-style: preserve-3d;
-          flex-shrink: 0;
-        }
-
-        .bookshelf-book-container:hover,
-        .book-expanded {
-          width: 440px;
-        }
-
-        .bookshelf-book-3d {
-          width: 100%;
-          height: 100%;
-          position: relative;
-          transform-style: preserve-3d;
-          transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-          transform: rotateY(-24deg) rotateX(1deg);
-          transform-origin: bottom left;
-        }
-
-        .bookshelf-book-container:hover .bookshelf-book-3d,
-        .book-expanded .bookshelf-book-3d {
-          transform: rotateY(0deg) translateZ(20px) translateY(-10px);
-          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Spine Face */
-        .book-spine-face {
-          position: absolute;
-          width: 65px;
-          height: 100%;
-          box-shadow: inset -3px 0 6px rgba(0,0,0,0.15);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: space-between;
-          padding: 24px 0;
-          z-index: 5;
-          backface-visibility: hidden;
-          transition: opacity 0.2s, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s, color 0.3s;
-        }
-
-        .spine-title {
-          writing-mode: vertical-rl;
-          transform: rotate(180deg);
-          font-family: var(--font-display);
-          font-size: 11px;
-          font-weight: 700;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          white-space: nowrap;
-          opacity: 0.9;
-          margin: 10px 0;
-        }
-
-        .spine-title-quiet {
-          writing-mode: vertical-rl;
-          transform: rotate(180deg);
-          font-family: var(--font-display);
-          font-size: 11px;
-          font-weight: 600;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          white-space: nowrap;
-          opacity: 0.6;
-          margin: auto 0;
-        }
-
-        .spine-emoji {
-          font-size: 22px;
-          display: block;
-        }
-
-        .spine-impact {
-          font-size: 9.5px;
-          font-family: var(--font-mono);
-          font-weight: 600;
-          opacity: 0.9;
-        }
-
-        /* Spine rotates out of sight on hover */
-        .bookshelf-book-container:hover .book-spine-face,
-        .book-expanded .book-spine-face {
-          transform: rotateY(-90deg) translateZ(32px);
-          opacity: 0;
-          pointer-events: none;
-        }
-
-        /* Cover Face (Giant Detailed Card on Book) */
-        .book-cover-face {
-          position: absolute;
-          inset: 0;
-          z-index: 4;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          padding: 32px;
-          box-shadow: inset 4px 0 12px rgba(255,255,255,0.45), 4px 4px 24px rgba(0,0,0,0.08);
-          opacity: 0;
-          transition: opacity 0.25s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-          pointer-events: none;
-        }
-
-        .bookshelf-book-container:hover .book-cover-face,
-        .book-expanded .book-cover-face {
-          opacity: 1;
-          pointer-events: auto;
-        }
-
-        .cover-glow {
-          position: absolute;
-          width: 120px;
-          height: 120px;
-          filter: blur(48px);
-          opacity: 0.08;
-          top: -30px;
-          right: -30px;
-          pointer-events: none;
-        }
-
-        .cover-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-
-        .cover-category {
-          font-family: var(--font-mono);
-          font-size: 9.5px;
-          font-weight: 700;
-          letter-spacing: 0.12em;
-        }
-
-        .cover-emoji {
-          font-size: 28px;
-        }
-
-        .cover-title {
-          font-family: var(--font-display);
-          font-size: 21px;
-          font-weight: 600;
-          color: var(--text-primary);
-          line-height: 1.35;
-          margin: 12px 0 6px 0;
-          letter-spacing: -0.020em;
-        }
-
-        .cover-meta-row {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 11.5px;
-          font-family: var(--font-body);
-          color: var(--text-secondary);
-          margin-bottom: 12px;
-          opacity: 0.85;
-        }
-
-        .cover-meta-dot {
-          opacity: 0.5;
-        }
-
-        .cover-overview {
-          font-size: 13px;
-          line-height: 1.6;
-          color: var(--text-secondary);
-          margin: 0 0 16px 0;
-          opacity: 0.9;
-        }
-
-        .cover-tags-row {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 6px;
-          margin-bottom: 20px;
-        }
-
-        .cover-tag-pill {
-          font-size: 10px;
-          font-weight: 500;
-          color: var(--text-secondary);
-          background: var(--bg-warm);
-          border: 1px solid var(--border);
-          padding: 3px 8px;
-          border-radius: 4px;
-          font-family: var(--font-body);
-        }
-
-        .cover-footer {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          border-top: 1px solid var(--border);
-          padding-top: 16px;
-        }
-
-        .cover-impact-badge {
-          font-size: 10px;
-          font-weight: 600;
-          font-family: var(--font-mono);
-          padding: 4px 10px;
-          border-radius: 4px;
-        }
-
-        .cover-action-cta {
-          font-size: 11.5px;
-          font-weight: 700;
-          cursor: pointer;
-        }
-
-        /* Thick inner page edges */
-        .book-pages-face {
-          position: absolute;
-          width: 20px;
-          height: 96%;
-          top: 2%;
-          right: 0;
-          background: #fdfdf9;
-          border: 1px solid #d5d4ca;
-          border-radius: 0 4px 4px 0;
-          transform: rotateY(90deg) translateZ(10px);
-          z-index: 3;
-          background-image: linear-gradient(to right, #f7f7f0 80%, #e1e0d5 100%);
-        }
-
-        /* ── Responsive Bookshelf Styles ── */
-        @media (max-width: 900px) {
-          .bookshelf-row-books-refined {
-            justify-content: flex-start !important;
-            overflow-x: auto !important;
-            padding-bottom: 12px !important;
-            gap: 16px !important;
-            min-height: 380px !important;
-            width: 100% !important;
-          }
-
-          .bookshelf-book-container {
-            width: 65px !important;
-          }
-
-          .bookshelf-book-container:hover,
-          .book-expanded {
-            width: 320px !important;
-          }
-        }
-      `}</style>
     </>
   )
 }

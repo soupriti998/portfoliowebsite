@@ -1,3 +1,5 @@
+import { playFluteHover, playFluteClick } from './utils'
+
 export default function Footer() {
   return (
     <footer 
@@ -6,6 +8,8 @@ export default function Footer() {
         background: '#0052ff', // Electric Blue background
         borderTop: '1px solid rgba(255, 255, 255, 0.1)',
         color: '#ffffff', // Crisp white text
+        position: 'relative',
+        zIndex: 16,
       }}
     >
       <div className="container" style={{
@@ -26,7 +30,10 @@ export default function Footer() {
           <span style={{ color: '#ffffff', fontSize: 13.5, fontWeight: 600, letterSpacing: '-0.01em' }}>soupriti</span>
           <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: 12 }}>· Product Designer</span>
           <button
-            onClick={() => window.openSpecSheet && window.openSpecSheet()}
+            onClick={() => {
+              playFluteClick()
+              window.openSpecSheet && window.openSpecSheet()
+            }}
             style={{
               background: 'rgba(255, 77, 166, 0.25)',
               border: '1.2px solid #FF4DA6',
@@ -47,6 +54,7 @@ export default function Footer() {
               e.currentTarget.style.background = '#FF4DA6'
               e.currentTarget.style.boxShadow = '0 0 18px #FF4DA6'
               e.currentTarget.style.transform = 'translateY(-1px)'
+              playFluteHover()
             }}
             onMouseLeave={e => {
               e.currentTarget.style.background = 'rgba(255, 77, 166, 0.25)'
@@ -56,6 +64,43 @@ export default function Footer() {
           >
             Design Spec ✦
           </button>
+          <a
+            href="https://productgrowthsoupriti.framer.website/"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={playFluteClick}
+            style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              border: '1.2px solid rgba(255, 255, 255, 0.4)',
+              borderRadius: 20,
+              padding: '3px 10px',
+              fontSize: 10,
+              fontWeight: 800,
+              fontFamily: 'var(--font-mono)',
+              color: '#ffffff',
+              cursor: 'pointer',
+              marginLeft: 8,
+              transition: 'all 0.2s',
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
+              display: 'inline-flex',
+              alignItems: 'center',
+              textDecoration: 'none'
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = '#ffffff'
+              e.currentTarget.style.color = '#0052ff'
+              e.currentTarget.style.transform = 'translateY(-1px)'
+              playFluteHover()
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
+              e.currentTarget.style.color = '#ffffff'
+              e.currentTarget.style.transform = 'none'
+            }}
+          >
+            Previous Portfolio ↗
+          </a>
         </div>
 
         {/* Center: Single line tagline with emoji, expanding end-to-end */}

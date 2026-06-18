@@ -10,3 +10,7 @@ dist
 package-lock.json
 
 .vercel
+
+# Large videos
+public/intro_video.mp4
+Soupriti (4).mp4

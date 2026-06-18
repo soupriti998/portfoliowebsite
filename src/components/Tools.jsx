@@ -201,7 +201,7 @@ export default function Tools() {
   const shiftAmount = Math.abs(overlap) * 0.95
 
   return (
-    <section id="tools" style={{ position: 'relative', zIndex: 3, padding: 'var(--space-11) 0', background: 'var(--bg)', borderTop: '1px solid var(--border)', overflow: 'visible' }}>
+    <section id="tools" style={{ position: 'relative', zIndex: 13, padding: 'var(--space-11) 0', background: 'var(--bg)', borderTop: '1px solid var(--border)', overflow: 'visible' }}>
       <div className="container" style={{ position: 'relative' }}>
         
         {/* Centered Heading */}
@@ -219,8 +219,8 @@ export default function Tools() {
                 marginTop: 'var(--space-5)',
                 marginBottom: 'var(--space-4)',
               }}>
-                Systems I build<br />
-                <span style={{ color: 'var(--accent)' }}>with these tools.</span>
+                The tools that<br />
+                <span style={{ color: 'var(--accent)' }}>shape my craft.</span>
               </h2>
               <p style={{ fontSize: 16, color: 'var(--text-secondary)', margin: '0 auto', maxWidth: '54ch', lineHeight: 1.5 }}>
                 Drag cards anywhere, or hover over them to focus and reveal their outcomes.

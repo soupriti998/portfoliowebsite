@@ -8,7 +8,7 @@ const DIMS = {
   jdMatch: { width: 480, height: 480, radius: 25 }
 }
 
-/* ── Dynamic Breathing Circle & Status System (NO MASCOT, NO CAT) ── */
+/* ΓöÇΓöÇ Dynamic Breathing Circle & Status System (NO MASCOT, NO CAT) ΓöÇΓöÇ */
 const StatusHUDIcon = ({ state, theme }) => {
   const pinkGlow = '#FF4DA6'
 
@@ -150,7 +150,7 @@ const StatusHUDIcon = ({ state, theme }) => {
   )
 }
 
-/* ── Smart Contextual Status Resolver (Scroll, Reading Time, Inactivity, Active Project) ── */
+/* ΓöÇΓöÇ Smart Contextual Status Resolver (Scroll, Reading Time, Inactivity, Active Project) ΓöÇΓöÇ */
 const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) => {
   // 1. Check if near bottom
   const scrollHeight = document.documentElement.scrollHeight
@@ -159,7 +159,7 @@ const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) 
 
   if (isNearBottom) {
     return {
-      text: "Bottom of page! 🎈",
+      text: "Bottom of page! ≡ƒÄê",
       icon: "idle"
     }
   }
@@ -167,7 +167,7 @@ const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) 
   // 2. Inactive / Sleeping states
   if (inactive) {
     return {
-      text: "Sleeping... Zzz... 🛌💤",
+      text: "Sleeping... Zzz... ≡ƒ¢î≡ƒÆñ",
       icon: "inactive"
     }
   }
@@ -176,12 +176,12 @@ const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) 
   if (activeProj) {
     if (velocity > 0.4) {
       return {
-        text: "Scanning details... 🔍",
+        text: "Scanning details... ≡ƒöì",
         icon: "scrolling"
       }
     }
     return {
-      text: "Thinking... 🧠",
+      text: "Thinking... ≡ƒºá",
       icon: "thinking"
     }
   }
@@ -189,17 +189,17 @@ const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) 
   // 4. Scroll Aware states (Scrolling)
   if (velocity > 0.7) {
     return {
-      text: "Scrolling fast! 🚀💨",
+      text: "Scrolling fast! ≡ƒÜÇ≡ƒÆ¿",
       icon: "scrolling"
     }
   }
 
   if (velocity > 0.3) {
     const scrollPool = [
-      "Scrolling... 🏎️💨",
-      "Scanning... 🔍",
-      "Slow down! 😵",
-      "Scrolling... 👍"
+      "Scrolling... ≡ƒÅÄ∩╕Å≡ƒÆ¿",
+      "Scanning... ≡ƒöì",
+      "Slow down! ≡ƒÿ╡",
+      "Scrolling... ≡ƒæì"
     ]
     const idx = Math.floor((window.scrollY / 250) % scrollPool.length)
     return {
@@ -211,10 +211,10 @@ const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) 
   // 5. Reading deep states (time in current section)
   if (readingSecs > 14) {
     const thinkPool = [
-      "Reading... 📖",
-      "Thinking... 🤖",
-      "Thinking... ☕",
-      "Reading... 🧠"
+      "Reading... ≡ƒôû",
+      "Thinking... ≡ƒñû",
+      "Thinking... Γÿò",
+      "Reading... ≡ƒºá"
     ]
     const idx = Math.floor((window.scrollY / 200) % thinkPool.length)
     return {
@@ -226,37 +226,37 @@ const getSmartHUDState = (section, velocity, activeProj, inactive, readingSecs) 
   // 6. Section aware defaults
   const sectionPool = {
     hero: {
-      text: "Vibing... 😎",
+      text: "Vibing... ≡ƒÿÄ",
       icon: "idle"
     },
     expertise: {
-      text: "Reading skills... 💅",
+      text: "Reading skills... ≡ƒÆà",
       icon: "idle"
     },
     projects: {
-      text: "Viewing projects... ✨",
+      text: "Viewing projects... Γ£¿",
       icon: "idle"
     },
     about: {
-      text: "Investigating... 🕵️‍♀️",
+      text: "Investigating... ≡ƒò╡∩╕ÅΓÇìΓÖÇ∩╕Å",
       icon: "idle"
     },
     journey: {
-      text: "Reading timeline... 📜",
+      text: "Reading timeline... ≡ƒô£",
       icon: "idle"
     },
     contact: {
-      text: "Ready to chat! 👋",
+      text: "Ready to chat! ≡ƒæï",
       icon: "idle"
     }
   }
 
-  return sectionPool[section] || { text: "Vibing... 🍹", icon: "idle" }
+  return sectionPool[section] || { text: "Vibing... ≡ƒì╣", icon: "idle" }
 }
 
-/* ── Chat replies dictionary ── */
+/* ΓöÇΓöÇ Chat replies dictionary ΓöÇΓöÇ */
 const KB = {
-  greet: ["Hmm... Hey! I am Soup, Soupriti's digital pet. Ask me anything about her work, skills, or experience.", "Hmm... Hello! I'm Soup — here to help you explore. What would you like to know?", "Hmm... Welcome! I'm Soup. Feel free to ask me about Soupriti's projects, skills, or how to get in touch."],
+  greet: ["Hmm... Hey! I am Soup, Soupriti's digital pet. Ask me anything about her work, skills, or experience.", "Hmm... Hello! I'm Soup ΓÇö here to help you explore. What would you like to know?", "Hmm... Welcome! I'm Soup. Feel free to ask me about Soupriti's projects, skills, or how to get in touch."],
   about: "soupriti is a Product Designer based in Bangalore with 3+ years of experience designing HMI and SaaS products. She completed B.Des in Fashion Communication at NIFT Chennai. She simplifies complex systems into warm, human-centered experiences.",
   current: "Soupriti is currently a Product Designer at upliance.ai. She redesigned their device interface, reducing perceived cooking times by 24% and coding their scalable React design system from scratch.",
   skills: "Skills: End-to-end UX/UI, user research, data dashboard mapping, Figma interaction system design, and React/JS prototyping. She works closely with developers to ensure 100% engineering delivery.",
@@ -267,10 +267,10 @@ const KB = {
   fuck: "Let's focus on design systems and UX thinking instead.",
 }
 
-/* ── Fun Mode Data ── */
+/* ΓöÇΓöÇ Fun Mode Data ΓöÇΓöÇ */
 const FUN = {
   intro: [
-    "Before we get serious… did someone say terrible joke?",
+    "Before we get seriousΓÇª did someone say terrible joke?",
     "Time for a quick design systems break!",
     "I was trained on layout ratios and bad jokes equally.",
   ],
@@ -279,12 +279,12 @@ const FUN = {
       id: 'alphabet',
       question: "Which is the coolest alphabet?",
       expectedAnswer: ["b"],
-      followUp: "Why though? 👀",
+      followUp: "Why though? ≡ƒæÇ",
       expectedFollowUp: ["because it has ac around it", "ac around it", "a/c", "ac"],
       correctFollowUp: ["HA! Passed the vibe check.", "Okay that was actually gold."],
-      wrongFollowUp: ["It's B… because it has AC around it."],
+      wrongFollowUp: ["It's BΓÇª because it has AC around it."],
       correctResponse: ["Nice! And do you know why?"],
-      wrongResponse: ["It's B… because it has AC around it. Cool? AC? Okay, moving on."],
+      wrongResponse: ["It's BΓÇª because it has AC around it. Cool? AC? Okay, moving on."],
     },
     {
       id: 'designer-hate',
@@ -304,14 +304,14 @@ const FUN = {
   playful: {
     thanks: ["You're officially my favorite visitor now!", "My island notch pixels are blushing."],
     compliment: ["Forwarding that compliment to Soupriti now!", "She'll act cool, but she's dancing."],
-    confusion: ["Hmm… my UX brain needs more context.", "That unlocked a layout edgecase. Rephrase?"],
+    confusion: ["HmmΓÇª my UX brain needs more context.", "That unlocked a layout edgecase. Rephrase?"],
   }
 }
 
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)]
 const matchesAny = (q, list) => list.some(s => q.includes(s))
 
-function getResponse(input, jokeState, setJokeState, activeSection, activeProject) {
+function getResponse(input, jokeState, setJokeState, activeSection) {
   const q = input.toLowerCase().trim()
 
   if (jokeState) {
@@ -332,123 +332,6 @@ function getResponse(input, jokeState, setJokeState, activeSection, activeProjec
     }
   }
 
-  // Case Study Contextual replies
-  if (activeProject) {
-    const pid = activeProject.id
-    if (pid === 'ai-cooking' || pid === 'cooking') {
-      if (q.includes('main challenge') || q.includes('biggest challenge')) {
-        return "The primary challenge was designing an interface that operates seamlessly in messy, high-moisture kitchen environments with steam, food residue, and noisy ambient sounds. The system had to be extremely forgiving, highly predictable, and reduce the cook's cognitive load during active cooking steps."
-      }
-      if (q.includes('messy') || q.includes('dirty') || q.includes('physical')) {
-        return "Soupriti designed with a physical-first perspective: using oversized touch targets to accommodate wet/dirty hands, simple voice-confirmation loops to enable hands-free interaction, and clear, high-contrast visual cues visible from across the room."
-      }
-      if (q.includes('metric') || q.includes('outcome')) {
-        return "Redesigning the cooking experience yielded a 24% increase in cooking task completion speed, reduced support tickets related to cooking errors, and improved overall D7 active user retention."
-      }
-      if (q.includes('layout') || q.includes('physical interface') || q.includes('collaborat')) {
-        return "She collaborated closely with hardware designers and developers to unify the touchscreen HMI with physical controls, ensuring that state transitions on the screen matched mechanical feedback (e.g. lid locks, motor speeds) seamlessly."
-      }
-    }
-    if (pid === 'onboarding') {
-      if (q.includes('reduce returns') || q.includes('how did onboarding')) {
-        return "By creating a 7-day progressive learning experience, users were guided through features step-by-step. Instead of overwhelming users on day one, Milestones and personalized setup prompts built early habits, directly reducing early product returns."
-      }
-      if (q.includes('milestone')) {
-        return "Progressive milestones means unlocking tutorials and feature settings over time based on the user's actual usage history. This prevents choice paralysis and ensures users master basic tasks before facing complex customizations."
-      }
-      if (q.includes('metric') || q.includes('track')) {
-        return "Key metrics included the onboarding step drop-off rate, active device pairing speed, first-cook completion rates within the first 72 hours, and early customer satisfaction (CSAT) scores."
-      }
-      if (q.includes('funnel') || q.includes('retention')) {
-        return "The onboarding funnel was optimized by removing redundant verification steps, introducing visual progress indicators, and aligning push notifications with actual user milestones rather than rigid timers, leading to a 7% drop-off reduction."
-      }
-    }
-    if (pid === 'airfryer') {
-      if (q.includes('texture') || q.includes('why texture')) {
-        return "In IoT consumer cooking, users don't think in degrees Celsius; they think in culinary outcomes. Designing the UI around desired textures (Crispy, Golden, Juicy) removes cooking anxiety and guesswork, resulting in more consistent and satisfying meals."
-      }
-      if (q.includes('test') || q.includes('validate')) {
-        return "We conducted in-house testing and validation sessions, tracking users as they prepared meals using standard recipes. The data proved that texture naming significantly reduced parameter adjustment errors and cognitive load."
-      }
-      if (q.includes('progress') || q.includes('loop')) {
-        return "Adaptive progress loops dynamically adjust cooking speed and temperature based on raw sensor readings (like humidity and heating elements), providing a hands-off, stress-free cooking cycle that adapts to food density."
-      }
-      if (q.includes('override') || q.includes('manual')) {
-        return "To avoid locking advanced users out, Soupriti built a subtle 'swipe-up for manual override' sheet, giving instant, granular control over time and temp without cluttering the primary outcome-based interface."
-      }
-    }
-    if (pid === 'medpod') {
-      if (q.includes('cognitive') || q.includes('limit') || q.includes('elderly')) {
-        return "Medpod utilizes oversized, high-tactile touch targets, a simplified color-coded medication tray mapping, and calm audio-guided steps to minimize inputs and prevent dosage errors caused by poor eyesight or trembling hands."
-      }
-      if (q.includes('error') || q.includes('prevent')) {
-        return "We implemented visual glow warning arcs, double-confirmation popups for dosage alterations, and automated warning notifications to primary caregivers if a dose is skipped, closing the loop on safety."
-      }
-      if (q.includes('dashboard') || q.includes('caregiver')) {
-        return "The dashboard displays real-time tracking, medication compliance analytics, battery status, and direct communication widgets, reassuring family members without requiring constant, invasive phone check-ins."
-      }
-      if (q.includes('tactile') || q.includes('visual')) {
-        return "User research confirmed that elderly users experience high frustration with small screens. Physical tactile confirmation combined with a voice interface reduced input errors by 40% compared to typical visual-only menus."
-      }
-    }
-    if (pid === 'battle-pass') {
-      if (q.includes('engagement') || q.includes('loop')) {
-        return "The loop is built on transparency and anticipation: clear visual maps of upcoming rewards, milestone trackers that update immediately after matches, and chest-opening micro-interactions that trigger satisfying visual feedback."
-      }
-      if (q.includes('reward') || q.includes('monetiz')) {
-        return "By creating premium tiers that offer purely cosmetic, prestige value without locking core gameplay mechanics, we ensured that free players still feel rewarded while paying players receive high status signaling."
-      }
-      if (q.includes('milestone') || q.includes('visual')) {
-        return "The progression trail is designed as a continuous horizontal track, using clean milestones and glowing status badges to highlight the path forward and build excitement for the next tier."
-      }
-      if (q.includes('dark pattern') || q.includes('decept') || q.includes('avoid')) {
-        return "We maintained strict visual honesty: no countdown timers causing false urgency, clear purchase cancellation options, and explicit effort-to-level conversion specs so players know exactly what they are getting."
-      }
-    }
-    if (pid === 'mcb-school') {
-      if (q.includes('imagination') || q.includes('led')) {
-        return "By utilizing playful typography, organic hand-drawn divider shapes, child-friendly color palettes, and interactive showcases of student artwork, we made the portal feel like an extension of the school's creative physical campus."
-      }
-      if (q.includes('parent') || q.includes('student') || q.includes('collaborat')) {
-        return "We created a shared 'Parent-Student Project Showcase' board where children can upload projects, parents can leave reactions, and teachers can post encouraging feedback, boosting family engagement."
-      }
-      if (q.includes('admission') || q.includes('inquir') || q.includes('brand')) {
-        return "The modernization project resulted in a double-digit increase in online admissions inquiries and positive feedback from parent focus groups who found the new portal clean, helpful, and creative."
-      }
-      if (q.includes('test') || q.includes('insight')) {
-        return "We learned that parents prioritize fast access to schedules and grades, while children respond to interactive elements. The solution was a dual-dashboard view that caters to both needs without compromising speed."
-      }
-    }
-    if (pid === 'doctorite') {
-      if (q.includes('hospital') || q.includes('speed') || q.includes('operation')) {
-        return "We optimized information architecture to put critical metrics, occupancy levels, and patient transfer pipelines front-and-center, using a color-coded triage system that allows administrators to assess status in under 3 seconds."
-      }
-      if (q.includes('accuracy') || q.includes('tracking')) {
-        return "By introducing single-click status updates, automating patient flow indicators using check-in triggers, and simplifying transfer logs, we eliminated manual entry errors and improved clinician tracking accuracy to 94%."
-      }
-      if (q.includes('unify') || q.includes('four') || q.includes('legacy')) {
-        return "We conducted workflow mappings to group overlapping features, replacing disconnected legacy applications with a centralized, modular widget system that lets staff keep their most-used panels open side-by-side."
-      }
-      if (q.includes('visual') || q.includes('real-time')) {
-        return "We used real-time stacked bar charts for bed occupancy, radial progress gauges for dispatch response times, and an interactive kanban-style map to visualize patient transfer stages clearly."
-      }
-    }
-
-    // Fallbacks for general project questions
-    if (q.includes('role')) {
-      return `For the "${activeProject.title}" project, Soupriti's role was Lead Product Designer, driving the end-to-end user research, UX flow definition, interactive prototyping, and developer handoff.`
-    }
-    if (q.includes('hurdle') || q.includes('challenge')) {
-      return `The biggest challenge in "${activeProject.title}" was balancing technical and physical system constraints with a friction-free user flow, ensuring high task completion rate.`
-    }
-    if (q.includes('success') || q.includes('measur')) {
-      return `Success for "${activeProject.title}" was measured through actionable metrics like user task speed improvements, reduction in support requests, and high engagement scores during testing.`
-    }
-    if (q.includes('takeaway') || q.includes('learn')) {
-      return `The key takeaway from "${activeProject.title}" was that simplifying interfaces and removing unnecessary choices yields the highest gains in both user delight and business performance.`
-    }
-  }
-
   // Recruiter-First queries
   if (q.includes('good fit for saas') || q.includes('fit for saas') || q.match(/\bsaas\b/)) {
     return "Soupriti is an exceptional fit for SaaS product roles. At Divami Design Labs and Incture, she worked extensively on complex high-density SaaS dashboards, data-heavy enterprise platforms, and complex workflow mapping. She combines design systems mastery in Figma with solid React frontend understanding, enabling her to design systems that are both beautiful and highly constructible by engineering."
@@ -463,7 +346,7 @@ function getResponse(input, jokeState, setJokeState, activeSection, activeProjec
     return "Soupriti's UX process is deeply system-driven and data-backed. When designing the HMI interface for upliance.ai, she conducted contextual inquiry and diary studies to resolve cognitive load issues. By restructuring user flows and visual hierarchy, she achieved a measurable 24% increase in cooking task completion speed and a 30% boost in user retention."
   }
   if (q.includes('product strategy') || q.includes('design strategy')) {
-    return "Soupriti bridges visual craft with business outcomes. Her strategy involves building robust design tokens (OKLCH-engineered light/dark modes) to speed up frontend development time, and aligning user journeys with business success metrics—such as onboarding completion rate and active device usage."
+    return "Soupriti bridges visual craft with business outcomes. Her strategy involves building robust design tokens (OKLCH-engineered light/dark modes) to speed up frontend development time, and aligning user journeys with business success metricsΓÇösuch as onboarding completion rate and active device usage."
   }
   if (q.includes('philosophy') || q.includes('design approach')) {
     return "Soupriti believes in 'complexity made warm.' Design should feel human, transparent, and responsive. Instead of decorative visuals, she focuses on functional design systems, clear typographic rhythms, and micro-interactions that elevate utility into moments of delightful feedback."
@@ -478,7 +361,7 @@ function getResponse(input, jokeState, setJokeState, activeSection, activeProjec
       return "You are looking at the Hero section of Soupriti's portfolio! It outlines her background as a Lead Product Designer with 3+ years of experience crafting SaaS and AI-powered interfaces, plus a quick preview of her interactive AI notch. Press CTRL + L to speak to me!"
     }
     if (activeSection === 'expertise') {
-      return "You are viewing the Expertise & Skills section! Here you can check out her core superpowers—Figma design systems, React front-end engineering, physical-digital IoT logic, and accessibility designs. Hover over any tile to interact!"
+      return "You are viewing the Expertise & Skills section! Here you can check out her core superpowersΓÇöFigma design systems, React front-end engineering, physical-digital IoT logic, and accessibility designs. Hover over any tile to interact!"
     }
     if (activeSection === 'projects') {
       return "You are exploring the Selected Projects section! This features case studies from upliance.ai (where she achieved a 24% increase in cooking task completion speed), behavior-driven onboarding platforms, smart air fryer devices, and doctor-facing diagnostic dashboards."
@@ -518,11 +401,11 @@ function getResponse(input, jokeState, setJokeState, activeSection, activeProjec
   return pick(FUN.playful.confusion) + '\n\nI can tell you about Soupriti\'s projects, skills, experience, or tell a joke!'
 }
 
-/* ── TTS Synthesizer voice ── */
+/* ΓöÇΓöÇ TTS Synthesizer voice ΓöÇΓöÇ */
 function speak(text, onEnd) {
   if (!window.speechSynthesis) return
   window.speechSynthesis.cancel()
-  const clean = text.replace(/[•\n]/g, '. ').replace(/\d+\./g, '').trim()
+  const clean = text.replace(/[ΓÇó\n]/g, '. ').replace(/\d+\./g, '').trim()
   const utt = new SpeechSynthesisUtterance(clean)
   utt.rate = 1.05; utt.pitch = 1.1; utt.volume = 1
   const setVoice = () => {
@@ -537,7 +420,7 @@ function speak(text, onEnd) {
   else window.speechSynthesis.onvoiceschanged = setVoice
 }
 
-/* ── Synthesizer sound generator ── */
+/* ΓöÇΓöÇ Synthesizer sound generator ΓöÇΓöÇ */
 let sharedAudioCtx = null
 const playSound = (type) => {
   try {
@@ -571,62 +454,13 @@ const playSound = (type) => {
       gain.connect(ctx.destination)
       osc.start(now)
       osc.stop(now + 0.08)
-    } else if (type === 'chord') {
-      // Voicing mimicking the deep, resonant Mac Startup Chime
-      // Stacking C major notes with low bass notes and mid-high extensions
-      const notes = [
-        { freq: 65.41, delay: 0.0, type: 'sawtooth', detune: -4, gain: 0.22, decay: 4.5 },  // C2 (deep bass foundation)
-        { freq: 130.81, delay: 0.02, type: 'sawtooth', detune: 4, gain: 0.25, decay: 4.2 }, // C3 (tenor warmth)
-        { freq: 196.00, delay: 0.04, type: 'sine', detune: 0, gain: 0.25, decay: 3.8 },     // G3 (fifth anchor)
-        { freq: 261.63, delay: 0.06, type: 'triangle', detune: -2, gain: 0.20, decay: 3.5 }, // C4 (middle C)
-        { freq: 329.63, delay: 0.08, type: 'triangle', detune: 2, gain: 0.18, decay: 3.2 },  // E4 (warm major third)
-        { freq: 392.00, delay: 0.10, type: 'sine', detune: 0, gain: 0.18, decay: 3.0 },     // G4 (bright fifth)
-        { freq: 523.25, delay: 0.12, type: 'sine', detune: 3, gain: 0.12, decay: 2.8 }      // C5 (sparkle top note)
-      ]
-
-      // Filter to cut harshness and create an analog sweeping feel
-      const filter = ctx.createBiquadFilter()
-      filter.type = 'lowpass'
-      filter.frequency.setValueAtTime(1200, now)
-      filter.frequency.exponentialRampToValueAtTime(280, now + 3.8)
-
-      // Master gain node for smooth fadeout
-      const masterGain = ctx.createGain()
-      masterGain.gain.setValueAtTime(0.85, now)
-      masterGain.gain.exponentialRampToValueAtTime(0.001, now + 4.5)
-
-      filter.connect(masterGain)
-      masterGain.connect(ctx.destination)
-
-      notes.forEach((n) => {
-        const startTime = now + n.delay
-        
-        const osc = ctx.createOscillator()
-        const voiceGain = ctx.createGain()
-        
-        osc.type = n.type
-        osc.frequency.setValueAtTime(n.freq, startTime)
-        if (n.detune) {
-          osc.detune.setValueAtTime(n.detune, startTime)
-        }
-
-        osc.connect(voiceGain)
-        voiceGain.connect(filter)
-
-        // Envelope for this voice
-        voiceGain.gain.setValueAtTime(n.gain, startTime)
-        voiceGain.gain.exponentialRampToValueAtTime(0.001, startTime + n.decay)
-
-        osc.start(startTime)
-        osc.stop(startTime + n.decay + 0.1)
-      })
     }
   } catch (e) {
     console.warn(e)
   }
 }
 
-/* ── High-Fidelity Vector Icons ── */
+/* ΓöÇΓöÇ High-Fidelity Vector Icons ΓöÇΓöÇ */
 const DocIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -837,91 +671,15 @@ export default function DynamicNotch({ activeProject }) {
   // JD Matcher States
   const [jdText, setJdText] = useState('')
   const [jdFileName, setJdFileName] = useState('')
-  const [jdMatching, setJdMatching] = useState(false)
-  const [matchScore, setMatchScore] = useState(null)
-  const [matchDetails, setMatchDetails] = useState('')
-
-  const getContextualPrompts = () => {
-    if (!activeProject) {
-      return [
-        { label: 'Is she a good fit for SaaS?', query: 'Is Soupriti a good fit for SaaS product roles?' },
-        { label: 'Summarize her experience', query: "Summarize Soupriti's experience" },
-        { label: 'Explore AI projects', query: "Tell me about Soupriti's AI projects" },
-        { label: 'Evaluate UX thinking', query: "Evaluate Soupriti's UX thinking and process" },
-        { label: 'Review product strategy', query: "Review Soupriti's product design strategy" },
-        { label: 'Hear her design philosophy', query: "What is Soupriti's design philosophy?" },
-        { label: 'Ask about B2B/B2C experience', query: "Tell me about Soupriti's B2B and B2C experience" }
-      ]
-    }
-
-    const pid = activeProject.id
-    if (pid === 'ai-cooking' || pid === 'cooking') {
-      return [
-        { label: 'Main Challenge in AI Cooking?', query: 'What was the main challenge in the AI Cooking project?' },
-        { label: 'Designing for Messy Cooking?', query: 'How did you design for messy physical cooking environments?' },
-        { label: 'UX Metrics & Outcomes?', query: 'What were the key UX metrics and outcomes for the AI Cooking screen?' },
-        { label: 'Physical Interface Layout?', query: 'Can you tell me about the physical interface layout and collaboration?' }
-      ]
-    }
-    if (pid === 'onboarding') {
-      return [
-        { label: 'Reduce Returns by 7%?', query: 'How did behavior-driven onboarding reduce returns by 7%?' },
-        { label: 'Progressive Milestones?', query: 'What does "progressive milestones" mean in this onboarding UX?' },
-        { label: 'Metrics Tracked?', query: 'What metrics were tracked during the onboarding week?' },
-        { label: 'Mobile Retention Funnel?', query: 'Explain the user retention funnel improvements on mobile UX' }
-      ]
-    }
-    if (pid === 'airfryer') {
-      return [
-        { label: 'Texture vs Temp?', query: 'Why did you choose texture-driven selections instead of temperature parameters?' },
-        { label: 'Testing Texture Categories?', query: 'How did you test and validate texture categories with real users?' },
-        { label: 'Adaptive Progress Loops?', query: 'What was the outcome of the smart adaptive progress loops?' },
-        { label: 'Manual Override System?', query: 'How did you design the manual override system for IoT control?' }
-      ]
-    }
-    if (pid === 'medpod') {
-      return [
-        { label: 'Elderly Limitations?', query: 'How does Medpod handle elderly cognitive and motor limitations?' },
-        { label: 'Error Prevention Loops?', query: 'What error prevention loops did you design for medication scheduling?' },
-        { label: 'Caregiver Dashboard?', query: 'Tell me about the remote status dashboard for caregiver peace of mind' },
-        { label: 'Tactile vs Visual?', query: 'Why did you choose tactile touch targets over small visual feedback?' }
-      ]
-    }
-    if (pid === 'battle-pass') {
-      return [
-        { label: 'Engagement Loops?', query: 'What are the core engagement loops in this battle pass system?' },
-        { label: 'Rewards vs Monetization?', query: 'How did you balance player progression rewards with gameplay monetization?' },
-        { label: 'Milestone Progression Trails?', query: 'Tell me about the visual layout of milestone progression trails' },
-        { label: 'Avoiding Dark Patterns?', query: 'How did you avoid deceptive dark patterns in game UX design?' }
-      ]
-    }
-    if (pid === 'mcb-school') {
-      return [
-        { label: 'Imagination-Led Portal?', query: 'How did you make the school portal imagination-led?' },
-        { label: 'Parent-Student Collab?', query: 'What student-parent collaboration modules did you design?' },
-        { label: 'Online Inquiries Impact?', query: 'How did the brand transformation affect digital admissions and inquiries?' },
-        { label: 'User Testing Insights?', query: 'What did you learn from user testing with parents and children?' }
-      ]
-    }
-    if (pid === 'doctorite') {
-      return [
-        { label: 'Hospital Speed?', query: 'How did you design the SaaS dashboard for operational hospital speed?' },
-        { label: 'Clinician Accuracy (+94%)?', query: 'What design decisions helped achieve +94% clinician tracking accuracy?' },
-        { label: 'Unifying 4 Legacy Apps?', query: 'How did you unify 4 distinct operational apps into 1 control deck?' },
-        { label: 'Real-time Tracking Viz?', query: 'What data visualization paradigms did you use for real-time tracking?' }
-      ]
-    }
-
-    // fallback
-    return [
-      { label: `Her role in ${activeProject.title}`, query: `What was Soupriti's role in the ${activeProject.title} project?` },
-      { label: 'Biggest project hurdle', query: `What was the biggest hurdle in the ${activeProject.title} project?` },
-      { label: 'How success was measured', query: `How was success measured for the ${activeProject.title} project?` },
-      { label: 'Key takeaways', query: `What are the key takeaways from the ${activeProject.title} project?` }
-    ]
-  }
   const [isScanning, setIsScanning] = useState(false)
   const [matchResult, setMatchResult] = useState(null)
+
+  // Floating Minimized Video Player State
+  const [videoVisible, setVideoVisible] = useState(true)
+
+  useEffect(() => {
+    setVideoVisible(true)
+  }, [activeProject])
 
   // Debounced auto-analyzer for pasted/typed JDs
   useEffect(() => {
@@ -1059,7 +817,7 @@ export default function DynamicNotch({ activeProject }) {
     // Generate Tailored Summary
     let summaryPoints = []
     if (matches.ai) {
-      summaryPoints.push("Soupriti excels in designing advanced AI user experiences—including agentic UI flows, floating HUD control units, and conversational co-pilots like Soup.")
+      summaryPoints.push("Soupriti excels in designing advanced AI user experiencesΓÇöincluding agentic UI flows, floating HUD control units, and conversational co-pilots like Soup.")
     }
     if (matches.designSystem) {
       summaryPoints.push("She builds scalable, tokenized design systems with clear multi-theme (light/dark) engineering and robust semantic tokens.")
@@ -1165,12 +923,6 @@ export default function DynamicNotch({ activeProject }) {
     return () => clearInterval(interval)
   }, [activeSection])
 
-  // 2.3 CASE STUDY RESET EFFECT
-  useEffect(() => {
-    setNotchState('compact')
-    stopVoiceRecognition()
-  }, [activeProject])
-
   // 3. KEYBOARD CTRL + L DETECTOR (Voice Toggle)
   useEffect(() => {
     const handleKey = (e) => {
@@ -1228,7 +980,7 @@ export default function DynamicNotch({ activeProject }) {
       await new Promise(r => setTimeout(r, 800)) // Cognitive delay
       
       setJokeState(currentJoke => {
-        const reply = getResponse(transcript, currentJoke, setJokeState, activeSection, activeProject)
+        const reply = getResponse(transcript, currentJoke, setJokeState, activeSection)
         setVoiceStatus('replying')
         setVoiceSpeechText('Speaking...')
         
@@ -1268,7 +1020,7 @@ export default function DynamicNotch({ activeProject }) {
     await new Promise(r => setTimeout(r, 600 + Math.random() * 300))
     setIsTyping(false)
 
-    const reply = getResponse(trimmed, jokeState, setJokeState, activeSection, activeProject)
+    const reply = getResponse(trimmed, jokeState, setJokeState, activeSection)
     setMessages(prev => [...prev, { from: 'bot', text: reply }])
     playSound('pop')
   }
@@ -1304,7 +1056,7 @@ export default function DynamicNotch({ activeProject }) {
   const glowShadow = '0 16px 40px rgba(0, 0, 0, 0.6), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.25), inset 0 -1.5px 1.5px rgba(0, 0, 0, 0.7), 0 0 16px rgba(255, 77, 166, 0.12)'
 
   // -- INTERPOLATION LOGIC --
-  const isDocked = dockRect && scrollProgress < 1 && !activeProject
+  const isDocked = dockRect && scrollProgress < 1
   const p = isDocked ? scrollProgress : 1
   const pEase = p === 1 ? 1 : 1 - Math.pow(2, -10 * p) // easeOutExpo
 
@@ -1349,7 +1101,7 @@ export default function DynamicNotch({ activeProject }) {
     : `translateX(-50%) scale(1)`
 
   // Add floating animation if fully docked
-  const isFullyDocked = p === 0 && !activeProject
+  const isFullyDocked = p === 0
 
   const hoverShadow = '0 20px 48px rgba(0, 0, 0, 0.65), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.35), inset 0 -1.5px 1.5px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 77, 166, 0.18)'
 
@@ -1401,12 +1153,7 @@ export default function DynamicNotch({ activeProject }) {
           justifyContent: 'flex-start',
           cursor: notchState === 'compact' ? 'pointer' : 'default',
         }}
-        onMouseEnter={() => {
-          if (!hovered && notchState === 'compact') {
-            playSound('chord')
-          }
-          setHovered(true)
-        }}
+        onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         onClick={notchState === 'compact' ? () => {
           playSound('pop')
@@ -1535,7 +1282,7 @@ export default function DynamicNotch({ activeProject }) {
                       opacity: 0.95,
                       textShadow: '0 1px 2px rgba(0, 0, 0, 0.6)',
                     }}>
-                      I can help you sniff around and see if Soupriti’s the kind of designer your team has been looking for.
+                      I can help you sniff around and see if SoupritiΓÇÖs the kind of designer your team has been looking for.
                     </span>
                     <span style={{
                       fontSize: 11,
@@ -1806,7 +1553,15 @@ export default function DynamicNotch({ activeProject }) {
                         gridTemplateColumns: '1fr 1fr',
                         gap: 8
                       }}>
-                      {getContextualPrompts().map(act => (
+                        {[
+                          { label: 'Is she a good fit for SaaS?', query: 'Is Soupriti a good fit for SaaS product roles?' },
+                          { label: 'Summarize her experience', query: "Summarize Soupriti's experience" },
+                          { label: 'Explore AI projects', query: "Tell me about Soupriti's AI projects" },
+                          { label: 'Evaluate UX thinking', query: "Evaluate Soupriti's UX thinking and process" },
+                          { label: 'Review product strategy', query: "Review Soupriti's product design strategy" },
+                          { label: 'Hear her design philosophy', query: "What is Soupriti's design philosophy?" },
+                          { label: 'Ask about B2B/B2C experience', query: "Tell me about Soupriti's B2B and B2C experience" }
+                        ].map(act => (
                           <button
                             key={act.label}
                             onClick={() => handleSendChat(act.query)}
@@ -1861,7 +1616,7 @@ export default function DynamicNotch({ activeProject }) {
                         </span>
                       </div>
                       <span style={{ fontSize: 11, color: subtextColor, fontFamily: 'var(--font-body)', lineHeight: 1.4 }}>
-                        Ask Soup anything about Soupriti’s work, process, or fit.
+                        Ask Soup anything about SoupritiΓÇÖs work, process, or fit.
                       </span>
                     </div>
                   </div>
@@ -2152,7 +1907,7 @@ export default function DynamicNotch({ activeProject }) {
 
                         {jdFileName && (
                           <span style={{ fontSize: 10, fontFamily: 'var(--font-body)', opacity: 0.6 }}>
-                            {jdFileName.endsWith('.pdf') ? "pdf" : "image"} loaded ✓
+                            {jdFileName.endsWith('.pdf') ? "pdf" : "image"} loaded Γ£ô
                           </span>
                         )}
                       </div>
@@ -2241,6 +1996,74 @@ export default function DynamicNotch({ activeProject }) {
           </div>
         )}
       </nav>
+
+      {/* Search to Intent Floating Presentation Video Player */}
+      {activeProject?.id === 'search-to-intent' && videoVisible && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: finalHeight + bottomSpacing + 12,
+            right: rightSpacing,
+            width: typeof window !== 'undefined' && window.innerWidth < 768 ? '260px' : '320px',
+            height: typeof window !== 'undefined' && window.innerWidth < 768 ? '146px' : '180px',
+            borderRadius: '16px',
+            background: 'rgba(14, 14, 17, 0.95)',
+            border: `1.2px solid ${accentColor}`,
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            boxShadow: `0 12px 32px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 77, 166, 0.15)`,
+            zIndex: 999998,
+            overflow: 'hidden',
+            transition: 'bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1), right 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+          }}
+        >
+          {/* Canva Watch Embed iframe */}
+          <iframe
+            src="https://www.canva.com/design/DAHLaWrsGuo/nd2_fdOFi5_mQC632ooo1g/watch?embed"
+            title="Search to Intent Case Study Video"
+            width="100%"
+            height="100%"
+            style={{ border: 'none' }}
+            allowFullScreen
+            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
+          />
+          {/* Close Button overlay */}
+          <button
+            onClick={() => {
+              playSound('pop')
+              setVideoVisible(false)
+            }}
+            style={{
+              position: 'absolute',
+              top: 8,
+              right: 8,
+              width: 24,
+              height: 24,
+              borderRadius: '50%',
+              background: 'rgba(0, 0, 0, 0.6)',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
+              color: '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              padding: 0,
+              transition: 'all 0.2s',
+              zIndex: 2,
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = 'rgba(255, 77, 166, 0.8)'
+              e.currentTarget.style.borderColor = accentColor
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)'
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)'
+            }}
+          >
+            <CloseIcon />
+          </button>
+        </div>
+      )}
 
       {/* Dynamic Keyframes */}
       <style>{`

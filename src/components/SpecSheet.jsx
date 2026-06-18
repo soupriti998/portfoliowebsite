@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { playFluteHover, playFluteClick } from './utils'
 
 /* ── Interactive State CSS Snippets & Metadata ── */
 const STATE_SPECS = {
@@ -620,7 +621,7 @@ const InteractiveCircleSpec = ({ name, active, onClick, theme }) => {
               position: 'absolute', top: -4, right: -4,
               color: pinkGlow, fontSize: 8, fontWeight: 700,
               animation: 'awayOrbit 3s infinite alternate'
-            }}>zZZ</span>
+            }}>\uD83D\uDECC\u2728</span>
           </div>
         )
       case 'Away':
@@ -664,7 +665,10 @@ const InteractiveCircleSpec = ({ name, active, onClick, theme }) => {
 
   return (
     <div 
-      onClick={onClick}
+      onClick={() => {
+        playFluteClick()
+        onClick()
+      }}
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -685,6 +689,7 @@ const InteractiveCircleSpec = ({ name, active, onClick, theme }) => {
         boxSizing: 'border-box'
       }}
       onMouseEnter={e => {
+        playFluteHover()
         if (!active) {
           e.currentTarget.style.background = isDark ? 'rgba(255,77,166,0.04)' : 'rgba(255,77,166,0.02)'
           e.currentTarget.style.borderColor = 'rgba(255, 77, 166, 0.4)'
@@ -799,7 +804,11 @@ export default function SpecSheet({ onClose }) {
             border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`
           }}>
             <button 
-              onClick={() => setTheme('light')}
+              onClick={() => {
+                playFluteClick()
+                setTheme('light')
+              }}
+              onMouseEnter={playFluteHover}
               style={{
                 border: 'none', background: !isDark ? '#ffffff' : 'none',
                 color: !isDark ? pinkGlow : '#a1a1a6',
@@ -810,7 +819,11 @@ export default function SpecSheet({ onClose }) {
               LIGHT
             </button>
             <button 
-              onClick={() => setTheme('dark')}
+              onClick={() => {
+                playFluteClick()
+                setTheme('dark')
+              }}
+              onMouseEnter={playFluteHover}
               style={{
                 border: 'none', background: isDark ? 'rgba(255, 77, 166, 0.25)' : 'none',
                 color: isDark ? '#ffffff' : '#515156',
@@ -824,14 +837,20 @@ export default function SpecSheet({ onClose }) {
 
           {/* Close Spec Sheet Overlay */}
           <button 
-            onClick={onClose}
+            onClick={() => {
+              playFluteClick()
+              onClose()
+            }}
             style={{
               padding: '6px 14px', borderRadius: 20, background: pinkGlow,
               border: 'none', color: '#ffffff', fontSize: 11, fontWeight: 700,
               cursor: 'pointer', boxShadow: `0 4px 12px rgba(255, 77, 166, 0.35)`,
               display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.2s'
             }}
-            onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseEnter={e => {
+              e.currentTarget.style.transform = 'scale(1.05)'
+              playFluteHover()
+            }}
             onMouseLeave={e => e.currentTarget.style.transform = 'none'}
           >
             <span>CLOSE</span>
@@ -995,7 +1014,11 @@ export default function SpecSheet({ onClose }) {
             </div>
 
             <button
-              onClick={() => copyCode(spec.css + '\n\n' + spec.react)}
+              onClick={() => {
+                playFluteClick()
+                copyCode(spec.css + '\n\n' + spec.react)
+              }}
+              onMouseEnter={playFluteHover}
               style={{
                 width: '100%', padding: '10px', borderRadius: 10, background: pinkGlow,
                 border: 'none', color: '#ffffff', fontSize: 11, fontWeight: 700, cursor: 'pointer',

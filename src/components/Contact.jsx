@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { FadeUp, Label } from './utils'
+import { FadeUp, Label, playFluteHover, playFluteClick } from './utils'
 
 export default function Contact({ isCaseStudy = false }) {
   const [copiedText, setCopiedText] = useState(null)
@@ -22,6 +22,7 @@ export default function Contact({ isCaseStudy = false }) {
   }, [isCaseStudy])
 
   const copyToClipboard = (text, type) => {
+    playFluteClick()
     navigator.clipboard.writeText(text)
     setCopiedText(type)
     setTimeout(() => setCopiedText(null), 2000)
@@ -43,7 +44,7 @@ export default function Contact({ isCaseStudy = false }) {
     linkedin: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-        <rect width="4" height="12" x="2" y="9" />
+        <path d="M2 9h4v12H2z" />
         <circle cx="4" cy="4" r="2" />
       </svg>
     ),
@@ -89,6 +90,7 @@ export default function Contact({ isCaseStudy = false }) {
         background: '#0a0b0d', 
         borderTop: '1px solid #16181d',
         position: 'relative',
+        zIndex: 15,
         overflow: 'hidden',
         color: '#ffffff',
       }}
@@ -133,7 +135,7 @@ export default function Contact({ isCaseStudy = false }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }} className="contact-links-list">
               
               {/* EMAIL: COPY */}
-              <div className="contact-detail-row">
+              <div className="contact-detail-row" onMouseEnter={playFluteHover}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                   <div className="contact-row-icon">{icons.email}</div>
                   <div>
@@ -143,6 +145,7 @@ export default function Contact({ isCaseStudy = false }) {
                 </div>
                 <button 
                   onClick={() => copyToClipboard('soupritidas123@gmail.com', 'email')}
+                  onMouseEnter={playFluteHover}
                   className={`contact-action-pill ${copiedText === 'email' ? 'copied' : ''}`}
                 >
                   {copiedText === 'email' ? icons.check : icons.copy}
@@ -151,7 +154,7 @@ export default function Contact({ isCaseStudy = false }) {
               </div>
 
               {/* PHONE: COPY */}
-              <div className="contact-detail-row">
+              <div className="contact-detail-row" onMouseEnter={playFluteHover}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                   <div className="contact-row-icon">{icons.phone}</div>
                   <div>
@@ -161,6 +164,7 @@ export default function Contact({ isCaseStudy = false }) {
                 </div>
                 <button 
                   onClick={() => copyToClipboard('+91 8825442430', 'phone')}
+                  onMouseEnter={playFluteHover}
                   className={`contact-action-pill ${copiedText === 'phone' ? 'copied' : ''}`}
                 >
                   {copiedText === 'phone' ? icons.check : icons.copy}
@@ -169,7 +173,7 @@ export default function Contact({ isCaseStudy = false }) {
               </div>
 
               {/* LINKEDIN: REDIRECTION */}
-              <div className="contact-detail-row">
+              <div className="contact-detail-row" onMouseEnter={playFluteHover}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                   <div className="contact-row-icon">{icons.linkedin}</div>
                   <div>
@@ -182,6 +186,8 @@ export default function Contact({ isCaseStudy = false }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="contact-action-pill"
+                  onMouseEnter={playFluteHover}
+                  onClick={playFluteClick}
                 >
                   {icons.redirect}
                   <span>Visit ↗</span>
@@ -189,7 +195,7 @@ export default function Contact({ isCaseStudy = false }) {
               </div>
 
               {/* CURRENT PORTFOLIO: REDIRECTION */}
-              <div className="contact-detail-row">
+              <div className="contact-detail-row" onMouseEnter={playFluteHover}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                   <div className="contact-row-icon">{icons.portfolio}</div>
                   <div>
@@ -202,6 +208,8 @@ export default function Contact({ isCaseStudy = false }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="contact-action-pill"
+                  onMouseEnter={playFluteHover}
+                  onClick={playFluteClick}
                 >
                   {icons.redirect}
                   <span>Visit ↗</span>
@@ -209,7 +217,7 @@ export default function Contact({ isCaseStudy = false }) {
               </div>
 
               {/* PREVIOUS ARCHIVE: REDIRECTION */}
-              <div className="contact-detail-row">
+              <div className="contact-detail-row" onMouseEnter={playFluteHover}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                   <div className="contact-row-icon">{icons.archive}</div>
                   <div>
@@ -222,6 +230,8 @@ export default function Contact({ isCaseStudy = false }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="contact-action-pill"
+                  onMouseEnter={playFluteHover}
+                  onClick={playFluteClick}
                 >
                   {icons.redirect}
                   <span>Visit ↗</span>
