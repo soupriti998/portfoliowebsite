@@ -64,7 +64,7 @@ function playSynthSound(type, isMuted) {
   }
 }
 
-function DesktopFolderItem({ label, icon, onClick, handleHover, isShipped }) {
+function DesktopFolderItem({ label, icon, onClick, handleHover, tagText, tagColor, isFile }) {
   const [isHovered, setIsHovered] = useState(false);
 
   const onMouseEnter = () => {
@@ -85,89 +85,94 @@ function DesktopFolderItem({ label, icon, onClick, handleHover, isShipped }) {
       style={{ position: 'relative' }}
     >
       <div style={{ position: 'relative', width: '80px', height: '80px', marginBottom: '8px' }}>
-        {/* Page 1 (left) */}
-        <motion.div 
-          style={{
-            position: 'absolute',
-            width: '48px',
-            height: '60px',
-            background: '#ffffff',
-            border: '1px solid rgba(226, 232, 240, 0.85)',
-            borderRadius: '5px',
-            boxShadow: '0 4px 8px rgba(0,0,0,0.12)',
-            top: 10,
-            left: 16,
-            zIndex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '4px',
-            padding: '6px 5px',
-            transformOrigin: 'bottom center',
-            pointerEvents: 'none'
-          }}
-          animate={isHovered ? { opacity: 1, y: -30, rotate: -18, scale: 1 } : { opacity: 0, y: 5, rotate: 0, scale: 0.8 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 18 }}
-        >
-          <div style={{ width: '80%', height: '3px', background: '#cbd5e1', borderRadius: '0.5px' }} />
-          <div style={{ width: '50%', height: '3px', background: '#cbd5e1', borderRadius: '0.5px' }} />
-          <div style={{ width: '70%', height: '3px', background: '#cbd5e1', borderRadius: '0.5px' }} />
-        </motion.div>
+        {!isFile && (
+          <>
+            {/* Page 1 (left) */}
+            <motion.div 
+              style={{
+                position: 'absolute',
+                width: '48px',
+                height: '60px',
+                background: '#ffffff',
+                border: '1px solid rgba(226, 232, 240, 0.85)',
+                borderRadius: '5px',
+                boxShadow: '0 4px 8px rgba(0,0,0,0.12)',
+                top: 10,
+                left: 16,
+                zIndex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '4px',
+                padding: '6px 5px',
+                transformOrigin: 'bottom center',
+                pointerEvents: 'none'
+              }}
+              animate={isHovered ? { opacity: 1, y: -30, rotate: -18, scale: 1 } : { opacity: 0, y: 5, rotate: 0, scale: 0.8 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 18 }}
+            >
+              <div style={{ width: '80%', height: '3px', background: '#cbd5e1', borderRadius: '0.5px' }} />
+              <div style={{ width: '50%', height: '3px', background: '#cbd5e1', borderRadius: '0.5px' }} />
+              <div style={{ width: '70%', height: '3px', background: '#cbd5e1', borderRadius: '0.5px' }} />
+            </motion.div>
 
-        {/* Page 2 (middle) */}
-        <motion.div 
-          style={{
-            position: 'absolute',
-            width: '48px',
-            height: '60px',
-            background: '#ffffff',
-            border: '1px solid rgba(226, 232, 240, 0.85)',
-            borderRadius: '5px',
-            boxShadow: '0 4px 8px rgba(0,0,0,0.12)',
-            top: 10,
-            left: 16,
-            zIndex: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '4px',
-            padding: '6px 5px',
-            transformOrigin: 'bottom center',
-            pointerEvents: 'none'
-          }}
-          animate={isHovered ? { opacity: 1, y: -38, rotate: 0, scale: 1.05 } : { opacity: 0, y: 5, rotate: 0, scale: 0.8 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.02 }}
-        >
-          <div style={{ width: '60%', height: '3px', background: '#94a3b8', borderRadius: '0.5px' }} />
-          <div style={{ width: '80%', height: '3px', background: '#cbd5e1', borderRadius: '0.5px' }} />
-          <div style={{ width: '45%', height: '3px', background: '#cbd5e1', borderRadius: '0.5px' }} />
-        </motion.div>
+            {/* Page 2 (middle) */}
+            <motion.div 
+              style={{
+                position: 'absolute',
+                width: '48px',
+                height: '60px',
+                background: '#ffffff',
+                border: '1px solid rgba(226, 232, 240, 0.85)',
+                borderRadius: '5px',
+                boxShadow: '0 4px 8px rgba(0,0,0,0.12)',
+                top: 10,
+                left: 16,
+                zIndex: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '4px',
+                padding: '6px 5px',
+                transformOrigin: 'bottom center',
+                pointerEvents: 'none'
+              }}
+              animate={isHovered ? { opacity: 1, y: -38, rotate: 0, scale: 1.05 } : { opacity: 0, y: 5, rotate: 0, scale: 0.8 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.02 }}
+            >
+              <div style={{ width: '60%', height: '3px', background: '#94a3b8', borderRadius: '0.5px' }} />
+              <div style={{ width: '80%', height: '3px', background: '#cbd5e1', borderRadius: '0.5px' }} />
+              <div style={{ width: '80%', height: '3px', background: '#cbd5e1', borderRadius: '0.5px' }} />
+              <div style={{ width: '45%', height: '3px', background: '#cbd5e1', borderRadius: '0.5px' }} />
+            </motion.div>
 
-        {/* Page 3 (right) */}
-        <motion.div 
-          style={{
-            position: 'absolute',
-            width: '48px',
-            height: '60px',
-            background: '#ffffff',
-            border: '1px solid rgba(226, 232, 240, 0.85)',
-            borderRadius: '5px',
-            boxShadow: '0 4px 8px rgba(0,0,0,0.12)',
-            top: 10,
-            left: 16,
-            zIndex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '4px',
-            padding: '6px 5px',
-            transformOrigin: 'bottom center',
-            pointerEvents: 'none'
-          }}
-          animate={isHovered ? { opacity: 1, y: -30, rotate: 18, scale: 1 } : { opacity: 0, y: 5, rotate: 0, scale: 0.8 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.04 }}
-        >
-          <div style={{ width: '70%', height: '3px', background: '#cbd5e1', borderRadius: '0.5px' }} />
-          <div style={{ width: '60%', height: '3px', background: '#cbd5e1', borderRadius: '0.5px' }} />
-          <div style={{ width: '75%', height: '3px', background: '#cbd5e1', borderRadius: '0.5px' }} />
-        </motion.div>
+            {/* Page 3 (right) */}
+            <motion.div 
+              style={{
+                position: 'absolute',
+                width: '48px',
+                height: '60px',
+                background: '#ffffff',
+                border: '1px solid rgba(226, 232, 240, 0.85)',
+                borderRadius: '5px',
+                boxShadow: '0 4px 8px rgba(0,0,0,0.12)',
+                top: 10,
+                left: 16,
+                zIndex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '4px',
+                padding: '6px 5px',
+                transformOrigin: 'bottom center',
+                pointerEvents: 'none'
+              }}
+              animate={isHovered ? { opacity: 1, y: -30, rotate: 18, scale: 1 } : { opacity: 0, y: 5, rotate: 0, scale: 0.8 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.04 }}
+            >
+              <div style={{ width: '70%', height: '3px', background: '#cbd5e1', borderRadius: '0.5px' }} />
+              <div style={{ width: '60%', height: '3px', background: '#cbd5e1', borderRadius: '0.5px' }} />
+              <div style={{ width: '75%', height: '3px', background: '#cbd5e1', borderRadius: '0.5px' }} />
+            </motion.div>
+          </>
+        )}
 
         {/* Actual Folder Icon */}
         <div style={{ position: 'relative', zIndex: 10, width: '100%', height: '100%', filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.15))' }}>
@@ -175,33 +180,33 @@ function DesktopFolderItem({ label, icon, onClick, handleHover, isShipped }) {
         </div>
       </div>
       <span className="desktop-folder-label" style={{ fontSize: '13px', marginTop: '6px' }}>{label}</span>
-      {isShipped && (
+      {tagText && (
         <div style={{
           display: 'flex',
           alignItems: 'center',
           gap: '4px',
           padding: '2px 8px',
-          background: 'rgba(34, 197, 94, 0.12)',
-          border: '1px solid rgba(34, 197, 94, 0.25)',
+          background: tagColor === 'blue' ? 'rgba(59, 130, 246, 0.12)' : 'rgba(34, 197, 94, 0.12)',
+          border: tagColor === 'blue' ? '1px solid rgba(59, 130, 246, 0.25)' : '1px solid rgba(34, 197, 94, 0.25)',
           borderRadius: '100px',
           fontSize: '9px',
           fontWeight: 600,
-          color: '#16a34a',
+          color: tagColor === 'blue' ? '#3b82f6' : '#16a34a',
           marginTop: '4px',
           letterSpacing: '0.01em',
           width: 'fit-content',
           marginInline: 'auto',
-          boxShadow: '0 1px 2px rgba(34,197,94,0.1)'
+          boxShadow: tagColor === 'blue' ? '0 1px 2px rgba(59,130,246,0.1)' : '0 1px 2px rgba(34,197,94,0.1)'
         }}>
-          <span className="pulse-green-dot" style={{
+          <span style={{
             width: '5px',
             height: '5px',
-            backgroundColor: '#22c55e',
+            backgroundColor: tagColor === 'blue' ? '#3b82f6' : '#22c55e',
             borderRadius: '50%',
             display: 'inline-block',
-            boxShadow: '0 0 4px #22c55e'
+            boxShadow: tagColor === 'blue' ? '0 0 4px #3b82f6' : '0 0 4px #22c55e'
           }} />
-          <span style={{ fontSize: '9px' }}>used by 60k+ users</span>
+          <span style={{ fontSize: '9px' }}>{tagText}</span>
         </div>
       )}
     </div>
@@ -325,7 +330,11 @@ export default function Desktop({
   const handleFolderClick = (e, tab) => {
     e.stopPropagation();
     playOpenSound();
-    onOpenWindow(tab);
+    if (tab === 'figma-design-system') {
+      window.open('https://www.figma.com/@soupritidas', '_blank');
+    } else {
+      onOpenWindow(tab);
+    }
   };
 
   const handleDockItemClick = (e, tab, isExternal, url) => {
@@ -456,10 +465,55 @@ export default function Desktop({
         {/* Left Side: Desktop Folders */}
         <div className="desktop-folders" style={{ marginTop: '40px' }}>
           {[
-            { label: "Selected Works", icon: <FolderIcon color1="#42e6a4" color2="#17b978" />, tab: 'selected-works' },
+            { label: "Selected Works", icon: <FolderIcon color1="#42e6a4" color2="#17b978" />, tab: 'selected-works', tagText: "used by 60k+ users", tagColor: "green" },
             { label: "Illustration Works", icon: <FolderIcon color1="#3b82f6" color2="#1d4ed8" />, tab: 'illustrations' },
             { label: "AI Experiments", icon: <FolderIcon color1="#06b6d4" color2="#0891b2" />, tab: 'ai-experiments' },
-            { label: "Not Shipped", icon: <FolderIcon color1="#ec4899" color2="#db2777" />, tab: 'not-shipped' }
+            { label: "Not Shipped", icon: <FolderIcon color1="#ec4899" color2="#db2777" />, tab: 'not-shipped' },
+            { 
+              label: "Figma Design System", 
+              tab: 'figma-design-system',
+              tagText: "used by 10k designers in Figma community",
+              tagColor: "blue",
+              isFile: true,
+              icon: (
+                <div style={{
+                  position: 'relative',
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '10px',
+                  overflow: 'hidden',
+                  background: '#1a082e',
+                  border: '1.5px solid rgba(255, 255, 255, 0.12)',
+                  boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
+                  display: 'flex',
+                  flexDirection: 'column'
+                }}>
+                  {/* File Header */}
+                  <div style={{
+                    height: '14px',
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    paddingLeft: '6px',
+                    flexShrink: 0
+                  }}>
+                    <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#ff5f56' }} />
+                    <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#ffbd2e' }} />
+                    <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#27c93f' }} />
+                  </div>
+                  {/* File Thumbnail body */}
+                  <div style={{ flex: 1, overflow: 'hidden', background: '#130522' }}>
+                    <img 
+                      src="/figma_design_system.png" 
+                      alt="Figma Design System Collage" 
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    />
+                  </div>
+                </div>
+              )
+            }
           ].map((item, idx) => (
             <motion.div
               key={item.tab}
@@ -482,7 +536,9 @@ export default function Desktop({
                 icon={item.icon}
                 onClick={(e) => handleFolderClick(e, item.tab)}
                 handleHover={handleHover}
-                isShipped={item.tab === 'selected-works'}
+                tagText={item.tagText}
+                tagColor={item.tagColor}
+                isFile={item.isFile}
               />
             </motion.div>
           ))}
